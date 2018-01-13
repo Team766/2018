@@ -1,9 +1,19 @@
 package com.team766.robot;
 
 import interfaces.MyRobot;
+import lib.ConstantsFileReader;
+import lib.LogFactory;
+import lib.LogHandler;
+import lib.LogMessage;
+import lib.LogMessage.Level;
 
+import com.team766.lib.CommandBase;
+import com.team766.lib.ServerParser;
+import com.team766.lib.Messages.Stop;
+import com.team766.robot.Actors.OperatorControl;
+import com.team766.robot.Actors.Auton.AutonSelector;
+import com.team766.robot.Actors.Drive.Drive;
 import com.team766.robot.Robot.GameState;
-
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -14,6 +24,11 @@ import edu.wpi.first.wpilibj.command.Scheduler;
  * @author Margaret Chan
  */
 public class Robot implements MyRobot {
+	private long prevTime;
+	private boolean autonDone = false;
+	private boolean teleopDone = false;
+	private final long RUN_TIME = 30;
+	private long lastSleepTime = 0;
 	
 	public enum GameState{
 		Teleop,
@@ -38,94 +53,125 @@ public class Robot implements MyRobot {
 	 */
 	@Override
 	public void robotInit() {
+		CommandBase.init();
+		LogFactory.createInstance("General");
+		LogFactory.createInstance("Vision");
+		LogFactory.createInstance("Errors");
 		
+		Scheduler.getInstance().add(CommandBase.Drive, 100);
+		Scheduler.getInstance().add(new ServerParser(Constants.MESSAGE_PORT), 100);
+		Scheduler.getInstance().add(new LogHandler(Constants.LOG_FILE), 20);
+		
+		System.out.println("It works......");
+		Log(Level.INFO, "Robot Starting");
 	}
 
-	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-	 */
-	@Override
+	
 	public void disabledInit() {
 
 	}
 
-	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
-	 */
-	@Override
+	
 	public void autonomousInit() {
-		autonomousCommand = chooser.getSelected();
-
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
-
-		// schedule the autonomous command (example)
-		if (autonomousCommand != null)
-			autonomousCommand.start();
+		LogFactory.getInstance("General").print("Auton Init");
+    	Log(Level.INFO, "Auton Init / Match Starting");
+    	setState(GameState.Auton);
+    	//Scheduler.getInstance().remove(OperatorControl.class);
+    	Scheduler.getInstance().remove(AutonSelector.class);
+    	emptyInboxes();
+    	
+    	sendStopMessage();
+    	
+    	LogFactory.getInstance("Vision").print("Starting AutonSelector");
+    	Scheduler.getInstance().add(new AutonSelector(Constants.getAutonMode()));
+    	
+    	autonDone = true;
 	}
 
-	/**
-	 * This function is called periodically during autonomous
-	 */
-	@Override
 	public void autonomousPeriodic() {
-		Scheduler.getInstance().run();
+		//Scheduler.getInstance().run();
+		sleep();
 	}
-
+	
+	
 	@Override
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		if (autonomousCommand != null)
-			autonomousCommand.cancel();
+		LogFactory.getInstance("General").print("Teleop Init");
+    	setState(GameState.Teleop);
+    	
+    	Scheduler.getInstance().remove(AutonSelector.class);
+    	emptyInboxes();
+    	
+    	sendStopMessage();
+    	
+		//Scheduler.getInstance().add(new OperatorControl());
+		teleopDone = true;
 	}
 
-	/**
-	 * This function is called periodically during operator control
-	 */
-	@Override
 	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
+		//Scheduler.getInstance().run();
+		sleep();
 	}
-
-	/**
-	 * This function is called periodically during test mode
-	 */
-	@Override
-	public void testPeriodic() {
-		LiveWindow.run();
-	}
-
-	@Override
+	
 	public void testInit() {
-		// TODO Auto-generated method stub
+	}
+	
+	public void testPeriodic() {
+    }
+	
+	public void startCompetition(){
+		System.out.println("Wrong one...close enough? lmao");
+	}
+	
+	private void emptyInboxes(){
+		Scheduler.getInstance().getActor(Drive.class).clearInbox();
+	}
+	
+	private void sleep(){
+		//Run loops at set speed
+		try {
+			//System.out.println("Curr: " + System.currentTimeMillis() + "\tLast: " + lastSleepTime);
+			Thread.sleep(RUN_TIME - (System.currentTimeMillis() - lastSleepTime));
+		} catch (Exception e) {
+			System.out.println(toString() + "\tNo time to sleep, running behind schedule!! rut roh :/  Robert the robot drank 2 much coffee...can't sleep");
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e1) {}
+		}
 		
+		lastSleepTime = System.currentTimeMillis();
 	}
 
-	@Override
-	public void startCompetition() {
-		// TODO Auto-generated method stub
-		
+	public String toString(){
+		return "2018 Robot";
+	}
+	
+	private void sendStopMessage(){
+		try {
+			Scheduler.getInstance().sendMessage(new Stop());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Log(Level.ERROR, "Failed to send Stop message");
+		}
+	}
+	
+	private void Log(Level lvl, String message){
+		try {
+			Scheduler.getInstance().sendMessage(new LogMessage(lvl, getSourceClass() + ": " + message));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			//Now would be a great time to log an error, unfortunately we can't because
+			//this is in charge of sending log messages
+		}
+	}
+	
+	private String getSourceClass(){
+		Object[] out = Thread.currentThread().getStackTrace();
+		return out[out.length - 2].toString();
 	}
 }
+

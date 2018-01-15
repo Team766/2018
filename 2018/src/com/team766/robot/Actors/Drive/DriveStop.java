@@ -2,7 +2,7 @@ package com.team766.robot.Actors.Drive;
 
 import interfaces.SubActor;
 
-public class DriveStraightSpeed implements SubActor {
+public class DriveStop implements SubActor {
 
 	@Override
 	public void update() {

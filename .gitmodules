@@ -1,0 +1,6 @@
+[submodule "2018/RobotInterfaces"]
+	path = 2018/RobotInterfaces
+	url = https://github.com/Team766/RobotInterfaces
+[submodule "2018/WpilibImplementation"]
+	path = 2018/WpilibImplementation
+	url = https://github.com/Team766/WpilibImplementation

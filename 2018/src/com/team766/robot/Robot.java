@@ -8,6 +8,8 @@ import lib.Scheduler;
 
 import com.team766.lib.CommandBase;
 import com.team766.lib.Messages.Stop;
+import com.team766.robot.Constants.Autons;
+import com.team766.robot.Actors.OperatorControl;
 import com.team766.robot.Actors.Auton.AutonSelector;
 
 /**
@@ -42,13 +44,10 @@ public class Robot implements MyRobot {
 	@Override
 	public void robotInit() {
 		CommandBase.init();
-		LogFactory.createInstance("General");
-		LogFactory.createInstance("Vision");
-		LogFactory.createInstance("Errors");
 		
 		Scheduler.getInstance().add(CommandBase.Drive);
 		
-		System.out.println("It works......");
+		System.out.println("It works!!!");
 		log(Level.INFO, "Robot Starting");
 
 		httpServer = new HTTPServer(Constants.Autons.class);
@@ -67,7 +66,7 @@ public class Robot implements MyRobot {
 	public void autonomousInit() {
 		log(Level.INFO, "Auton Init / Match Starting");
 		setState(GameState.Auton);
-		//Scheduler.getInstance().remove(OperatorControl.class);
+		Scheduler.getInstance().remove(OperatorControl.class);
 		Scheduler.getInstance().remove(AutonSelector.class);
 
 		sendStopMessage();
@@ -81,7 +80,6 @@ public class Robot implements MyRobot {
 		Scheduler.getInstance().run();
 	}
 	
-	
 	@Override
 	public void teleopInit() {
 		log(Level.INFO, "Teleop Init");
@@ -91,7 +89,7 @@ public class Robot implements MyRobot {
 
 		sendStopMessage();
 
-		//Scheduler.getInstance().add(new OperatorControl());
+		Scheduler.getInstance().add(new OperatorControl());
 	}
 
 	public void teleopPeriodic() {

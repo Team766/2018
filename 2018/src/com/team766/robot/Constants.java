@@ -1,7 +1,7 @@
 package com.team766.robot;
 
 public class Constants {
-	public enum Autons {
+	public static enum Autons {
 		None,
 		Switch,
 		Scale,
@@ -9,4 +9,15 @@ public class Constants {
 		CrossLine,
 		DriveByTime
 	};
+	
+	public static enum Drives {
+		Simple
+	};
+	
+	public static final double wheel_circumference = 4.0 * Math.PI; //inches
+	
+	public static final Drives driveType = Drives.Simple;
+	
+	public static final double leftAxisDeadband = 0.05;
+	public static final double rightAxisDeadband = 0.05;
 }

@@ -3,6 +3,7 @@ package com.team766.robot;
 import com.team766.lib.ConfigFile;
 
 import interfaces.EncoderReader;
+import interfaces.JoystickReader;
 import interfaces.RobotProvider;
 import interfaces.SpeedController;
 
@@ -16,6 +17,8 @@ public class HardwareProvider {
 		}
 		return instance;
 	}
+	
+	//Drive
 	public SpeedController getLeftDriveA(){
 		return RobotProvider.instance.getMotor(ConfigFile.getLeftMotor()[0]);
 	}
@@ -34,5 +37,15 @@ public class HardwareProvider {
 	public EncoderReader getRightEncoder(){
 		return RobotProvider.instance.getEncoder(ConfigFile.getRightEncoder()[0], ConfigFile.getRightEncoder()[1]);
 	}
-
+	
+	//Joysticks
+	public JoystickReader getLeftJoy() {
+		return RobotProvider.instance.getJoystick(ConfigFile.getLeftJoy());
+	}
+	public JoystickReader getRightJoy() {
+		return RobotProvider.instance.getJoystick(ConfigFile.getRightJoy());
+	}
+	public JoystickReader getButtonJoy() {
+		return RobotProvider.instance.getJoystick(ConfigFile.getButtonJoy());
+	}
 }

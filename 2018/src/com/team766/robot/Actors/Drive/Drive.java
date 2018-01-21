@@ -2,6 +2,7 @@ package com.team766.robot.Actors.Drive;
 
 import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
+import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
@@ -27,7 +28,7 @@ public class Drive extends Actor{
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveEncoderMessage.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveEncoderMessage.class};
 	}
 	
 	public void iterate() {
@@ -46,6 +47,9 @@ public class Drive extends Actor{
 			if (currentMessage instanceof DriveEncoderMessage){
 				currentCommand = new DriveStraightEncoder(currentMessage);
 			}
+			if(currentMessage instanceof DriveUpdate){
+				currentCommand = new DriveUpdateCommand(currentMessage);
+			}
 		}
 		
 		if (currentCommand != null) {
@@ -54,7 +58,7 @@ public class Drive extends Actor{
 	}
 
 	public String toString() {
-		return null;
+		return "Actor: Drive";
 	}
 
 	public void setRight(double power){
@@ -63,8 +67,8 @@ public class Drive extends Actor{
 	}
 	
 	public void setLeft(double power){
-		leftDriveA.set(power);
-		leftDriveB.set(power);
+		leftDriveA.set(-power);
+		leftDriveB.set(-power);
 	}
 		
 	public void setDrive(double power){

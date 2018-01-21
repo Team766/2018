@@ -24,7 +24,7 @@ public class DriveStraightTime extends CommandBase{
 	public void update() {
 
 		if ((double) System.currentTimeMillis() - startTime < message.getTime() * 1000.0){
-			Drive.setDrive(1.0);
+			Drive.setDrive(0.2);
 		}
 		else{
 			Drive.setDrive(0.0);

@@ -12,5 +12,12 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPorts("rightDrive");
 	}
 	
+	public static int[] getLeftEncoder(){
+		return ConfigFileReader.getInstance().getPorts("leftEncoder");
+	}
+	
+	public static int[] getRightEncoder(){
+		return ConfigFileReader.getInstance().getPorts("rightEncoder");
+	}
 
 }

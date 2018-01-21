@@ -1,13 +1,17 @@
 package com.team766.robot.Actors.Drive;
 
+import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.Stop;
+import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 import com.team766.robot.Actors.Drive.DriveStraightTime;
 
+import interfaces.EncoderReader;
 import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
+import lib.ConstantsFileReader;
 import lib.Message;
 
 public class Drive extends Actor{
@@ -16,11 +20,14 @@ public class Drive extends Actor{
 	SpeedController leftDriveB = HardwareProvider.getInstance().getLeftDriveB();
 	SpeedController rightDriveA = HardwareProvider.getInstance().getRightDriveA();
 	SpeedController rightDriveB = HardwareProvider.getInstance().getRightDriveB();
+	
+	EncoderReader leftEncoder = HardwareProvider.getInstance().getLeftEncoder();
+	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
 
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveEncoderMessage.class};
 	}
 	
 	public void iterate() {
@@ -35,6 +42,9 @@ public class Drive extends Actor{
 			}
 			if (currentMessage instanceof DriveTimeMessage){
 				currentCommand = new DriveStraightTime(currentMessage);
+			}
+			if (currentMessage instanceof DriveEncoderMessage){
+				currentCommand = new DriveStraightEncoder(currentMessage);
 			}
 		}
 		
@@ -62,10 +72,29 @@ public class Drive extends Actor{
 		setRight(power);
 	}
 	
+	public double leftDistance(){
+		//assume the counts_per_rev is 1000 for now
+		return ConstantsFileReader.getInstance().get("LeftEncoderDirection") * (leftEncoder.getRaw() / 1000 * 4 * Math.PI);
+	}
+	
+	public double rightDistance(){
+		return ConstantsFileReader.getInstance().get("RightEncoderDirection") * (rightEncoder.getRaw() / 1000 * 4 * Math.PI);
+	}
+	
+	public double AverageDistance(){
+		return (leftDistance() + rightDistance())/2.0;
+	}
+	
+	protected void resetEncoder(){
+		leftEncoder.reset();
+		rightEncoder.reset();
+	}
+	
 	private void stopCurrentCommand(){
 		if(currentCommand != null){
 			currentCommand.stop();
 		}
 		currentCommand = null;
 	}
+	
 }

@@ -5,3 +5,4 @@ rightEncoder,2,3
 leftJoy,0
 rightJoy,1
 buttonJoy,2
+climber,10

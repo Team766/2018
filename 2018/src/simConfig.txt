@@ -5,3 +5,9 @@ rightEncoder,2,3
 leftJoy,0
 rightJoy,1
 buttonJoy,2
+gripperA,8
+gripperB,9
+gripperMotorA,10
+gripperMotorB,11
+armShoulder,12
+armWrist,13

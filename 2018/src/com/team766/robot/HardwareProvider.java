@@ -5,6 +5,7 @@ import com.team766.lib.ConfigFile;
 import interfaces.EncoderReader;
 import interfaces.JoystickReader;
 import interfaces.RobotProvider;
+import interfaces.SolenoidController;
 import interfaces.SpeedController;
 
 public class HardwareProvider {
@@ -37,6 +38,22 @@ public class HardwareProvider {
 	public EncoderReader getRightEncoder(){
 		return RobotProvider.instance.getEncoder(ConfigFile.getRightEncoder()[0], ConfigFile.getRightEncoder()[1]);
 	}
+	
+	//Gripper
+	public SolenoidController getGripperA(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperA());
+	}
+	public SolenoidController getGripperB(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperB());
+	}
+	/*
+	public SpeedController getGripperMotorA(){
+		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorA());
+	}
+	public SpeedController getGripperMotorB(){
+		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorB());
+	}
+	*/
 	
 	//Joysticks
 	public JoystickReader getLeftJoy() {

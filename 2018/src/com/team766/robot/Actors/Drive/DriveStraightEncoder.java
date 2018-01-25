@@ -31,7 +31,7 @@ public class DriveStraightEncoder extends CommandBase{
 			System.out.println("Error " + error);
 			
 			Drive.setLeft(leftPower);
-			Drive.setRight(rightPower);
+			Drive.setRight(-rightPower);
 			
 			error = Drive.leftDistance() - Drive.rightDistance();
 			rightPower += error / kp;

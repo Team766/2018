@@ -21,6 +21,25 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPorts("rightEncoder");
 	}
 	
+	//gripper
+	public static int getGripperA(){
+		return ConfigFileReader.getInstance().getPort("gripperA");
+	}
+	
+	public static int getGripperB(){
+		return ConfigFileReader.getInstance().getPort("gripperB");
+	}
+	
+	/* does not have a motor for now
+	public static int getGripperMotorA(){
+		return ConfigFileReader.getInstance().getPort("gripperMotorA");
+	}
+	
+	public static int getGripperMotorB(){
+		return ConfigFileReader.getInstance().getPort("gripperMotorB");
+	}
+	*/
+	
 	//Joysticks
 	public static int getLeftJoy(){
 		return ConfigFileReader.getInstance().getPort("leftJoy");
@@ -32,7 +51,6 @@ public class ConfigFile {
 	
 	public static int getButtonJoy() {
 		return ConfigFileReader.getInstance().getPort("buttonJoy");
-		
 	}
 
 }

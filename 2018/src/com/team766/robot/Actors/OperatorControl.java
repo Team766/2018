@@ -1,6 +1,8 @@
 package com.team766.robot.Actors;
 
 import com.team766.lib.Messages.DriveUpdate;
+import com.team766.lib.Messages.GripperUpdate;
+import com.team766.robot.Buttons;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 
@@ -17,7 +19,7 @@ public class OperatorControl extends Actor{
 	
 	private double[] leftAxis = new double[4];
 	private double[] rightAxis = new double[4];
-	private boolean[] prevPress = new boolean[0];
+	private boolean[] prevPress = new boolean[2];
 
 	@Override
 	public void iterate() {		
@@ -43,7 +45,17 @@ public class OperatorControl extends Actor{
 			}
 			previousLeft = leftAxis[1];
 			previousRight = rightAxis[1];
-		} 
+		}
+		
+		//button for open gripper(prevPress[0])
+		if(!prevPress[0] && jBox.getRawButton(Buttons.openGripper))
+			sendMessage(new GripperUpdate(false, false));
+		prevPress[0] = jBox.getRawButton(Buttons.openGripper);
+		
+		//button for close gripper + intake
+		if(!prevPress[1] && jBox.getRawButton(Buttons.intakeBlock))
+			sendMessage(new GripperUpdate(true, false));
+		prevPress[1] = jBox.getRawButton(Buttons.intakeBlock);
 		
 	}
 

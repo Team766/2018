@@ -65,4 +65,9 @@ public class HardwareProvider {
 	public JoystickReader getButtonJoy() {
 		return RobotProvider.instance.getJoystick(ConfigFile.getButtonJoy());
 	}
+	
+	//Climber
+	public SpeedController getClimber() {
+		return RobotProvider.instance.getMotor(ConfigFile.getClimber());
+	}
 }

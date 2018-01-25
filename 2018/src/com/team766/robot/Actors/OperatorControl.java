@@ -1,5 +1,6 @@
 package com.team766.robot.Actors;
 
+import com.team766.lib.Messages.ClimberUpdate;
 import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.robot.Buttons;
@@ -19,7 +20,7 @@ public class OperatorControl extends Actor{
 	
 	private double[] leftAxis = new double[4];
 	private double[] rightAxis = new double[4];
-	private boolean[] prevPress = new boolean[2];
+	private boolean[] prevPress = new boolean[10];
 
 	@Override
 	public void iterate() {		
@@ -57,6 +58,17 @@ public class OperatorControl extends Actor{
 			sendMessage(new GripperUpdate(true, false));
 		prevPress[1] = jBox.getRawButton(Buttons.intakeBlock);
 		
+		//button for climb down (prevPress[2]) 
+		if(!prevPress[2] && jBox.getRawButton(Buttons.climbDown)) {
+			sendMessage(new ClimberUpdate(false));
+			prevPress[2] = jBox.getRawButton(Buttons.climbDown);
+		}
+		
+		//button for climb up (prevPress[3])
+		if(!prevPress[3] && jBox.getRawButton(Buttons.climbUp)) {
+			sendMessage(new ClimberUpdate(true));
+			prevPress[3] = jBox.getRawButton(Buttons.climbUp);
+		}
 	}
 
 	@Override

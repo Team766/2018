@@ -52,5 +52,9 @@ public class ConfigFile {
 	public static int getButtonJoy() {
 		return ConfigFileReader.getInstance().getPort("buttonJoy");
 	}
+	
+	public static int getClimber() {
+		return ConfigFileReader.getInstance().getPort("climber");
+	}
 
 }

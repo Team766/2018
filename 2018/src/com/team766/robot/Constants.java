@@ -20,4 +20,6 @@ public class Constants {
 	
 	public static final double leftAxisDeadband = 0.05;
 	public static final double rightAxisDeadband = 0.05;
+	
+	public static final double climberSpeed = 1.0;
 }

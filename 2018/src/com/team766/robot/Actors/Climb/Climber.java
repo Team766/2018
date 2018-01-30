@@ -12,7 +12,7 @@ import lib.Message;
 public class Climber extends Actor {
 	
 	private boolean commandFinished;
-	SpeedController climberMotor = HardwareProvider.getInstance().getClimber();
+	//SpeedController climberMotor = HardwareProvider.getInstance().getClimber();
 	
 	Message currentMessage;
 	SubActor currentCommand;
@@ -23,24 +23,24 @@ public class Climber extends Actor {
 	
 	@Override
 	public void iterate() {
-		if(newMessage()) {
-			if (currentCommand == null)
-				currentCommand.stop();
-			
-			commandFinished = false;
-			
-			currentMessage = readMessage();
-			if(currentMessage instanceof ClimberUpdate) {
-				ClimberUpdate climberMessage = (ClimberUpdate)currentMessage;
-				if(climberMessage.getClimb()){
-					setClimberMotor(Constants.climberSpeed);
-				}
-				else{
-					setClimberMotor(0.0);
-				}
-			}
-		}
-		
+//		if(newMessage()) {
+//			if (currentCommand == null)
+//				currentCommand.stop();
+//			
+//			commandFinished = false;
+//			
+//			currentMessage = readMessage();
+//			if(currentMessage instanceof ClimberUpdate) {
+//				ClimberUpdate climberMessage = (ClimberUpdate)currentMessage;
+//				if(climberMessage.getClimb()){
+//					setClimberMotor(Constants.climberSpeed);
+//				}
+//				else{
+//					setClimberMotor(0.0);
+//				}
+//			}
+//		}
+//		
 	}
 	
 
@@ -49,13 +49,13 @@ public class Climber extends Actor {
 		return "Actor:\tClimber";
 	}
 	
-	protected double getClimberMotor() {
-		return climberMotor.get();
-	}
+//	protected double getClimberMotor() {
+//		return climberMotor.get();
+//	}
 	
-	protected void setClimberMotor(double power){
-		climberMotor.set(power);
-	}
+//	protected void setClimberMotor(double power){
+//		climberMotor.set(power);
+//	}
 
 
 }

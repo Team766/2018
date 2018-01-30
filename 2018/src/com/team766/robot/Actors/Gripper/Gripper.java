@@ -12,8 +12,7 @@ import lib.Message;
 
 public class Gripper extends Actor{
 	
-	SolenoidController leftGripper = HardwareProvider.getInstance().getGripperA();
-	SolenoidController rightGripper = HardwareProvider.getInstance().getGripperB();
+	SolenoidController gripper = HardwareProvider.getInstance().getGripper();
 	
 	//SpeedController leftGripperMotor = HardwareProvider.getInstance().getGripperMotorA();
 	//SpeedController rightGripperMotor = HardwareProvider.getInstance().getGripperMotorB();
@@ -43,6 +42,7 @@ public class Gripper extends Actor{
 				currentCommand = null;
 				GripperUpdate gripperMessage = (GripperUpdate)currentMessage;
 				setGripper(gripperMessage.getGrab());
+				System.out.println("set: " + gripperMessage.getGrab() + "actual: " + getGripper());
 			}
 		}
 	}
@@ -51,25 +51,13 @@ public class Gripper extends Actor{
 		return "Actor:\tGripper";
 	}
 	
-	protected boolean getGripper1(){
-		return leftGripper.get();
+	protected boolean getGripper(){
+		return gripper.get();
 	}
 	
-	protected boolean getGripper2(){
-		return rightGripper.get();
-	}
-	
-	public void setGripper1(boolean grab){
-		leftGripper.set(grab);
-	}
-	
-	public void setGripper2(boolean grab){
-		rightGripper.set(grab);
-	}
 	
 	public void setGripper(boolean grab){
-		setGripper1(grab);
-		setGripper2(grab);
+		gripper.set(grab);
 	}
 	
 	/*

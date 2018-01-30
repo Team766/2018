@@ -19,12 +19,13 @@ public class DriveStraightEncoder extends CommandBase{
 	
 	public DriveStraightEncoder(Message message){
 		command = (DriveEncoderMessage)message;
-		leftTargetDistance = Drive.leftDistance() + command.getDistance();
-		rightTargetDistance = Drive.rightDistance() + command.getDistance();
+		//leftTargetDistance = Drive.leftDistance() + command.getDistance();
+		//rightTargetDistance = Drive.rightDistance() + command.getDistance();
 		done = false;
 	}
 	
 	public void update() {
+		
 		if(!done){ 
 			System.out.println("left distance: " + Drive.leftDistance());
 			System.out.println("right distance: " + Drive.rightDistance());

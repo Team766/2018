@@ -46,6 +46,7 @@ public class Robot implements MyRobot {
 		CommandBase.init();
 		
 		Scheduler.getInstance().add(CommandBase.Drive);
+		Scheduler.getInstance().add(CommandBase.Gripper);
 		
 		System.out.println("It works!!!");
 		log(Level.INFO, "Robot Starting");

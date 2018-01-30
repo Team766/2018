@@ -6,7 +6,7 @@ import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
-import com.team766.robot.Actors.Drive.DriveStraightTime;
+import com.team766.robot.Actors.Drive.DriveTime;
 
 import interfaces.EncoderReader;
 import interfaces.SpeedController;
@@ -28,7 +28,7 @@ public class Drive extends Actor{
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveEncoderMessage.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class};
 	}
 	
 	public void iterate() {
@@ -42,7 +42,7 @@ public class Drive extends Actor{
 				currentCommand = new DriveStop();
 			}
 			if (currentMessage instanceof DriveTimeMessage){
-				currentCommand = new DriveStraightTime(currentMessage);
+				currentCommand = new DriveTime(currentMessage);
 			}
 			if (currentMessage instanceof DriveEncoderMessage){
 				currentCommand = new DriveStraightEncoder(currentMessage);

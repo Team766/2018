@@ -53,6 +53,4 @@ public class DriveStraightEncoder extends CommandBase{
 	public boolean isDone() {
 		return done;
 	}
-
-	
 }

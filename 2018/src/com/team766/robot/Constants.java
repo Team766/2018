@@ -7,7 +7,8 @@ public class Constants {
 		Scale,
 		Exchange,
 		CrossLine,
-		DriveByTime
+		DriveStraightTime,
+		DriveSquareTime
 	};
 	
 	public static enum Drives {
@@ -18,8 +19,8 @@ public class Constants {
 	
 	public static final Drives driveType = Drives.Simple;
 	
-	public static final double leftAxisDeadband = 0.05;
-	public static final double rightAxisDeadband = 0.05;
+	public static final double leftAxisDeadband = 0.07;
+	public static final double rightAxisDeadband = 0.07;
 	
 	public static final double climberSpeed = 1.0;
 }

@@ -5,26 +5,30 @@ import com.team766.lib.Messages.DriveTimeMessage;
 
 import lib.Message;
 
-public class DriveStraightTime extends CommandBase{
+public class DriveTime extends CommandBase{
 	
 	private DriveTimeMessage message;
 	private double startTime; 
 	private boolean done;
+	private int turn;
 	
-	public DriveStraightTime(Message potato){
-		
+	public DriveTime(Message potato){
 		this.message = (DriveTimeMessage) potato;
 		
-		startTime = (double) System.currentTimeMillis();
+		turn = message.getTurn() ? -1 : 1;
 		
+		startTime = (double) System.currentTimeMillis();
 		done = false;
 	}
 
 	@Override
 	public void update() {
-
+		
+		//will turn left if power is > 0
+		
 		if ((double) System.currentTimeMillis() - startTime < message.getTime() * 1000.0){
-			Drive.setDrive(0.2);
+			Drive.setLeft(message.getPower() * turn);
+			Drive.setRight(message.getPower());
 		}
 		else{
 			Drive.setDrive(0.0);

@@ -4,8 +4,9 @@ public class Buttons {
 	
 	//gripper
 	public static final int openGripper = 1;
-	public static final int intakeBlock = 2;
-	//public static final int scoreBlock = 3;
+	public static final int closeGripper = 2;
+	public static final int intakeBlock = 5;
+	public static final int stopGripperMotor = 4;
 
 	//climber
 	public static final int climbDown = 9;

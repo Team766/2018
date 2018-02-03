@@ -1,5 +1,6 @@
 package com.team766.robot.Actors.Drive;
 
+import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
@@ -22,13 +23,13 @@ public class Drive extends Actor{
 	SpeedController rightDriveA = HardwareProvider.getInstance().getRightDriveA();
 	SpeedController rightDriveB = HardwareProvider.getInstance().getRightDriveB();
 	
-	EncoderReader leftEncoder = HardwareProvider.getInstance().getLeftEncoder();
-	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
+//	EncoderReader leftEncoder = HardwareProvider.getInstance().getLeftEncoder();
+//	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
 
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class};
 	}
 	
 	public void iterate() {
@@ -49,6 +50,9 @@ public class Drive extends Actor{
 			}
 			if(currentMessage instanceof DriveUpdate){
 				currentCommand = new DriveUpdateCommand(currentMessage);
+			}
+			if(currentMessage instanceof DriveDoubleSideUpdate){
+				currentCommand = new DriveDoubleSideCommand(currentMessage);
 			}
 		}
 		
@@ -76,23 +80,23 @@ public class Drive extends Actor{
 		setRight(power);
 	}
 	
-	public double leftDistance(){
-		//assume the counts_per_rev is 1000 for now
-		return ConstantsFileReader.getInstance().get("LeftEncoderDirection") * (leftEncoder.getRaw() / 1000 * 4 * Math.PI);
-	}
-	
-	public double rightDistance(){
-		return ConstantsFileReader.getInstance().get("RightEncoderDirection") * (rightEncoder.getRaw() / 1000 * 4 * Math.PI);
-	}
-	
-	public double AverageDistance(){
-		return (leftDistance() + rightDistance())/2.0;
-	}
-	
-	protected void resetEncoder(){
-		leftEncoder.reset();
-		rightEncoder.reset();
-	}
+//	public double leftDistance(){
+//		//assume the counts_per_rev is 1000 for now
+//		return ConstantsFileReader.getInstance().get("LeftEncoderDirection") * (leftEncoder.getRaw() / 1000 * 4 * Math.PI);
+//	}
+//	
+//	public double rightDistance(){
+//		return ConstantsFileReader.getInstance().get("RightEncoderDirection") * (rightEncoder.getRaw() / 1000 * 4 * Math.PI);
+//	}
+//	
+//	public double AverageDistance(){
+//		return (leftDistance() + rightDistance())/2.0;
+//	}
+//	
+//	protected void resetEncoder(){
+//		leftEncoder.reset();
+//		rightEncoder.reset();
+//	}
 	
 	private void stopCurrentCommand(){
 		if(currentCommand != null){

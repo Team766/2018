@@ -23,4 +23,9 @@ public class Constants {
 	public static final double rightAxisDeadband = 0.07;
 	
 	public static final double climberSpeed = 1.0;
+
+	//1 = right and -1 = left
+	public static int scale_side;
+	public static int switch_side;
+	
 }

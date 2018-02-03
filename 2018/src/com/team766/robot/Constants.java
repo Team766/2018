@@ -25,4 +25,9 @@ public class Constants {
 	
 	public static final double gripperMotorSpeed = 0.4;
 	public static final double climberSpeed = 1.0;
+
+	//1 = right and -1 = left
+	public static int scale_side;
+	public static int switch_side;
+	
 }

@@ -34,43 +34,25 @@ public class HardwareProvider {
 	}
 	
 	
-	public EncoderReader getLeftEncoder(){
-		return RobotProvider.instance.getEncoder(ConfigFile.getLeftEncoder()[0], ConfigFile.getLeftEncoder()[1]);
-	}
-	public EncoderReader getRightEncoder(){
-		return RobotProvider.instance.getEncoder(ConfigFile.getRightEncoder()[0], ConfigFile.getRightEncoder()[1]);
-	}
+//	public EncoderReader getLeftEncoder(){
+//		return RobotProvider.instance.getEncoder(ConfigFile.getLeftEncoder()[0], ConfigFile.getLeftEncoder()[1]);
+//	}
+//	public EncoderReader getRightEncoder(){
+//		return RobotProvider.instance.getEncoder(ConfigFile.getRightEncoder()[0], ConfigFile.getRightEncoder()[1]);
+//	}
 
 	
 	//Gripper
 	public SolenoidController getGripper(){
 		return RobotProvider.instance.getSolenoid(ConfigFile.getGripper());
 	}
-	
-	/*
 	public SpeedController getGripperMotorA(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorA());
 	}
 	public SpeedController getGripperMotorB(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorB());
 	}
-	*/
 	
-	//Gripper
-	public SolenoidController getGripperA(){
-		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperA());
-	}
-	public SolenoidController getGripperB(){
-		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperB());
-	}
-	/*
-	public SpeedController getGripperMotorA(){
-		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorA());
-	}
-	public SpeedController getGripperMotorB(){
-		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorB());
-	}
-	*/
 	
 	//Joysticks
 	public JoystickReader getLeftJoy() {
@@ -81,6 +63,27 @@ public class HardwareProvider {
 	}
 	public JoystickReader getButtonJoy() {
 		return RobotProvider.instance.getJoystick(ConfigFile.getButtonJoy());
+	}
+	
+	
+	//Arm
+	public SpeedController getLeftArmShoulder(){
+		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[0]);
+	}
+	public SpeedController getRightArmShoulder(){
+		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[1]);
+	}
+	public SpeedController getLeftArmWrist(){
+		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[0]);
+	}
+	public SpeedController getRightArmWrist(){
+		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[1]);
+	}
+	public EncoderReader getShoulderEncoder(){
+		return RobotProvider.instance.getEncoder(ConfigFile.getShoulderEncoder()[0], ConfigFile.getShoulderEncoder()[1]);
+	}
+	public EncoderReader getWristEncoder(){
+		return RobotProvider.instance.getEncoder(ConfigFile.getWristEncoder()[0], ConfigFile.getWristEncoder()[1]);
 	}
 	
 	//Climber

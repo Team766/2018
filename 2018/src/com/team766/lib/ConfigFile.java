@@ -14,13 +14,13 @@ public class ConfigFile {
 	}
 	
 	
-	public static int[] getLeftEncoder(){
-		return ConfigFileReader.getInstance().getPorts("leftEncoder");
-	}
-	
-	public static int[] getRightEncoder(){
-		return ConfigFileReader.getInstance().getPorts("rightEncoder");
-	}
+//	public static int[] getLeftEncoder(){
+//		return ConfigFileReader.getInstance().getPorts("leftEncoder");
+//	}
+//	
+//	public static int[] getRightEncoder(){
+//		return ConfigFileReader.getInstance().getPorts("rightEncoder");
+//	}
 
 	
 	//gripper
@@ -28,8 +28,6 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPort("gripper");
 	}
 	
-	
-	/* does not have a motor for now
 	public static int getGripperMotorA(){
 		return ConfigFileReader.getInstance().getPort("gripperMotorA");
 	}
@@ -37,7 +35,7 @@ public class ConfigFile {
 	public static int getGripperMotorB(){
 		return ConfigFileReader.getInstance().getPort("gripperMotorB");
 	}
-	*/
+	
 	
 	//Joysticks
 	public static int getLeftJoy(){
@@ -51,6 +49,24 @@ public class ConfigFile {
 	public static int getButtonJoy() {
 		return ConfigFileReader.getInstance().getPort("buttonJoy");
 	}
+	
+	//Arm
+	public static int[] getArmShoulder(){
+		return ConfigFileReader.getInstance().getPorts("armShoulder");
+	}
+	
+	public static int[] getArmWrist(){
+		return ConfigFileReader.getInstance().getPorts("armWrist");
+	}
+	
+	public static int[] getShoulderEncoder(){
+		return ConfigFileReader.getInstance().getPorts("shoulderEncoder");
+	}
+	
+	public static int[] getWristEncoder(){
+		return ConfigFileReader.getInstance().getPorts("wristEncoder");
+	}
+	
 	
 	/*
 	//climber

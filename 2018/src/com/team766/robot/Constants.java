@@ -8,7 +8,8 @@ public class Constants {
 		Exchange,
 		CrossLine,
 		DriveStraightTime,
-		DriveSquareTime
+		DriveSquareTime,
+		DriveEncoderStraight
 	};
 	
 	public static enum Drives {
@@ -21,6 +22,8 @@ public class Constants {
 	
 	public static final double leftAxisDeadband = 0.07;
 	public static final double rightAxisDeadband = 0.07;
+	
+	public static final double driveThreshold = 1.0; //not tested
 	
 	public static final double climberSpeed = 1.0;
 }

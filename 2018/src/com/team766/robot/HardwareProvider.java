@@ -58,11 +58,9 @@ public class HardwareProvider {
 	
 	//Gripper
 	public SolenoidController getGripperA(){
-		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperA());
+		return RobotProvider.instance.getSolenoid(ConfigFile.getGripper());
 	}
-	public SolenoidController getGripperB(){
-		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperB());
-	}
+
 	/*
 	public SpeedController getGripperMotorA(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorA());

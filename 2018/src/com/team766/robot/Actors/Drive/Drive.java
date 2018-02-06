@@ -1,5 +1,6 @@
 package com.team766.robot.Actors.Drive;
 
+import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
@@ -28,7 +29,7 @@ public class Drive extends Actor{
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveEncoderMessage.class};
 	}
 	
 	public void iterate() {
@@ -54,7 +55,13 @@ public class Drive extends Actor{
 		
 		if (currentCommand != null) {
 			currentCommand.update();
+			if(currentCommand.isDone()){ 
+				sendMessage(new Done());
+				currentCommand = null;
+			}
 		}
+		
+		System.out.println("DBG: right encoder = " + rightEncoder.get() + "\t\t left = " + leftEncoder.get());
 	}
 
 	public String toString() {
@@ -62,13 +69,13 @@ public class Drive extends Actor{
 	}
 
 	public void setRight(double power){
-		rightDriveA.set(power);
-		rightDriveB.set(power);
+		rightDriveA.set(-power);
+		rightDriveB.set(-power);
 	}
 	
 	public void setLeft(double power){
-		leftDriveA.set(-power);
-		leftDriveB.set(-power);
+		leftDriveA.set(power);
+		leftDriveB.set(power);
 	}
 		
 	public void setDrive(double power){
@@ -89,7 +96,7 @@ public class Drive extends Actor{
 		return (leftDistance() + rightDistance())/2.0;
 	}
 	
-	protected void resetEncoder(){
+	protected void resetEncoders(){
 		leftEncoder.reset();
 		rightEncoder.reset();
 	}

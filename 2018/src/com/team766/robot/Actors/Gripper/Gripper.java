@@ -1,7 +1,9 @@
 package com.team766.robot.Actors.Gripper;
 
+import com.team766.lib.Messages.GripperMotorUpdate;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.lib.Messages.Stop;
+import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 
 import interfaces.SolenoidController;
@@ -14,8 +16,8 @@ public class Gripper extends Actor{
 	
 	SolenoidController gripper = HardwareProvider.getInstance().getGripper();
 	
-	//SpeedController leftGripperMotor = HardwareProvider.getInstance().getGripperMotorA();
-	//SpeedController rightGripperMotor = HardwareProvider.getInstance().getGripperMotorB();
+	SpeedController leftGripperMotor = HardwareProvider.getInstance().getGripperMotorA();
+	SpeedController rightGripperMotor = HardwareProvider.getInstance().getGripperMotorB();
 	
 	private boolean commandFinished;
 	
@@ -24,7 +26,7 @@ public class Gripper extends Actor{
 	
 	
 	public void init(){
-		acceptableMessages = new Class[]{GripperUpdate.class, Stop.class};
+		acceptableMessages = new Class[]{GripperUpdate.class, GripperMotorUpdate.class, Stop.class};
 	}
 	
 	public void iterate() {
@@ -44,6 +46,13 @@ public class Gripper extends Actor{
 				setGripper(gripperMessage.getGrab());
 				System.out.println("set: " + gripperMessage.getGrab() + "actual: " + getGripper());
 			}
+			if(currentMessage instanceof GripperMotorUpdate){
+				currentCommand = null;
+				GripperMotorUpdate gripperMessage = (GripperMotorUpdate)currentMessage;
+				setGripperMotor(gripperMessage.getSpeed());
+				System.out.println("gripper motor speed: " + gripperMessage.getSpeed());
+			}
+			
 		}
 	}
 	
@@ -60,19 +69,19 @@ public class Gripper extends Actor{
 		gripper.set(grab);
 	}
 	
-	/*
+	
 	public void setLeftGripperMotor(double speed){
 		leftGripperMotor.set(speed);
 	}
 	
 	public void setRightGripperMotor(double speed){
-		rightGripperMotor.set(speed);
+		rightGripperMotor.set(-speed);
 	}
 	
 	public void setGripperMotor(double speed){
 		setLeftGripperMotor(speed);
 		setRightGripperMotor(speed);
 	}
-	*/
+	
 
 }

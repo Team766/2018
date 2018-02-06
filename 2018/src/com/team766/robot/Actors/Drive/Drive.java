@@ -1,6 +1,7 @@
 package com.team766.robot.Actors.Drive;
 
 import com.team766.lib.Messages.Done;
+import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
@@ -29,7 +30,7 @@ public class Drive extends Actor{
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveEncoderMessage.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveEncoderMessage.class, DriveDoubleSideUpdate.class};
 	}
 	
 	public void iterate() {
@@ -51,6 +52,9 @@ public class Drive extends Actor{
 			if(currentMessage instanceof DriveUpdate){
 				currentCommand = new DriveUpdateCommand(currentMessage);
 			}
+			if(currentMessage instanceof DriveDoubleSideUpdate){
+				currentCommand = new DriveDoubleSideCommand(currentMessage);
+			}
 		}
 		
 		if (currentCommand != null) {
@@ -61,7 +65,7 @@ public class Drive extends Actor{
 			}
 		}
 		
-		System.out.println("DBG: right encoder = " + rightEncoder.get() + "\t\t left = " + leftEncoder.get());
+		//System.out.println("DBG: right encoder = " + rightEncoder.get() + "\t\t left = " + leftEncoder.get());
 	}
 
 	public String toString() {

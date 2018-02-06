@@ -56,20 +56,6 @@ public class HardwareProvider {
 	}
 	*/
 	
-	//Gripper
-	public SolenoidController getGripperA(){
-		return RobotProvider.instance.getSolenoid(ConfigFile.getGripper());
-	}
-
-	/*
-	public SpeedController getGripperMotorA(){
-		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorA());
-	}
-	public SpeedController getGripperMotorB(){
-		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorB());
-	}
-	*/
-	
 	//Joysticks
 	public JoystickReader getLeftJoy() {
 		return RobotProvider.instance.getJoystick(ConfigFile.getLeftJoy());

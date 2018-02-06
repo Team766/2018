@@ -12,6 +12,8 @@ import com.team766.robot.Constants.Autons;
 import com.team766.robot.Actors.OperatorControl;
 import com.team766.robot.Actors.Auton.AutonSelector;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * 2018 Robot Code
  * 
@@ -74,6 +76,21 @@ public class Robot implements MyRobot {
 
 		log(Level.INFO, "Starting AutonSelector");
 		Constants.Autons selected_auton = httpServer.getSelectedAutonMode(Constants.Autons.class);
+		
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		for(int i = 0; i < 2; i++){
+			boolean right = true;
+			if(gameData.charAt(i) == 'L'){
+				right = false;
+			}
+			if(i == 0){
+				Constants.switch_side = right ? 1 : -1;
+				break;
+			}
+			Constants.scale_side = right ? 1 : -1;
+		}
+			
+		
 		Scheduler.getInstance().add(new AutonSelector(selected_auton));
 	}
 

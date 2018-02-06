@@ -55,8 +55,8 @@ public class OperatorControl extends Actor{
 			rightPower = rightAxis[1];
 		}
 		else if(Constants.driveType == Constants.Drives.SingleStick){
-			leftPower = leftAxis[1] + leftAxis[0];
-			rightPower = leftAxis[1] - leftAxis[0];
+			leftPower = leftAxis[1] - leftAxis[0];
+			rightPower = leftAxis[1] + leftAxis[0];
 		}
 		
 		

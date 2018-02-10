@@ -67,15 +67,15 @@ public class HardwareProvider {
 	
 	
 	//Arm
-	public SpeedController getLeftArmShoulder(){
-		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[0]);
-	}
+//	public SpeedController getLeftArmShoulder(){
+//		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[0]);
+//	}
 	public SpeedController getRightArmShoulder(){
 		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[1]);
 	}
-	public SpeedController getLeftArmWrist(){
-		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[0]);
-	}
+//	public SpeedController getLeftArmWrist(){
+//		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[0]);
+//	}
 	public SpeedController getRightArmWrist(){
 		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[1]);
 	}

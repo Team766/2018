@@ -1,5 +1,6 @@
 package com.team766.robot.Actors;
 
+import com.team766.lib.Messages.ArmSimpleMessage;
 import com.team766.lib.Messages.ClimberUpdate;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveUpdate;
@@ -23,7 +24,7 @@ public class OperatorControl extends Actor{
 	
 	private double[] leftAxis = new double[4];
 	private double[] rightAxis = new double[4];
-	private boolean[] prevPress = new boolean[10];
+	private boolean[] prevPress = new boolean[14];
 	
 	private void setAxis(JoystickReader joystick, double[] axis, int axisNumber, double deadband){
 		axis[axisNumber] = (Math.abs(joystick.getRawAxis(axisNumber)) > deadband)? joystick.getRawAxis(axisNumber) : 0.0;
@@ -57,6 +58,10 @@ public class OperatorControl extends Actor{
 		else if(Constants.driveType == Constants.Drives.SingleStick){
 			leftPower = leftAxis[1] - leftAxis[0];
 			rightPower = leftAxis[1] + leftAxis[0];
+		}
+		else if(Constants.driveType == Constants.Drives.CheesyDrive){
+			leftPower = leftAxis[1] - rightAxis[0];
+			rightPower = leftAxis[1] + rightAxis[0];
 		}
 		
 		
@@ -111,6 +116,38 @@ public class OperatorControl extends Actor{
 			sendMessage(new ClimberUpdate(true));
 			prevPress[3] = jBox.getRawButton(Buttons.climbUp);
 		}
+		
+		//button for move arm shoulder forward(prevPress[8])
+		if(!prevPress[8] && jLeft.getRawButton(Buttons.moveShoulderForward)){
+			sendMessage(new ArmSimpleMessage(0.05, 0));
+			prevPress[8] = jLeft.getRawButton(Buttons.moveShoulderForward);
+		}
+		
+		//button for move arm backward(prevPress[9])
+		if(!prevPress[9] && jLeft.getRawButton(Buttons.moveShoulderBackward)){
+			sendMessage(new ArmSimpleMessage(-0.05, 0));
+			prevPress[9] = jLeft.getRawButton(Buttons.moveShoulderBackward);
+		}
+		
+		//Button for move wrist forward(prevPress[10])
+		if(!prevPress[10] && jLeft.getRawButton(Buttons.moveWristForward)){
+			sendMessage(new ArmSimpleMessage(0, 0.05));
+			prevPress[10] = jLeft.getRawButton(Buttons.moveWristForward);
+		}
+		
+		//button for move wrist backward(prevPress[11])
+		if(!prevPress[11] && jLeft.getRawButton(Buttons.moveWristBackward)){
+			sendMessage(new ArmSimpleMessage(0, -0.05));
+			prevPress[11] = jLeft.getRawButton(Buttons.moveWristBackward);
+		}
+		
+		//button for stop gripper(prevPress[12])
+		if(!prevPress[12] && jLeft.getRawButton(Buttons.stopArm)){
+			sendMessage(new ArmSimpleMessage(0, 0));
+			prevPress[12] = jLeft.getRawButton(Buttons.stopArm);
+		}
+		
+		
 	}
 
 	@Override

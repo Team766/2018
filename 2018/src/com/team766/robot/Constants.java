@@ -13,12 +13,13 @@ public class Constants {
 	
 	public static enum Drives {
 		TankDrive,
-		SingleStick
+		SingleStick,
+		CheesyDrive
 	};
 	
 	public static final double wheel_circumference = 4.0 * Math.PI; //inches
 	
-	public static final Drives driveType = Drives.SingleStick;
+	public static final Drives driveType = Drives.CheesyDrive;
 	
 	public static final double leftAxisDeadband = 0.07;
 	public static final double rightAxisDeadband = 0.07;
@@ -29,5 +30,11 @@ public class Constants {
 	//1 = right and -1 = left
 	public static int scale_side;
 	public static int switch_side;
+	
+	//PID for arm shoulder
+	public static final double k_intakeP = 0.001;
+	public static final double k_intakeI = 0.0008;
+	public static final double k_intakeD = 0.0;
+	public static final double k_intakeThresh = 0.001;
 	
 }

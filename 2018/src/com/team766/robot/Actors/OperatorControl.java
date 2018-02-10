@@ -3,7 +3,7 @@ package com.team766.robot.Actors;
 import com.team766.lib.Messages.ClimberUpdate;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveUpdate;
-import com.team766.lib.Messages.GripperMotorUpdate;
+//import com.team766.lib.Messages.GripperMotorUpdate;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.robot.Buttons;
@@ -74,35 +74,35 @@ public class OperatorControl extends Actor{
 		
 		
 		//System.out.println("left = " + leftPower + "\t\tright = " + rightPower);
-		
-		//button for open gripper(prevPress[0])
-		if(!prevPress[0] && jBox.getRawButton(Buttons.openGripper)){
-			System.out.println("button 1: " + jBox.getRawButton(Buttons.openGripper));
-			sendMessage(new GripperUpdate(false));
-		}
-		prevPress[0] = jBox.getRawButton(Buttons.openGripper);
-		
-		//button for close gripper(prevPress[1])
-		if(!prevPress[1] && jBox.getRawButton(Buttons.closeGripper)){
-			System.out.println("button 2: " + jBox.getRawButton(Buttons.closeGripper));
-			sendMessage(new GripperUpdate(true));
-		}
-		prevPress[1] = jBox.getRawButton(Buttons.closeGripper);
-		
-		//button for intake block (prevPress[5])
-		if(!prevPress[5] && jBox.getRawButton(Buttons.intakeBlock)){
-			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
-			sendMessage(new GripperMotorUpdate(Constants.gripperMotorSpeed));
-		}
-		prevPress[5] = jBox.getRawButton(Buttons.intakeBlock);
-		
-		//button for stop gripper motors (prevPress[4])
-		if(!prevPress[4] && jBox.getRawButton(Buttons.stopGripperMotor)){
-			System.out.println("button 4(stopping): " + jBox.getRawButton(Buttons.stopGripperMotor));
-			sendMessage(new GripperMotorUpdate(0.0));
-		}
-		prevPress[4] = jBox.getRawButton(Buttons.stopGripperMotor);
-		
+//		
+//		//button for open gripper(prevPress[0])
+//		if(!prevPress[0] && jBox.getRawButton(Buttons.openGripper)){
+//			System.out.println("button 1: " + jBox.getRawButton(Buttons.openGripper));
+//			sendMessage(new GripperUpdate(false));
+//		}
+//		prevPress[0] = jBox.getRawButton(Buttons.openGripper);
+//		
+//		//button for close gripper(prevPress[1])
+//		if(!prevPress[1] && jBox.getRawButton(Buttons.closeGripper)){
+//			System.out.println("button 2: " + jBox.getRawButton(Buttons.closeGripper));
+//			sendMessage(new GripperUpdate(true));
+//		}
+//		prevPress[1] = jBox.getRawButton(Buttons.closeGripper);
+//		
+//		//button for intake block (prevPress[5])
+//		if(!prevPress[5] && jBox.getRawButton(Buttons.intakeBlock)){
+//			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
+//			sendMessage(new GripperMotorUpdate(Constants.gripperMotorSpeed));
+//		}
+//		prevPress[5] = jBox.getRawButton(Buttons.intakeBlock);
+//		
+//		//button for stop gripper motors (prevPress[4])
+//		if(!prevPress[4] && jBox.getRawButton(Buttons.stopGripperMotor)){
+//			System.out.println("button 4(stopping): " + jBox.getRawButton(Buttons.stopGripperMotor));
+//			sendMessage(new GripperMotorUpdate(0.0));
+//		}
+//		prevPress[4] = jBox.getRawButton(Buttons.stopGripperMotor);
+//		
 		//button for climb down (prevPress[2]) 
 		if(!prevPress[2] && jBox.getRawButton(Buttons.climbDown)) {
 			sendMessage(new ClimberUpdate(false));

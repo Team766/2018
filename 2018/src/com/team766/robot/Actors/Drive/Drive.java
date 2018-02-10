@@ -1,5 +1,6 @@
 package com.team766.robot.Actors.Drive;
 
+import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
@@ -26,16 +27,16 @@ public class Drive extends Actor{
 	SpeedController rightDriveB = HardwareProvider.getInstance().getRightDriveB();
 	SolenoidController rightShifter = HardwareProvider.getInstance().getRightShifter();
 	SolenoidController leftShifter = HardwareProvider.getInstance().getLeftShifter();
-	
-//	EncoderReader leftEncoder = HardwareProvider.getInstance().getLeftEncoder();
-//	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
+
+	EncoderReader leftEncoder = HardwareProvider.getInstance().getLeftEncoder();
+	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
 
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, ShifterUpdate.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class};
 	}
-	
+
 	public void iterate() {
 		while (newMessage()) {
 			Message currentMessage = readMessage();
@@ -65,10 +66,16 @@ public class Drive extends Actor{
 				setRightShifter(shifterMessage.getHighGear());
 			}
 		}
-		
+
 		if (currentCommand != null) {
 			currentCommand.update();
+			if(currentCommand.isDone()){
+				sendMessage(new Done());
+				currentCommand = null;
+			}
 		}
+
+		//System.out.println("DBG: right encoder = " + rightEncoder.get() + "\t\t left = " + leftEncoder.get());
 	}
 
 	public String toString() {
@@ -76,60 +83,60 @@ public class Drive extends Actor{
 	}
 
 	public void setRight(double power){
-		rightDriveA.set(power);
-		rightDriveB.set(power);
+		rightDriveA.set(-power);
+		rightDriveB.set(-power);
 	}
-	
+
 	public void setLeft(double power){
-		leftDriveA.set(-power);
-		leftDriveB.set(-power);
+		leftDriveA.set(power);
+		leftDriveB.set(power);
 	}
-		
+
 	public void setDrive(double power){
 		setLeft(power);
 		setRight(power);
 	}
-	
-//	public double leftDistance(){
-//		//assume the counts_per_rev is 1000 for now
-//		return ConstantsFileReader.getInstance().get("LeftEncoderDirection") * (leftEncoder.getRaw() / 1000 * 4 * Math.PI);
-//	}
-//	
-//	public double rightDistance(){
-//		return ConstantsFileReader.getInstance().get("RightEncoderDirection") * (rightEncoder.getRaw() / 1000 * 4 * Math.PI);
-//	}
-//	
-//	public double AverageDistance(){
-//		return (leftDistance() + rightDistance())/2.0;
-//	}
-//	
-//	protected void resetEncoder(){
-//		leftEncoder.reset();
-//		rightEncoder.reset();
-//	}
-	
+
+	public double leftDistance(){
+		//assume the counts_per_rev is 1000 for now
+		return ConstantsFileReader.getInstance().get("LeftEncoderDirection") * (leftEncoder.getRaw() / 1000 * 4 * Math.PI);
+	}
+
+	public double rightDistance(){
+		return ConstantsFileReader.getInstance().get("RightEncoderDirection") * (rightEncoder.getRaw() / 1000 * 4 * Math.PI);
+	}
+
+	public double AverageDistance(){
+		return (leftDistance() + rightDistance())/2.0;
+	}
+
+	protected void resetEncoders(){
+		leftEncoder.reset();
+		rightEncoder.reset();
+	}
+
 	public void setRightShifter(boolean setHighGear){
 		rightShifter.set(setHighGear^Constants.negateRightShifter);
 	}
-	
+
 	public boolean getRightShifter(){
 		return rightShifter.get()^Constants.negateRightShifter;
 	}
-	
+
 	public void setLeftShifter(boolean setHighGear){
 		leftShifter.set(setHighGear^Constants.negateLeftShifter);
 	}
-	
+
 	public boolean getLeftShifter(){
 		return leftShifter.get()^Constants.negateLeftShifter;
 	}
-	
-	
+
+
 	private void stopCurrentCommand(){
 		if(currentCommand != null){
 			currentCommand.stop();
 		}
 		currentCommand = null;
 	}
-	
+
 }

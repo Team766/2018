@@ -5,9 +5,11 @@ import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.GripperMotorUpdate;
 import com.team766.lib.Messages.GripperUpdate;
+import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.robot.Buttons;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
+import com.team766.robot.Actors.Drive.Drive;
 import com.team766.robot.Actors.Gripper.Gripper;
 
 import interfaces.JoystickReader;
@@ -24,6 +26,7 @@ public class OperatorControl extends Actor{
 	private double[] leftAxis = new double[4];
 	private double[] rightAxis = new double[4];
 	private boolean[] prevPress = new boolean[10];
+	private boolean shifterStatus = false;
 	
 	private void setAxis(JoystickReader joystick, double[] axis, int axisNumber, double deadband){
 		axis[axisNumber] = (Math.abs(joystick.getRawAxis(axisNumber)) > deadband)? joystick.getRawAxis(axisNumber) : 0.0;
@@ -111,6 +114,14 @@ public class OperatorControl extends Actor{
 			sendMessage(new ClimberUpdate(true));
 			prevPress[3] = jBox.getRawButton(Buttons.climbUp);
 		}
+		
+		//Shifter button
+		if (!prevPress[7] && jBox.getRawButton(Buttons.shiftGear)){
+			shifterStatus = !shifterStatus;
+			sendMessage(new ShifterUpdate(shifterStatus));
+			System.out.println("Button 8 is pressed");
+		}
+		prevPress[7] = jBox.getRawButton(Buttons.shiftGear);
 	}
 
 	@Override

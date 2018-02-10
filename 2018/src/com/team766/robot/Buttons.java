@@ -12,4 +12,7 @@ public class Buttons {
 	public static final int climbDown = 9;
 	public static final int climbUp = 10;
 	
+	//shifter
+	public static final int shiftGear = 8;
+	
 }

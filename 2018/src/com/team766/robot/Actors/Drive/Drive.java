@@ -8,7 +8,6 @@ import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
-import com.team766.robot.Actors.Auton.DriveStraightEncoder;
 import com.team766.robot.Actors.Drive.DriveTime;
 
 import interfaces.EncoderReader;
@@ -16,7 +15,6 @@ import interfaces.GyroReader;
 import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
-import lib.ConstantsFileReader;
 import lib.Message;
 
 public class Drive extends Actor{

@@ -12,7 +12,7 @@ public class DriveDistance extends CommandBase{
 	 */
 	DriveEncoderMessage message;
 	private boolean leftDone, rightDone;
-	private double targetDist, targetAngle;
+	private double targetDist;
 	
 	private double linearPower = 0.5;
 	private double linearP = 0.2;

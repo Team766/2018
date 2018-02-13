@@ -36,4 +36,10 @@ public class Constants {
 	//1 = right and -1 = left
 	public static int scale_side;
 	public static int switch_side;
+
+	
+	//shifters
+	public static final boolean negateRightShifter = true;
+	public static final boolean negateLeftShifter = false;
+
 }

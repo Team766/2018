@@ -77,4 +77,12 @@ public class HardwareProvider {
 		return RobotProvider.instance.getMotor(ConfigFile.getClimber());
 	}
 	*/
+	
+	//Shifter
+	public SolenoidController getRightShifter(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getRightShifter());
+	}
+	public SolenoidController getLeftShifter(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getLeftShifter());
+	}
 }

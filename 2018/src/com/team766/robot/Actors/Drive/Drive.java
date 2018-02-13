@@ -5,6 +5,7 @@ import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
+import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
@@ -12,6 +13,7 @@ import com.team766.robot.Actors.Drive.DriveTime;
 
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
+import interfaces.SolenoidController;
 import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
@@ -24,6 +26,9 @@ public class Drive extends Actor{
 	SpeedController rightDriveA = HardwareProvider.getInstance().getRightDriveA();
 	SpeedController rightDriveB = HardwareProvider.getInstance().getRightDriveB();
 	
+	SolenoidController rightShifter = HardwareProvider.getInstance().getRightShifter();
+	SolenoidController leftShifter = HardwareProvider.getInstance().getLeftShifter();
+
 	EncoderReader leftEncoder = HardwareProvider.getInstance().getLeftEncoder();
 	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
 	
@@ -33,7 +38,7 @@ public class Drive extends Actor{
 	private double gyroStart;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveEncoderMessage.class, DriveDoubleSideUpdate.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class};
 	
 		gyroStart = gyro.getAngle();
 	}
@@ -59,6 +64,12 @@ public class Drive extends Actor{
 			}
 			if(currentMessage instanceof DriveDoubleSideUpdate){
 				currentCommand = new DriveDoubleSideCommand(currentMessage);
+			}
+			if (currentMessage instanceof ShifterUpdate){
+				currentCommand = null;
+				ShifterUpdate shifterMessage = (ShifterUpdate) currentMessage;
+				setLeftShifter(shifterMessage.getHighGear());
+				setRightShifter(shifterMessage.getHighGear());
 			}
 		}
 		
@@ -108,7 +119,24 @@ public class Drive extends Actor{
 		leftEncoder.reset();
 		rightEncoder.reset();
 	}
-	
+
+	public void setRightShifter(boolean setHighGear){
+		rightShifter.set(setHighGear^Constants.negateRightShifter);
+	}
+
+	public boolean getRightShifter(){
+		return rightShifter.get()^Constants.negateRightShifter;
+	}
+
+	public void setLeftShifter(boolean setHighGear){
+		leftShifter.set(setHighGear^Constants.negateLeftShifter);
+	}
+
+	public boolean getLeftShifter(){
+		return leftShifter.get()^Constants.negateLeftShifter;
+	}
+
+
 	private void stopCurrentCommand(){
 		if(currentCommand != null){
 			currentCommand.stop();
@@ -116,7 +144,7 @@ public class Drive extends Actor{
 		currentCommand = null;
 	}
 	
-	//returns degree angle from 0 to 360 - not done yet
+	//returns degree angle from 0 to 360
 	public double getCalculatedAngle(){
 		double angle = getGyroAngle();
 		while(angle > 360){
@@ -131,6 +159,4 @@ public class Drive extends Actor{
 	public double getGyroAngle(){
 		return gyro.getAngle() - gyroStart;
 	}
-	
-	
 }

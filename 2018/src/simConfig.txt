@@ -12,4 +12,6 @@ gripperMotorB,11
 armShoulder,12
 armWrist,13
 climber,10
+rightShifter,1
+leftShifter,2
 gyro,12

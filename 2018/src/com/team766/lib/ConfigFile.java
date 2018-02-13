@@ -53,6 +53,14 @@ public class ConfigFile {
 	public static int getButtonJoy() {
 		return ConfigFileReader.getInstance().getPort("buttonJoy");
 	}
+
+	public static int getRightShifter() {
+		return ConfigFileReader.getInstance().getPort("rightShifter");
+	}
+	
+	public static int getLeftShifter() {
+		return ConfigFileReader.getInstance().getPort("leftShifter");
+	}
 	
 	/*
 	//climber

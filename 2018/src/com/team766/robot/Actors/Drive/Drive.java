@@ -8,9 +8,11 @@ import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
+import com.team766.robot.Actors.Auton.DriveStraightEncoder;
 import com.team766.robot.Actors.Drive.DriveTime;
 
 import interfaces.EncoderReader;
+import interfaces.GyroReader;
 import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
@@ -26,11 +28,16 @@ public class Drive extends Actor{
 	
 	EncoderReader leftEncoder = HardwareProvider.getInstance().getLeftEncoder();
 	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
+	
+	GyroReader gyro = HardwareProvider.getInstance().getGyro();
 
 	SubActor currentCommand;
+	private double gyroStart;
 
 	public void init() {
 		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveEncoderMessage.class, DriveDoubleSideUpdate.class};
+	
+		gyroStart = gyro.getAngle();
 	}
 	
 	public void iterate() {
@@ -41,13 +48,13 @@ public class Drive extends Actor{
 			}
 			stopCurrentCommand();
 			if (currentMessage instanceof Stop) {
-				currentCommand = new DriveStop();
+				setDrive(0.0);
 			}
 			if (currentMessage instanceof DriveTimeMessage){
 				currentCommand = new DriveTime(currentMessage);
 			}
 			if (currentMessage instanceof DriveEncoderMessage){
-				currentCommand = new DriveStraightEncoder(currentMessage);
+				currentCommand = new DriveDistance(currentMessage);
 			}
 			if(currentMessage instanceof DriveUpdate){
 				currentCommand = new DriveUpdateCommand(currentMessage);
@@ -65,7 +72,7 @@ public class Drive extends Actor{
 			}
 		}
 		
-		//System.out.println("DBG: right encoder = " + rightEncoder.get() + "\t\t left = " + leftEncoder.get());
+		//System.out.println("DBG: right encoder = " + rightEncoder.getRaw() + "\t\t left = " + leftEncoder.getRaw());
 	}
 
 	public String toString() {
@@ -88,12 +95,11 @@ public class Drive extends Actor{
 	}
 	
 	public double leftDistance(){
-		//assume the counts_per_rev is 1000 for now
-		return ConstantsFileReader.getInstance().get("LeftEncoderDirection") * (leftEncoder.getRaw() / 1000 * 4 * Math.PI);
+		return Constants.leftEncoderDirection * (leftEncoder.getRaw() / Constants.counts_per_revolution * 4.0/12.0 * Math.PI);
 	}
 	
 	public double rightDistance(){
-		return ConstantsFileReader.getInstance().get("RightEncoderDirection") * (rightEncoder.getRaw() / 1000 * 4 * Math.PI);
+		return Constants.rightEncoderDirection * (rightEncoder.getRaw() / Constants.counts_per_revolution * 4.0/12.0 * Math.PI);
 	}
 	
 	public double AverageDistance(){
@@ -111,5 +117,22 @@ public class Drive extends Actor{
 		}
 		currentCommand = null;
 	}
+	
+	//returns degree angle from 0 to 360 - not done yet
+	public double getCalculatedAngle(){
+		double angle = getGyroAngle();
+		while(angle > 360){
+			angle -= 360;
+		}
+		while(angle < -360){
+			angle += 360;
+		}
+		return angle;
+	}
+	
+	public double getGyroAngle(){
+		return gyro.getAngle() - gyroStart;
+	}
+	
 	
 }

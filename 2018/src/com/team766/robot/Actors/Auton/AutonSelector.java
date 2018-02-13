@@ -9,7 +9,6 @@ import com.team766.robot.Constants;
 import com.team766.robot.Constants.Autons;
 import com.team766.robot.Actors.Auton.DriveStraightTime;
 import com.team766.robot.Actors.Auton.DriveSquareTime;
-import com.team766.robot.Actors.Drive.DriveStop;
 
 import interfaces.AutonMode;
 import interfaces.SubActor;
@@ -52,6 +51,7 @@ public class AutonSelector extends Actor{
 			break;
 		case DriveEncoderStraight:
 			System.out.println("Auton: DriveEncoderStraight");
+			currentMode = new DriveStraightEncoder(this);
 			break;
 		}
 	}

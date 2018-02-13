@@ -18,13 +18,18 @@ public class Constants {
 	};
 	
 	public static final double wheel_circumference = 4.0 * Math.PI; //inches
+	public static final int counts_per_revolution = 1024;
+	public static final int leftEncoderDirection = -1;
+	public static final int rightEncoderDirection = 1;
+	
 	
 	public static final Drives driveType = Drives.SingleStick;
 	
 	public static final double leftAxisDeadband = 0.07;
 	public static final double rightAxisDeadband = 0.07;
 	
-	public static final double driveThreshold = 1.0; //not tested
+	public static final double driveThreshold = 0.7;
+	public static final double angleThreshold = 5.0; //not tested
 	public static final double gripperMotorSpeed = 0.4;
 	public static final double climberSpeed = 1.0;
 	

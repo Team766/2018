@@ -3,6 +3,7 @@ package com.team766.robot;
 import com.team766.lib.ConfigFile;
 
 import interfaces.EncoderReader;
+import interfaces.GyroReader;
 import interfaces.JoystickReader;
 import interfaces.RobotProvider;
 import interfaces.SolenoidController;
@@ -33,6 +34,9 @@ public class HardwareProvider {
 		return RobotProvider.instance.getMotor(ConfigFile.getRightMotor()[1]);
 	}
 	
+	public GyroReader getGyro(){
+		return RobotProvider.instance.getGyro(ConfigFile.getGyro());
+	}
 	
 	public EncoderReader getLeftEncoder(){
 		return RobotProvider.instance.getEncoder(ConfigFile.getLeftEncoder()[0], ConfigFile.getLeftEncoder()[1]);

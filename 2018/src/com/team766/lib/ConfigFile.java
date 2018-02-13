@@ -13,7 +13,6 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPorts("rightDrive");
 	}
 	
-	
 	public static int[] getLeftEncoder(){
 		return ConfigFileReader.getInstance().getPorts("leftEncoder");
 	}
@@ -21,7 +20,10 @@ public class ConfigFile {
 	public static int[] getRightEncoder(){
 		return ConfigFileReader.getInstance().getPorts("rightEncoder");
 	}
-
+	
+	public static int getGyro(){
+		return ConfigFileReader.getInstance().getPort("gyro");
+	}
 	
 	//gripper
 	public static int getGripper(){

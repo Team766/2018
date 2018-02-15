@@ -23,8 +23,8 @@ public class OperatorControl extends Actor{
 	
 	private double previousLeftPower, previousRightPower, previousHeading;
 	
-	private double[] leftAxis = new double[4];
-	private double[] rightAxis = new double[4];
+	private double[] leftJoystick = new double[4];
+	private double[] rightJoystick = new double[4];
 	private boolean[] prevPress = new boolean[10];
 	private boolean shifterStatus = false;
 	
@@ -40,11 +40,11 @@ public class OperatorControl extends Actor{
 		 * 1 axis F/B
 		 */
 		
-		setAxis(jLeft, leftAxis, 0, Constants.leftAxisDeadband);
-		setAxis(jLeft, leftAxis, 1, Constants.leftAxisDeadband);
+		setAxis(jLeft, leftJoystick, 0, Constants.leftAxisDeadband);
+		setAxis(jLeft, leftJoystick, 1, Constants.leftAxisDeadband);
 		
-		setAxis(jRight, rightAxis, 0, Constants.rightAxisDeadband);
-		setAxis(jRight, rightAxis, 1, Constants.rightAxisDeadband);
+		setAxis(jRight, rightJoystick, 0, Constants.rightAxisDeadband);
+		setAxis(jRight, rightJoystick, 1, Constants.rightAxisDeadband);
 		
 		//System.out.println("leftJoy: " + jLeft.getRawAxis(1));
 		//System.out.println("rightJoy: " + jRight.getRawAxis(1));
@@ -52,14 +52,17 @@ public class OperatorControl extends Actor{
 		double leftPower = 0.0;
 		double rightPower = 0.0;
 		
+	
 		//calculating motor power based on the drive mode
+		double scaleLR = 1.0;
+		double scaleFB = -1.0;
 		if(Constants.driveType == Constants.Drives.TankDrive){			
-			leftPower = leftAxis[1];
-			rightPower = rightAxis[1];
+			leftPower = leftJoystick[1]* scaleFB;
+			rightPower = rightJoystick[1]* scaleFB;
 		}
 		else if(Constants.driveType == Constants.Drives.SingleStick){
-			leftPower = leftAxis[1] + leftAxis[0];
-			rightPower = leftAxis[1] - leftAxis[0];
+			leftPower = leftJoystick[1]* scaleFB + leftJoystick[0]* scaleLR;
+			rightPower = leftJoystick[1]* scaleFB - leftJoystick[0]* scaleLR;
 		}
 		
 		

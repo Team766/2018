@@ -39,7 +39,7 @@ public class Constants {
 
 	
 	//shifters
-	public static final boolean negateRightShifter = true;
+	public static final boolean negateRightShifter = false;
 	public static final boolean negateLeftShifter = false;
 
 }

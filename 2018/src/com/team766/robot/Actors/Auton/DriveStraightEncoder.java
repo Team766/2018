@@ -27,7 +27,7 @@ public class DriveStraightEncoder implements AutonMode{
 		switch (currState){
 			case Start:
 				setState(State.Drive);
-				parent.sendMessage(new DriveEncoderMessage(10.0));
+				parent.sendMessage(new DriveEncoderMessage(10.0, 0.0));
 				break;
 			case Drive:
 				if(commandDone){

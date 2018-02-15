@@ -18,6 +18,7 @@ import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
 import lib.Message;
+import lib.PIDController;
 
 public class Drive extends Actor{
 
@@ -33,14 +34,17 @@ public class Drive extends Actor{
 	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
 	
 	GyroReader gyro = HardwareProvider.getInstance().getGyro();
+	
+	PIDController distancePID = new PIDController(Constants.k_linearP, Constants.k_linearI, Constants.k_linearD, Constants.k_linearThresh);
+	PIDController anglePID = new PIDController(Constants.k_angularP, Constants.k_angularI, Constants.k_angularD, Constants.k_angularThresh);
 
 	SubActor currentCommand;
-	private double gyroStart;
+	private double gyroOffset;
 
 	public void init() {
 		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class};
 	
-		gyroStart = gyro.getAngle();
+		gyroOffset = Constants.startAngle;
 	}
 	
 	public void iterate() {
@@ -82,6 +86,7 @@ public class Drive extends Actor{
 		}
 		
 		//System.out.println("DBG: right encoder = " + rightEncoder.getRaw() + "\t\t left = " + leftEncoder.getRaw());
+		System.out.println("Gyro: " + gyro.getAngle());
 	}
 
 	public String toString() {
@@ -144,19 +149,23 @@ public class Drive extends Actor{
 		currentCommand = null;
 	}
 	
-	//returns degree angle from 0 to 360
+	//returns degree angle from -180 to 180
 	public double getCalculatedAngle(){
 		double angle = getGyroAngle();
-		while(angle > 360){
+		while(angle > 180){
 			angle -= 360;
 		}
-		while(angle < -360){
+		while(angle < -180){
 			angle += 360;
 		}
 		return angle;
 	}
 	
+	public void setGyroAngle(double angle){
+		gyroOffset = gyro.getAngle() + angle;
+	}
+	
 	public double getGyroAngle(){
-		return gyro.getAngle() - gyroStart;
+		return gyro.getAngle() - gyroOffset;
 	}
 }

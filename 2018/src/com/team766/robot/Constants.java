@@ -22,6 +22,8 @@ public class Constants {
 	public static final int leftEncoderDirection = -1;
 	public static final int rightEncoderDirection = 1;
 	
+	public static final int gyroDirection = 1; //turning right increases angle
+	public static final double startAngle = 0.0;
 	
 	public static final Drives driveType = Drives.SingleStick;
 	
@@ -41,5 +43,16 @@ public class Constants {
 	//shifters
 	public static final boolean negateRightShifter = true;
 	public static final boolean negateLeftShifter = false;
-
+	
+	//PID - not tuned
+	public static final double k_linearP = 0.1; //1/max linear vel
+	public static final double k_linearI = 0.0;
+	public static final double k_linearD = 0.3;
+	public static final double k_linearThresh = 0.1;
+	
+	public static final double k_angularP = 0.1; //1/max angular vel
+	public static final double k_angularI = 0.0;
+	public static final double k_angularD = 0.0;
+	public static final double k_angularThresh = 1.0;
+	
 }

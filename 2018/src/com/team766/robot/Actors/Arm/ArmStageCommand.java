@@ -27,7 +27,7 @@ public class ArmStageCommand extends CommandBase{
 //		Arm.intakePID.calculate(targetAngle, false);
 //		System.out.println("Angle: " + Arm.getShoulderAngle());
 //		if(!done){
-//			Arm.setArmShoulder(Arm.intakePID.getOutput());
+//			Arm.setShoulderRotation(Arm.intakePID.getOutput());
 //			
 //			if(Arm.intakePID.isDone())
 //				done = true;

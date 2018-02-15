@@ -2,6 +2,7 @@ package com.team766.robot;
 
 import com.team766.lib.ConfigFile;
 
+import interfaces.CANSpeedController;
 import interfaces.EncoderReader;
 import interfaces.JoystickReader;
 import interfaces.RobotProvider;
@@ -70,14 +71,14 @@ public class HardwareProvider {
 //	public SpeedController getLeftArmShoulder(){
 //		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[0]);
 //	}
-	public SpeedController getRightArmShoulder(){
-		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[1]);
+	public CANSpeedController getRightArmShoulder(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmShoulder()[1]);
 	}
 //	public SpeedController getLeftArmWrist(){
 //		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[0]);
 //	}
-	public SpeedController getRightArmWrist(){
-		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[1]);
+	public CANSpeedController getRightArmWrist(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmWrist()[1]);
 	}
 	public EncoderReader getShoulderEncoder(){
 		return RobotProvider.instance.getEncoder(ConfigFile.getShoulderEncoder()[0], ConfigFile.getShoulderEncoder()[1]);

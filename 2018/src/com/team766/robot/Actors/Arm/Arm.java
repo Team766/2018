@@ -6,6 +6,8 @@ import com.team766.lib.Messages.ArmStageMessage;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 
+import interfaces.CANSpeedController;
+import interfaces.CANSpeedController.ControlMode;
 import interfaces.EncoderReader;
 import interfaces.SpeedController;
 import interfaces.SubActor;
@@ -25,9 +27,9 @@ public class Arm extends Actor {
 	
 
 	//SpeedController leftArmShoulder = HardwareProvider.getInstance().getLeftArmShoulder();
-	SpeedController rightArmShoulder = HardwareProvider.getInstance().getRightArmShoulder();
+	CANSpeedController rightArmShoulder = HardwareProvider.getInstance().getRightArmShoulder();
 	//SpeedController leftArmWrist = HardwareProvider.getInstance().getLeftArmWrist();
-	SpeedController rightArmWrist = HardwareProvider.getInstance().getRightArmWrist();
+	CANSpeedController rightArmWrist = HardwareProvider.getInstance().getRightArmWrist();
 	
 	EncoderReader shoulderAngle = HardwareProvider.getInstance().getShoulderEncoder();
 	EncoderReader wristEncoder = HardwareProvider.getInstance().getWristEncoder();
@@ -74,8 +76,9 @@ public class Arm extends Actor {
 //		leftArmShoulder.set(speed);
 //	}
 	
+	//PercentOutput is the mode for setting speed
 	public void setRightArmShoulder(double speed){
-		rightArmShoulder.set(-speed);
+		rightArmShoulder.set(ControlMode.PercentOutput, -speed);
 	}
 	
 	//setting both motors for arm shoulder 
@@ -89,7 +92,7 @@ public class Arm extends Actor {
 //	}
 	
 	public void setRightArmWrist(double speed){
-		rightArmWrist.set(-speed);
+		rightArmWrist.set(ControlMode.PercentOutput, -speed);
 	}
 	
 	//setting both motors for arm wrist
@@ -122,6 +125,19 @@ public class Arm extends Actor {
 	
 	public double getAngleFromHeight(double height){
 		return Math.asin(height / (2 * 36));
+	}
+	
+	public void setShoulderRotation(double speed){
+		 if(speed > 0)
+			 speed = Math.min(speed, 0.2);
+		 else if(speed < 0)
+			 speed = Math.max(speed, -0.2);
+		 
+		 setArmShoulder(speed);
+	}
+	
+	public void resetEncoder(){
+		shoulderAngle.reset();
 	}
 	
 	

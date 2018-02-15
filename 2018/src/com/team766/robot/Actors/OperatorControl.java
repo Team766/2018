@@ -49,20 +49,29 @@ public class OperatorControl extends Actor{
 		//System.out.println("leftJoy: " + jLeft.getRawAxis(1));
 		//System.out.println("rightJoy: " + jRight.getRawAxis(1));
 		
+		// normalize the input we are getting from the joysticks so that it is 
+		// easy to adapt to new joysticks
+		double scaleLR = 1.0;
+		double scaleFB = -1.0;
+
+		double leftJoystickLR = leftJoystick[0]* scaleLR;
+		double leftJoystickFB = leftJoystick[1]* scaleFB;
+		
+		double rightJoystickLR = rightJoystick[0]* scaleLR;
+		double rightJoystickFB = rightJoystick[1]* scaleFB;
+		
+		// Now that we have the normalized inputs, let's
+		// calculate motor power based on the drive mode
 		double leftPower = 0.0;
 		double rightPower = 0.0;
 		
-	
-		//calculating motor power based on the drive mode
-		double scaleLR = 1.0;
-		double scaleFB = -1.0;
 		if(Constants.driveType == Constants.Drives.TankDrive){			
-			leftPower = leftJoystick[1]* scaleFB;
-			rightPower = rightJoystick[1]* scaleFB;
+			leftPower = leftJoystickFB;
+			rightPower = rightJoystickFB;
 		}
 		else if(Constants.driveType == Constants.Drives.SingleStick){
-			leftPower = leftJoystick[1]* scaleFB + leftJoystick[0]* scaleLR;
-			rightPower = leftJoystick[1]* scaleFB - leftJoystick[0]* scaleLR;
+			leftPower = leftJoystickFB + leftJoystickLR;
+			rightPower = rightJoystickFB - rightJoystickLR;
 		}
 		
 		

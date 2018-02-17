@@ -5,7 +5,7 @@ import com.team766.lib.Messages.DriveEncoderMessage;
 
 import lib.Message;
 
-public class DrivePID extends CommandBase{
+public class DrivePIDCommand extends CommandBase{
 	/*
 	 * Drives robot to specified distance and angle using distance and angle PID
 	 */
@@ -13,8 +13,11 @@ public class DrivePID extends CommandBase{
 	private boolean done;
 	private DriveEncoderMessage message;
 	
-	public DrivePID(Message m){
+	public DrivePIDCommand(Message m){
 		message = (DriveEncoderMessage) m;
+		
+		Drive.resetEncoders();
+		Drive.setGyroAngle(0.0);
 		
 		Drive.distancePID.setSetpoint(message.getDistance());
 		Drive.anglePID.setSetpoint(message.getAngle());

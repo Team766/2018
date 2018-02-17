@@ -3,6 +3,7 @@ package com.team766.robot.Actors.Drive;
 import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveEncoderMessage;
+import com.team766.lib.Messages.DrivePIDMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.ShifterUpdate;
@@ -42,7 +43,7 @@ public class Drive extends Actor{
 	private double gyroOffset;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class, DrivePIDMessage.class};
 	
 		gyroOffset = Constants.startAngle;
 	}
@@ -77,6 +78,9 @@ public class Drive extends Actor{
 				ShifterUpdate shifterMessage = (ShifterUpdate) currentMessage;
 				setLeftShifter(shifterMessage.getHighGear());
 				setRightShifter(shifterMessage.getHighGear());
+			}
+			else if (currentMessage instanceof DrivePIDMessage){
+				swapCurrentCommand(new DrivePIDCommand(currentMessage), "got new drive PID message");
 			}
 		}
 		

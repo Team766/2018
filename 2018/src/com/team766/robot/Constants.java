@@ -9,7 +9,7 @@ public class Constants {
 		CrossLine,
 		DriveStraightTime,
 		DriveSquareTime,
-		DriveEncoderStraight
+		DriveEncoder
 	};
 	
 	public static enum Drives {
@@ -30,10 +30,11 @@ public class Constants {
 	public static final double leftAxisDeadband = 0.07;
 	public static final double rightAxisDeadband = 0.07;
 	
-	public static final double driveThreshold = 0.7;
+	public static final double driveThreshold = 0.3;
 	public static final double angleThreshold = 5.0; //not tested
 	public static final double gripperMotorSpeed = 0.4;
 	public static final double climberSpeed = 1.0;
+	public static final double powerLimit = 0.4;
 	
 	//1 = right and -1 = left
 	public static int scale_side;

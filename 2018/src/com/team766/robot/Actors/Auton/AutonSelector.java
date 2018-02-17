@@ -49,9 +49,9 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton: DriveSquareTime");
 			currentMode = new DriveSquareTime(this);
 			break;
-		case DriveEncoderStraight:
-			System.out.println("Auton: DriveEncoderStraight");
-			currentMode = new DriveStraightEncoder(this);
+		case DriveEncoder:
+			System.out.println("Auton: DriveEncoder");
+			currentMode = new DriveEncoder(this);
 			break;
 		}
 	}

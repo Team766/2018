@@ -8,47 +8,55 @@ import lib.Message;
 
 public class DriveDistance extends CommandBase{
 	/*
-	 * This command drives the robot straight ramping power down using encoders
+	 * This command drives the robot ramping power down using encoders and gyro
 	 */
 	DriveEncoderMessage message;
-	private boolean leftDone, rightDone;
-	private double targetDist;
+	private boolean done;
+	private double targetDist, targetAngle;
 	
-	private double linearPower = 0.5;
 	private double linearP = 0.2;
+	private double angularP = 0.1;
 	
 	public DriveDistance(Message m){
 		message = (DriveEncoderMessage) m;
-		leftDone = false;
-		rightDone = false;
+		done = false;
 		
 		Drive.resetEncoders();
+		Drive.setGyroAngle(0.0);
 		
 		targetDist = message.getDistance();
+		targetAngle = message.getAngle();
 	}
 
 	public void update() {
-		double leftError = targetDist - Drive.leftDistance();
-		double leftDirection = leftError > 0 ? 1 : -1;
-		if(Math.abs(leftError) > Constants.driveThreshold ){
-			Drive.setLeft(leftDirection * linearPower * linearP * leftError);
-		}
-		else{
-			Drive.setLeft(0.0);
-			leftDone = true;
-		}
-
-		double rightError = targetDist - Drive.rightDistance();
-		double rightDirection = rightError > 0 ? 1 : -1;
-		if(Math.abs(rightError) > Constants.driveThreshold){
-			Drive.setRight(rightDirection * linearPower * linearP * rightError);
-		}
-		else{
-			Drive.setRight(0.0);
-			rightDone = true;
+		boolean angleDone = false;
+		boolean linearDone = false;
+		
+		double angleError = targetAngle - Drive.getCalculatedAngle();
+		double yaw_v = angleError * angularP;
+		
+		double linearError = targetDist - Drive.averageDistance();
+		double surge_v = linearError * linearP;
+		
+		if(Math.abs(angleError) < Constants.angleThreshold){
+			yaw_v = 0.0;
+			angleDone = true;
 		}
 		
-		//System.out.println("DBG: \t\tError: left = " + leftError + " \t\tright = " + rightError);
+		if(Math.abs(linearError) < Constants.driveThreshold){
+			surge_v = 0.0;
+			linearDone = true;
+		}
+		
+		Drive.twist(surge_v, yaw_v);
+
+		done = done || (angleDone && linearDone);
+		
+		System.out.println("DBG: target distance = " + targetDist + "\n current distance = " + Drive.averageDistance());
+		System.out.println("DBG: angle done = " + (angleDone ? "TRUE" : "FALSE"));
+		System.out.println("DBG: linear done = " + (linearDone ? "TRUE" : "FALSE"));
+		System.out.println("DBG: done = " + (done ? "TRUE" : "FALSE"));
+		
 	}
 
 	public void stop() {
@@ -56,11 +64,10 @@ public class DriveDistance extends CommandBase{
 	}
 
 	public boolean isDone() {
-		if(leftDone && rightDone){
+		if(done){
 			stop();
 			return true;
 		}
 		return false;
 	}	
-
 }

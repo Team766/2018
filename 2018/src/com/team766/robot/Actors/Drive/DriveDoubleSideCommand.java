@@ -2,6 +2,7 @@ package com.team766.robot.Actors.Drive;
 
 import com.team766.lib.CommandBase;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
+import com.team766.robot.Constants;
 
 import lib.Message;
 
@@ -17,8 +18,8 @@ public class DriveDoubleSideCommand extends CommandBase {
 
 	@Override
 	public void update() {
-		Drive.setLeft(clamp(command.getLeftPower()));
-		Drive.setRight(clamp(command.getRightPower()));
+		Drive.setLeft(command.getLeftPower());
+		Drive.setRight(command.getRightPower());
 		done = true;
 	}
 
@@ -30,11 +31,4 @@ public class DriveDoubleSideCommand extends CommandBase {
 	public boolean isDone() {
 		return done;
 	}
-	
-	private double clamp(double power){
-		power = Math.min(power, 1);
-		power = Math.max(power, -1);
-		return power;
-	}
-
 }

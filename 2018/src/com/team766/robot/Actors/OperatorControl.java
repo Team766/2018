@@ -71,7 +71,7 @@ public class OperatorControl extends Actor{
 		}
 		else if(Constants.driveType == Constants.Drives.SingleStick){
 			leftPower = leftJoystickFB + leftJoystickLR;
-			rightPower = rightJoystickFB - rightJoystickLR;
+			rightPower = leftJoystickFB - leftJoystickLR;
 		}
 		
 		

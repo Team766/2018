@@ -23,8 +23,8 @@ public class OperatorControl extends Actor{
 	
 	private double previousLeftPower, previousRightPower, previousHeading;
 	
-	private double[] leftAxis = new double[4];
-	private double[] rightAxis = new double[4];
+	private double[] leftJoystick = new double[4];
+	private double[] rightJoystick = new double[4];
 	private boolean[] prevPress = new boolean[10];
 	private boolean shifterStatus = false;
 	
@@ -40,26 +40,38 @@ public class OperatorControl extends Actor{
 		 * 1 axis F/B
 		 */
 		
-		setAxis(jLeft, leftAxis, 0, Constants.leftAxisDeadband);
-		setAxis(jLeft, leftAxis, 1, Constants.leftAxisDeadband);
+		setAxis(jLeft, leftJoystick, 0, Constants.leftAxisDeadband);
+		setAxis(jLeft, leftJoystick, 1, Constants.leftAxisDeadband);
 		
-		setAxis(jRight, rightAxis, 0, Constants.rightAxisDeadband);
-		setAxis(jRight, rightAxis, 1, Constants.rightAxisDeadband);
+		setAxis(jRight, rightJoystick, 0, Constants.rightAxisDeadband);
+		setAxis(jRight, rightJoystick, 1, Constants.rightAxisDeadband);
 		
 		//System.out.println("leftJoy: " + jLeft.getRawAxis(1));
 		//System.out.println("rightJoy: " + jRight.getRawAxis(1));
 		
+		// normalize the input we are getting from the joysticks so that it is 
+		// easy to adapt to new joysticks
+		double scaleLR = 1.0;
+		double scaleFB = -1.0;
+
+		double leftJoystickLR = leftJoystick[0]* scaleLR;
+		double leftJoystickFB = leftJoystick[1]* scaleFB;
+		
+		double rightJoystickLR = rightJoystick[0]* scaleLR;
+		double rightJoystickFB = rightJoystick[1]* scaleFB;
+		
+		// Now that we have the normalized inputs, let's
+		// calculate motor power based on the drive mode
 		double leftPower = 0.0;
 		double rightPower = 0.0;
 		
-		//calculating motor power based on the drive mode
 		if(Constants.driveType == Constants.Drives.TankDrive){			
-			leftPower = leftAxis[1];
-			rightPower = rightAxis[1];
+			leftPower = leftJoystickFB;
+			rightPower = rightJoystickFB;
 		}
 		else if(Constants.driveType == Constants.Drives.SingleStick){
-			leftPower = leftAxis[1] + leftAxis[0];
-			rightPower = leftAxis[1] - leftAxis[0];
+			leftPower = leftJoystickFB + leftJoystickLR;
+			rightPower = rightJoystickFB - rightJoystickLR;
 		}
 		
 		

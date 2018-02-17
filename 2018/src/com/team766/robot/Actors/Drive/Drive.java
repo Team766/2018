@@ -18,6 +18,7 @@ import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
 import lib.Message;
+import lib.PIDController;
 
 public class Drive extends Actor{
 
@@ -33,40 +34,46 @@ public class Drive extends Actor{
 	EncoderReader rightEncoder = HardwareProvider.getInstance().getRightEncoder();
 	
 	GyroReader gyro = HardwareProvider.getInstance().getGyro();
+	
+	PIDController distancePID = new PIDController(Constants.k_linearP, Constants.k_linearI, Constants.k_linearD, Constants.k_linearThresh);
+	PIDController anglePID = new PIDController(Constants.k_angularP, Constants.k_angularI, Constants.k_angularD, Constants.k_angularThresh);
 
-	SubActor currentCommand;
-	private double gyroStart;
+	private SubActor currentCommand;
+	private double gyroOffset;
 
 	public void init() {
 		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class};
 	
-		gyroStart = gyro.getAngle();
+		gyroOffset = Constants.startAngle;
 	}
 	
 	public void iterate() {
-		while (newMessage()) {
+		while (newMessage()) {	
 			Message currentMessage = readMessage();
 			if (currentMessage == null){
 				continue;
 			}
-			stopCurrentCommand();
+			
+			System.out.println("DBG: got new message stopping current message!");
+			
 			if (currentMessage instanceof Stop) {
+				stopCurrentCommand("got Stop message");
 				setDrive(0.0);
 			}
-			if (currentMessage instanceof DriveTimeMessage){
-				currentCommand = new DriveTime(currentMessage);
+			else if (currentMessage instanceof DriveTimeMessage){
+				swapCurrentCommand(new DriveTime(currentMessage), "got new drive time message");
 			}
-			if (currentMessage instanceof DriveEncoderMessage){
-				currentCommand = new DriveDistance(currentMessage);
+			else if (currentMessage instanceof DriveEncoderMessage){
+				swapCurrentCommand(new DriveDistance(currentMessage), "got new drive encoder message");
 			}
-			if(currentMessage instanceof DriveUpdate){
-				currentCommand = new DriveUpdateCommand(currentMessage);
+			else if(currentMessage instanceof DriveUpdate){
+				swapCurrentCommand(new DriveUpdateCommand(currentMessage), "got new drive update message");
 			}
-			if(currentMessage instanceof DriveDoubleSideUpdate){
-				currentCommand = new DriveDoubleSideCommand(currentMessage);
+			else if(currentMessage instanceof DriveDoubleSideUpdate){
+				swapCurrentCommand(new DriveDoubleSideCommand(currentMessage), "got new drive double side message");
 			}
-			if (currentMessage instanceof ShifterUpdate){
-				currentCommand = null;
+			else if (currentMessage instanceof ShifterUpdate){
+				//stopCurrentCommand();
 				ShifterUpdate shifterMessage = (ShifterUpdate) currentMessage;
 				setLeftShifter(shifterMessage.getHighGear());
 				setRightShifter(shifterMessage.getHighGear());
@@ -74,6 +81,7 @@ public class Drive extends Actor{
 		}
 		
 		if (currentCommand != null) {
+			System.out.println("DMDBG: Calling update");
 			currentCommand.update();
 			if(currentCommand.isDone()){ 
 				sendMessage(new Done());
@@ -82,6 +90,7 @@ public class Drive extends Actor{
 		}
 		
 		//System.out.println("DBG: right encoder = " + rightEncoder.getRaw() + "\t\t left = " + leftEncoder.getRaw());
+		//System.out.println("Gyro: " + gyro.getAngle());
 	}
 
 	public String toString() {
@@ -89,13 +98,13 @@ public class Drive extends Actor{
 	}
 
 	public void setRight(double power){
-		rightDriveA.set(-power);
-		rightDriveB.set(-power);
+		rightDriveA.set(clamp(-power));
+		rightDriveB.set(clamp(-power));
 	}
 	
 	public void setLeft(double power){
-		leftDriveA.set(power);
-		leftDriveB.set(power);
+		leftDriveA.set(clamp(power));
+		leftDriveB.set(clamp(power));
 	}
 		
 	public void setDrive(double power){
@@ -111,7 +120,7 @@ public class Drive extends Actor{
 		return Constants.rightEncoderDirection * (rightEncoder.getRaw() / Constants.counts_per_revolution * 4.0/12.0 * Math.PI);
 	}
 	
-	public double AverageDistance(){
+	public double averageDistance(){
 		return (leftDistance() + rightDistance())/2.0;
 	}
 	
@@ -137,26 +146,59 @@ public class Drive extends Actor{
 	}
 
 
-	private void stopCurrentCommand(){
+	private void stopCurrentCommand(String reason){
+		swapCurrentCommand(null, reason);
+	}
+	
+	private void swapCurrentCommand(SubActor newCommand, String reason){
+		System.out.println("DMDBG: swapping currentCommand because: " + reason);
 		if(currentCommand != null){
 			currentCommand.stop();
 		}
-		currentCommand = null;
+		currentCommand = newCommand;
 	}
 	
-	//returns degree angle from 0 to 360
+	//returns degree angle from -180 to 180
 	public double getCalculatedAngle(){
 		double angle = getGyroAngle();
-		while(angle > 360){
+		while(angle > 180){
 			angle -= 360;
 		}
-		while(angle < -360){
+		while(angle < -180){
 			angle += 360;
 		}
 		return angle;
 	}
 	
+	public void setGyroAngle(double angle){
+		gyroOffset = gyro.getAngle() + angle;
+	}
+	
 	public double getGyroAngle(){
-		return gyro.getAngle() - gyroStart;
+		return gyro.getAngle() - gyroOffset;
+	}
+	
+	public double getAngularVel(){
+		return gyro.getRate(); //deg/sec
+	}
+	
+	private double clamp(double power){
+		double clampedLimit = Math.max(Math.min(Constants.powerLimit, 1), -1);
+		
+		power = Math.min(power, clampedLimit);
+		power = Math.max(power, -clampedLimit);
+		return power;
+	}
+	
+	public void twist(double surge_v, double yaw_v){
+		double leftPower = surge_v - yaw_v;
+		double rightPower = surge_v + yaw_v;
+		
+		System.out.println("yaw = " + yaw_v);
+		
+		System.out.println("DBG: left = " + leftPower + " \t\tright = " + rightPower);
+		
+		setLeft(leftPower);
+		setRight(rightPower);
 	}
 }

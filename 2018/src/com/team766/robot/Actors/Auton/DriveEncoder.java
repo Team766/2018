@@ -4,7 +4,7 @@ import com.team766.lib.Messages.DriveEncoderMessage;
 
 import interfaces.AutonMode;
 
-public class DriveStraightEncoder implements AutonMode{
+public class DriveEncoder implements AutonMode{
 
 	private boolean commandDone;
 	private AutonSelector parent;
@@ -16,7 +16,7 @@ public class DriveStraightEncoder implements AutonMode{
 		Done
 	}
 	
-	public DriveStraightEncoder(AutonSelector parent){
+	public DriveEncoder(AutonSelector parent){
 		this.parent = parent;
 		currState = State.Start;
 		commandDone = false;
@@ -27,7 +27,7 @@ public class DriveStraightEncoder implements AutonMode{
 		switch (currState){
 			case Start:
 				setState(State.Drive);
-				parent.sendMessage(new DriveEncoderMessage(10.0));
+				parent.sendMessage(new DriveEncoderMessage(6.0, 0.0));
 				break;
 			case Drive:
 				if(commandDone){

@@ -4,10 +4,11 @@ import lib.Message;
 
 public class DriveEncoderMessage implements Message {
 
-	private double distance;
+	private double distance, angle;
 	
-	public DriveEncoderMessage(double distance){
+	public DriveEncoderMessage(double distance, double angle){
 		this.distance = distance;
+		this.angle = angle;
 	}
 	
 	//feet
@@ -15,8 +16,13 @@ public class DriveEncoderMessage implements Message {
 		return distance;
 	}
 	
+	//degrees
+	public double getAngle(){
+		return angle;
+	}
+	
 	public String toString(){
-		return "Message: DriveStraightEncoderMessage";
+		return "Message: DriveEncoderMessage";
 	}
 
 }

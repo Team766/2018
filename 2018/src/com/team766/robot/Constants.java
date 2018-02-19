@@ -8,8 +8,9 @@ public class Constants {
 		Exchange,
 		CrossLine,
 		DriveStraightTime,
-		DriveSquareTime,
-		DriveEncoder
+		DriveSquare,
+		DriveEncoder,
+		DrivePID
 	};
 	
 	public static enum Drives {
@@ -46,14 +47,14 @@ public class Constants {
 	public static final boolean negateLeftShifter = false;
 	
 	//PID - not tuned
-	public static final double k_linearP = 0.1; //1/max linear vel
+	public static final double k_linearP = 0.4; 
 	public static final double k_linearI = 0.0;
-	public static final double k_linearD = 0.3;
-	public static final double k_linearThresh = 0.1;
+	public static final double k_linearD = 0.02; //1/max linear vel
+	public static final double k_linearThresh = 0.2;
 	
 	public static final double k_angularP = 0.1; //1/max angular vel
 	public static final double k_angularI = 0.0;
-	public static final double k_angularD = 0.0;
-	public static final double k_angularThresh = 1.0;
+	public static final double k_angularD = 0.005;
+	public static final double k_angularThresh = 2.0;
 	
 }

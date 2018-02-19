@@ -1,20 +1,23 @@
 package com.team766.robot.Actors.Drive;
 
 import com.team766.lib.CommandBase;
-import com.team766.lib.Messages.DriveEncoderMessage;
+import com.team766.lib.Messages.DrivePIDMessage;
 
 import lib.Message;
 
-public class DrivePID extends CommandBase{
+public class DrivePIDCommand extends CommandBase{
 	/*
 	 * Drives robot to specified distance and angle using distance and angle PID
 	 */
 	
 	private boolean done;
-	private DriveEncoderMessage message;
+	private DrivePIDMessage message;
 	
-	public DrivePID(Message m){
-		message = (DriveEncoderMessage) m;
+	public DrivePIDCommand(Message m){
+		message = (DrivePIDMessage) m;
+		
+		Drive.resetEncoders();
+		Drive.setGyroAngle(0.0);
 		
 		Drive.distancePID.setSetpoint(message.getDistance());
 		Drive.anglePID.setSetpoint(message.getAngle());
@@ -24,7 +27,7 @@ public class DrivePID extends CommandBase{
 	public void update() {
 		Drive.distancePID.calculate(Drive.averageDistance(), false);
 		Drive.anglePID.calculate(Drive.getGyroAngle(),false);
-		
+
 		Drive.setLeft(Drive.distancePID.getOutput() - Drive.anglePID.getOutput()); //could change + and - not tested
 		Drive.setRight(Drive.distancePID.getOutput() + Drive.anglePID.getOutput());
 		

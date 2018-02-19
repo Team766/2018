@@ -3,6 +3,7 @@ package com.team766.robot.Actors.Drive;
 import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveEncoderMessage;
+import com.team766.lib.Messages.DrivePIDMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.ShifterUpdate;
@@ -42,7 +43,7 @@ public class Drive extends Actor{
 	private double gyroOffset;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class};
+		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class, DrivePIDMessage.class};
 	
 		gyroOffset = Constants.startAngle;
 	}
@@ -54,7 +55,7 @@ public class Drive extends Actor{
 				continue;
 			}
 			
-			System.out.println("DBG: got new message stopping current message!");
+			//System.out.println("DBG: got new message stopping current message!");
 			
 			if (currentMessage instanceof Stop) {
 				stopCurrentCommand("got Stop message");
@@ -78,10 +79,13 @@ public class Drive extends Actor{
 				setLeftShifter(shifterMessage.getHighGear());
 				setRightShifter(shifterMessage.getHighGear());
 			}
+			else if (currentMessage instanceof DrivePIDMessage){
+				swapCurrentCommand(new DrivePIDCommand(currentMessage), "got new drive PID message");
+			}
 		}
 		
 		if (currentCommand != null) {
-			System.out.println("DMDBG: Calling update");
+			//System.out.println("DMDBG: Calling update");
 			currentCommand.update();
 			if(currentCommand.isDone()){ 
 				sendMessage(new Done());
@@ -103,6 +107,7 @@ public class Drive extends Actor{
 	}
 	
 	public void setLeft(double power){
+		//System.out.println("left: " + power);
 		leftDriveA.set(clamp(power));
 		leftDriveB.set(clamp(power));
 	}
@@ -151,7 +156,7 @@ public class Drive extends Actor{
 	}
 	
 	private void swapCurrentCommand(SubActor newCommand, String reason){
-		System.out.println("DMDBG: swapping currentCommand because: " + reason);
+		//System.out.println("DMDBG: swapping currentCommand because: " + reason);
 		if(currentCommand != null){
 			currentCommand.stop();
 		}

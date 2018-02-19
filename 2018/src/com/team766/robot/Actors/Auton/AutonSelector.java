@@ -8,7 +8,7 @@ import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
 import com.team766.robot.Constants.Autons;
 import com.team766.robot.Actors.Auton.DriveStraightTime;
-import com.team766.robot.Actors.Auton.DriveSquareTime;
+import com.team766.robot.Actors.Auton.DriveSquare;
 
 import interfaces.AutonMode;
 import interfaces.SubActor;
@@ -45,13 +45,17 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton: DriveStraightTime");
 			currentMode = new DriveStraightTime(this);
 			break;
-		case DriveSquareTime:
-			System.out.println("Auton: DriveSquareTime");
-			currentMode = new DriveSquareTime(this);
+		case DriveSquare:
+			System.out.println("Auton: DriveSquare");
+			currentMode = new DriveSquare(this);
 			break;
 		case DriveEncoder:
 			System.out.println("Auton: DriveEncoder");
 			currentMode = new DriveEncoder(this);
+			break;
+		case DrivePID:
+			System.out.println("Auton: DrivePID");
+			currentMode = new DrivePID(this);
 			break;
 		}
 	}

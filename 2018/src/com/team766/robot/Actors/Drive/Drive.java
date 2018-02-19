@@ -55,7 +55,7 @@ public class Drive extends Actor{
 				continue;
 			}
 			
-			System.out.println("DBG: got new message stopping current message!");
+			//System.out.println("DBG: got new message stopping current message!");
 			
 			if (currentMessage instanceof Stop) {
 				stopCurrentCommand("got Stop message");
@@ -85,7 +85,7 @@ public class Drive extends Actor{
 		}
 		
 		if (currentCommand != null) {
-			System.out.println("DMDBG: Calling update");
+			//System.out.println("DMDBG: Calling update");
 			currentCommand.update();
 			if(currentCommand.isDone()){ 
 				sendMessage(new Done());
@@ -107,6 +107,7 @@ public class Drive extends Actor{
 	}
 	
 	public void setLeft(double power){
+		//System.out.println("left: " + power);
 		leftDriveA.set(clamp(power));
 		leftDriveB.set(clamp(power));
 	}
@@ -155,7 +156,7 @@ public class Drive extends Actor{
 	}
 	
 	private void swapCurrentCommand(SubActor newCommand, String reason){
-		System.out.println("DMDBG: swapping currentCommand because: " + reason);
+		//System.out.println("DMDBG: swapping currentCommand because: " + reason);
 		if(currentCommand != null){
 			currentCommand.stop();
 		}

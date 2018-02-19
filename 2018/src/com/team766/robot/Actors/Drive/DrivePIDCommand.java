@@ -1,7 +1,7 @@
 package com.team766.robot.Actors.Drive;
 
 import com.team766.lib.CommandBase;
-import com.team766.lib.Messages.DriveEncoderMessage;
+import com.team766.lib.Messages.DrivePIDMessage;
 
 import lib.Message;
 
@@ -11,10 +11,10 @@ public class DrivePIDCommand extends CommandBase{
 	 */
 	
 	private boolean done;
-	private DriveEncoderMessage message;
+	private DrivePIDMessage message;
 	
 	public DrivePIDCommand(Message m){
-		message = (DriveEncoderMessage) m;
+		message = (DrivePIDMessage) m;
 		
 		Drive.resetEncoders();
 		Drive.setGyroAngle(0.0);
@@ -27,7 +27,7 @@ public class DrivePIDCommand extends CommandBase{
 	public void update() {
 		Drive.distancePID.calculate(Drive.averageDistance(), false);
 		Drive.anglePID.calculate(Drive.getGyroAngle(),false);
-		
+
 		Drive.setLeft(Drive.distancePID.getOutput() - Drive.anglePID.getOutput()); //could change + and - not tested
 		Drive.setRight(Drive.distancePID.getOutput() + Drive.anglePID.getOutput());
 		

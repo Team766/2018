@@ -25,7 +25,7 @@ public class DrivePID implements AutonMode{
 		switch(currState){
 			case Start:
 				setState(State.Drive);
-				parent.sendMessage(new DrivePIDMessage(6.0, 0.0));
+				parent.sendMessage(new DrivePIDMessage(0.0, 90.0));
 				break;
 			case Drive:
 				if(commandDone){

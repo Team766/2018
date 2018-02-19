@@ -59,15 +59,6 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPorts("armWrist");
 	}
 	
-	public static int[] getShoulderEncoder(){
-		return ConfigFileReader.getInstance().getPorts("shoulderEncoder");
-	}
-	
-	public static int[] getWristEncoder(){
-		return ConfigFileReader.getInstance().getPorts("wristEncoder");
-	}
-	
-	
 	/*
 	//climber
 	public static int getClimber() {

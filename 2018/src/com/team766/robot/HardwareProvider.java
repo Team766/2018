@@ -68,23 +68,17 @@ public class HardwareProvider {
 	
 	
 	//Arm
-//	public SpeedController getLeftArmShoulder(){
-//		return RobotProvider.instance.getMotor(ConfigFile.getArmShoulder()[0]);
-//	}
+	public CANSpeedController getLeftArmShoulder(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmShoulder()[0]);
+	}
 	public CANSpeedController getRightArmShoulder(){
 		return RobotProvider.instance.getCANMotor(ConfigFile.getArmShoulder()[1]);
 	}
-//	public SpeedController getLeftArmWrist(){
-//		return RobotProvider.instance.getMotor(ConfigFile.getArmWrist()[0]);
-//	}
+	public CANSpeedController getLeftArmWrist(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmWrist()[0]);
+	}
 	public CANSpeedController getRightArmWrist(){
 		return RobotProvider.instance.getCANMotor(ConfigFile.getArmWrist()[1]);
-	}
-	public EncoderReader getShoulderEncoder(){
-		return RobotProvider.instance.getEncoder(ConfigFile.getShoulderEncoder()[0], ConfigFile.getShoulderEncoder()[1]);
-	}
-	public EncoderReader getWristEncoder(){
-		return RobotProvider.instance.getEncoder(ConfigFile.getWristEncoder()[0], ConfigFile.getWristEncoder()[1]);
 	}
 	
 	//Climber

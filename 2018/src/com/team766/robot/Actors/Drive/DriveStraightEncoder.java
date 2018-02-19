@@ -25,7 +25,7 @@ public class DriveStraightEncoder extends CommandBase{
 	}
 	
 	public void update() {
-		
+		/*
 		if(!done){ 
 			System.out.println("left distance: " + Drive.leftDistance());
 			System.out.println("right distance: " + Drive.rightDistance());
@@ -44,6 +44,7 @@ public class DriveStraightEncoder extends CommandBase{
 		}
 		else
 			stop();
+		*/
 	}
 
 	public void stop() {

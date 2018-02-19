@@ -14,34 +14,40 @@ public class ArmStageCommand extends CommandBase{
 	private double targetAngle;
 
 	public ArmStageCommand(Message command) {
-//		this.message = (ArmStageMessage)command;
-//		this.targetHeight = message.getHeight();
-//		done = false;
-//		targetAngle = Arm.getAngleFromHeight(message.getHeight());
-//		Arm.setShoulderSetPoint(targetAngle);
-//		Arm.intakePID.setSetpoint(Arm.getShoulderSetPoint());
+		done = false;
+//		Arm.resetEncoders();
+		
+		this.message = (ArmStageMessage)command;
+		this.targetHeight = message.getHeight();
+		
+		targetAngle = Arm.getAngleFromHeight(targetHeight);
+		Arm.setShoulderSetPoint(targetAngle);
+		Arm.armPID.setSetpoint(Arm.getShoulderSetPoint());
 	}
-//
-//	@Override
+
+	@Override
 	public void update() {
-//		Arm.intakePID.calculate(targetAngle, false);
-//		System.out.println("Angle: " + Arm.getShoulderAngle());
-//		if(!done){
-//			Arm.setShoulderRotation(Arm.intakePID.getOutput());
-//			
-//			if(Arm.intakePID.isDone())
-//				done = true;
-//		}
+		Arm.armPID.calculate(targetAngle, false);
+		System.out.println("this Angle: " + Arm.getShoulderAngle());
+		System.out.println(Arm.armPID.isDone());
+		if(!done){
+			System.out.println("pid not done output: " + Arm.armPID.getOutput());
+			Arm.setShoulder(Arm.armPID.getOutput());
+			if(Arm.armPID.isDone()){
+				done = true;
+			}
+		}
 	}
 
 	@Override
 	public void stop() {
-//		Arm.setArmShoulder(0.0);
+		Arm.setShoulder(0.0);
 	}
 
 	@Override
 	public boolean isDone() {
-		return isDone();
+		stop();
+		return done;
 	}
 
 }

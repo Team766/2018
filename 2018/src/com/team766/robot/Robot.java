@@ -48,8 +48,8 @@ public class Robot implements MyRobot {
 		CommandBase.init();
 		
 		Scheduler.getInstance().add(CommandBase.Drive);
-		Scheduler.getInstance().add(CommandBase.Gripper);
-		//Scheduler.getInstance().add(CommandBase.Arm);
+		Scheduler.getInstance().add(CommandBase.Intake);
+		Scheduler.getInstance().add(CommandBase.Arm);
 		
 		System.out.println("It works!!!");
 		log(Level.INFO, "Robot Starting");
@@ -79,6 +79,7 @@ public class Robot implements MyRobot {
 		Constants.Autons selected_auton = httpServer.getSelectedAutonMode(Constants.Autons.class);
 		
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		/*
 		for(int i = 0; i < 2; i++){
 			boolean right = true;
 			if(gameData.charAt(i) == 'L'){
@@ -90,7 +91,7 @@ public class Robot implements MyRobot {
 			}
 			Constants.scale_side = right ? 1 : -1;
 		}
-			
+		*/
 		
 		Scheduler.getInstance().add(new AutonSelector(selected_auton));
 	}

@@ -4,12 +4,13 @@ import com.team766.lib.Messages.ArmSimpleMessage;
 import com.team766.lib.Messages.ClimberUpdate;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveUpdate;
-import com.team766.lib.Messages.GripperMotorUpdate;
+import com.team766.lib.Messages.IntakeMotorUpdate;
+import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.robot.Buttons;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
-import com.team766.robot.Actors.Gripper.Gripper;
+import com.team766.robot.Actors.Intake.Intake;
 
 import interfaces.JoystickReader;
 import lib.Actor;
@@ -50,6 +51,9 @@ public class OperatorControl extends Actor{
 		double leftPower = 0.0;
 		double rightPower = 0.0;
 		
+		double shoulderPower = 0.0;
+		double wristPower = 0.0;
+		
 		//calculating motor power based on the drive mode
 		if(Constants.driveType == Constants.Drives.TankDrive){			
 			leftPower = leftAxis[1];
@@ -63,16 +67,28 @@ public class OperatorControl extends Actor{
 			leftPower = leftAxis[1] - rightAxis[0];
 			rightPower = leftAxis[1] + rightAxis[0];
 		}
+		else if(Constants.driveType == Constants.Drives.Arm){
+			shoulderPower = leftAxis[1];
+			//wristPower = rightAxis[1];
+		}
+		
+		if(previousLeftPower != shoulderPower || previousRightPower != wristPower){
+			sendMessage(new ArmSimpleMessage(shoulderPower, 0.0));
+			previousLeftPower = shoulderPower;
+			//previousRightPower = wristPower;
+		}
 		
 		
 		//sending calculated motor power (DriveDoubleSideUpdate)
-		if(previousLeftPower != leftPower || previousRightPower != rightPower){
+		//if(previousLeftPower != leftPower || previousRightPower != rightPower){
+			/*
 			sendMessage(new DriveDoubleSideUpdate(leftPower, rightPower));
 			previousLeftPower = leftPower;
 			previousRightPower = rightPower;
 			System.out.println("left power = " + leftPower);
 			System.out.println("right power = " + rightPower);
-		}
+			*/
+		//}
 		
 		
 		//System.out.println("left = " + leftPower + "\t\tright = " + rightPower);
@@ -94,14 +110,14 @@ public class OperatorControl extends Actor{
 		//button for intake block (prevPress[5])
 		if(!prevPress[5] && jBox.getRawButton(Buttons.intakeBlock)){
 			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
-			sendMessage(new GripperMotorUpdate(Constants.gripperMotorSpeed));
+			sendMessage(new IntakeMotorUpdate(Constants.intakeMotorSpeed));
 		}
 		prevPress[5] = jBox.getRawButton(Buttons.intakeBlock);
 		
 		//button for stop gripper motors (prevPress[4])
 		if(!prevPress[4] && jBox.getRawButton(Buttons.stopGripperMotor)){
 			System.out.println("button 4(stopping): " + jBox.getRawButton(Buttons.stopGripperMotor));
-			sendMessage(new GripperMotorUpdate(0.0));
+			sendMessage(new IntakeMotorUpdate(0.0));
 		}
 		prevPress[4] = jBox.getRawButton(Buttons.stopGripperMotor);
 		
@@ -141,12 +157,11 @@ public class OperatorControl extends Actor{
 			prevPress[11] = jLeft.getRawButton(Buttons.moveWristBackward);
 		}
 		
-		//button for stop gripper(prevPress[12])
+		//button for stop arm(prevPress[12])
 		if(!prevPress[12] && jLeft.getRawButton(Buttons.stopArm)){
 			sendMessage(new ArmSimpleMessage(0, 0));
 			prevPress[12] = jLeft.getRawButton(Buttons.stopArm);
 		}
-		
 		
 	}
 

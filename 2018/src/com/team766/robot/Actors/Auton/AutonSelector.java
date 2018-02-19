@@ -2,10 +2,13 @@ package com.team766.robot.Actors.Auton;
 
 import lib.Actor;
 
+import com.team766.lib.Messages.ArmStageMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
 import com.team766.robot.Constants;
 import com.team766.robot.Constants.Autons;
+
+import interfaces.SubActor;
 
 public class AutonSelector extends Actor{
 
@@ -47,6 +50,9 @@ public class AutonSelector extends Actor{
 				}
 				sendMessage(new DriveTimeMessage(2.0, 0.2, false));
 				break;
+			case ArmPID:
+				System.out.println("Auton: ArmPID");
+				sendMessage(new ArmStageMessage(3.0));
 		}
 		done = true;
 	}

@@ -5,6 +5,7 @@ import lib.Actor;
 import com.team766.lib.Messages.ArmStageMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
+import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.robot.Constants;
 import com.team766.robot.Constants.Autons;
 
@@ -52,7 +53,8 @@ public class AutonSelector extends Actor{
 				break;
 			case ArmPID:
 				System.out.println("Auton: ArmPID");
-				sendMessage(new ArmStageMessage(3.0));
+				sendMessage(new ShoulderPIDMessage(true));
+				break;
 		}
 		done = true;
 	}

@@ -1,6 +1,7 @@
 package com.team766.robot.Actors.Auton;
 
 import com.team766.lib.Messages.ArmStageMessage;
+import com.team766.lib.Messages.ShoulderPIDMessage;
 
 import interfaces.AutonMode;
 
@@ -27,7 +28,7 @@ public class ArmPID implements AutonMode{
 		switch (currState){
 			case Start:
 				setState(State.ArmMovement);
-				parent.sendMessage(new ArmStageMessage(3.0)); //3 feet
+				parent.sendMessage(new ShoulderPIDMessage(true)); //3 feet
 				break;
 			case ArmMovement:
 				if(commandDone){
@@ -35,6 +36,7 @@ public class ArmPID implements AutonMode{
 				}
 				break;
 			case Done:
+				//parent.setDone(true);
 				break;
 		}
 	}

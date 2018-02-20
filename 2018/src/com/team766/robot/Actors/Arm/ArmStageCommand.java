@@ -15,25 +15,25 @@ public class ArmStageCommand extends CommandBase{
 
 	public ArmStageCommand(Message command) {
 		done = false;
-//		Arm.resetEncoders();
+		Arm.setShoulderEncoders(0);
 		
 		this.message = (ArmStageMessage)command;
 		this.targetHeight = message.getHeight();
 		
 		targetAngle = Arm.getAngleFromHeight(targetHeight);
 		Arm.setShoulderSetPoint(targetAngle);
-		Arm.armPID.setSetpoint(Arm.getShoulderSetPoint());
+		Arm.shoulderUpPID.setSetpoint(Arm.getShoulderSetPoint());
 	}
 
 	@Override
 	public void update() {
-		Arm.armPID.calculate(targetAngle, false);
+		Arm.shoulderUpPID.calculate(targetAngle, false);
 		System.out.println("this Angle: " + Arm.getShoulderAngle());
-		System.out.println(Arm.armPID.isDone());
+		System.out.println(Arm.shoulderUpPID.isDone());
 		if(!done){
-			System.out.println("pid not done output: " + Arm.armPID.getOutput());
-			Arm.setShoulder(Arm.armPID.getOutput());
-			if(Arm.armPID.isDone()){
+			System.out.println("pid not done output: " + Arm.shoulderUpPID.getOutput());
+			Arm.setShoulder(Arm.shoulderUpPID.getOutput());
+			if(Arm.shoulderUpPID.isDone()){
 				done = true;
 			}
 		}

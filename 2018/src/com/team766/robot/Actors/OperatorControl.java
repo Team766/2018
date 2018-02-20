@@ -69,13 +69,13 @@ public class OperatorControl extends Actor{
 		}
 		else if(Constants.driveType == Constants.Drives.Arm){
 			shoulderPower = leftAxis[1];
-			//wristPower = rightAxis[1];
+			wristPower = rightAxis[1];
 		}
 		
 		if(previousLeftPower != shoulderPower || previousRightPower != wristPower){
-			sendMessage(new ArmSimpleMessage(shoulderPower, 0.0));
+			sendMessage(new ArmSimpleMessage(shoulderPower, wristPower));
 			previousLeftPower = shoulderPower;
-			//previousRightPower = wristPower;
+			previousRightPower = wristPower;
 		}
 		
 		

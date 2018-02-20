@@ -45,9 +45,6 @@ public class OperatorControl extends Actor{
 		setAxis(jRight, rightAxis, 0, Constants.rightAxisDeadband);
 		setAxis(jRight, rightAxis, 1, Constants.rightAxisDeadband);
 		
-		//System.out.println("leftJoy: " + jLeft.getRawAxis(1));
-		//System.out.println("rightJoy: " + jRight.getRawAxis(1));
-		
 		double leftPower = 0.0;
 		double rightPower = 0.0;
 		
@@ -70,28 +67,26 @@ public class OperatorControl extends Actor{
 		else if(Constants.driveType == Constants.Drives.Arm){
 			shoulderPower = leftAxis[1];
 			wristPower = rightAxis[1];
-		}
-		
-		if(previousLeftPower != shoulderPower || previousRightPower != wristPower){
+			
+			if(previousLeftPower != shoulderPower || previousRightPower != wristPower){
 			sendMessage(new ArmSimpleMessage(shoulderPower, wristPower));
 			previousLeftPower = shoulderPower;
 			previousRightPower = wristPower;
+			}
 		}
 		
 		
-		//sending calculated motor power (DriveDoubleSideUpdate)
-		//if(previousLeftPower != leftPower || previousRightPower != rightPower){
-			/*
-			sendMessage(new DriveDoubleSideUpdate(leftPower, rightPower));
-			previousLeftPower = leftPower;
-			previousRightPower = rightPower;
-			System.out.println("left power = " + leftPower);
-			System.out.println("right power = " + rightPower);
-			*/
-		//}
+		if(Constants.driveType != Constants.Drives.Arm){
+			if(previousLeftPower != leftPower || previousRightPower != rightPower){
+				sendMessage(new DriveDoubleSideUpdate(leftPower, rightPower));
+				previousLeftPower = leftPower;
+				previousRightPower = rightPower;
+				//System.out.println("left power = " + leftPower);
+				//System.out.println("right power = " + rightPower);
+			
+			}
+		}
 		
-		
-		//System.out.println("left = " + leftPower + "\t\tright = " + rightPower);
 		
 		//button for open gripper(prevPress[0])
 		if(!prevPress[0] && jBox.getRawButton(Buttons.openGripper)){

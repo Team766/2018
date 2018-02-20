@@ -41,17 +41,19 @@ public class ShoulderPIDCommand extends CommandBase{
 		switch (currentState){
 			case Up:
 				Arm.shoulderUpPID.calculate(Arm.getAveShoulderEncoder(), false);
-				//Arm.setShoulder(Constants.shoulderUpPIDScale * Arm.shoulderPID.getOutput());
-				System.out.println("shoulder: " + Constants.shoulderUpPIDScale * Arm.shoulderUpPID.getOutput());
+				Arm.setShoulder(Constants.shoulderUpPIDScale * Arm.shoulderUpPID.getOutput() + Constants.shoulderUpFeedForward * Math.cos(Arm.getShoulderAngleRad(Arm.getAveShoulderEncoder()))); //radians
 				if(Arm.shoulderUpPID.isDone()){
 					switchState(State.StayVertical);
 				}
 				break;
 			case StayVertical:
 				Arm.shoulderBalancePID.calculate(Arm.getAveShoulderEncoder(), false);
+				Arm.setShoulderBalance(Constants.shoulderBalancePIDScale * Arm.shoulderBalancePID.getOutput());
+				if(Arm.getAveShoulderEncoder() < Constants.armShoulderVertical - Constants.k_shoulderUpThresh){
+					switchState(State.Up);
+				}
 				break;
 			case Down:
-				//pid calc with different p value so need to make second arm pid? -- can just let fall if adding those piston spring things 
 				if(Arm.shoulderUpPID.isDone()){
 					switchState(State.Stop);
 				}

@@ -58,7 +58,7 @@ public class Arm extends Actor {
 				currentCommand = null;
 				ArmSimpleMessage armMessage = (ArmSimpleMessage)currentMessage;
 				if(getAveShoulderEncoder() < Constants.armShoulderVertical){
-					//no need to negate shoulder on mule see note vv
+					//no need to negate shoulder on mule see note
 					setShoulder(armMessage.getShoulderSpeed());
 				}else{
 					leftShoulder.stopMotor();
@@ -66,7 +66,6 @@ public class Arm extends Actor {
 				}
 				
 				if(getAveWristEncoder() < Constants.armWristLimit){
-					//joystick forward = up?
 					setWrist(armMessage.getWristSpeed());
 				}else{
 					leftWrist.stopMotor();
@@ -85,23 +84,26 @@ public class Arm extends Actor {
 		if (currentCommand != null) {
 			currentCommand.update();
 		}
-		//System.out.println("left shoulder = " + getLeftShoulderEncoder() + "\t\t right shoulder = " + getRightShoulderEncoder());
-		//System.out.println("\tleft wrist = " + getLeftWristEncoder() + "\t\t right wrist = " + getRightWristEncoder());
 	}
 	
 	//mule: one shoulder motor is cross wired so they spin the same way, no need to negate one side
 	public void setLeftShoulder(double power){
-		leftShoulder.set(ControlMode.PercentOutput, clamp(power, Constants.shoulderPowerLimit));
+		leftShoulder.set(ControlMode.PercentOutput, clamp(power, Constants.shoulderUpPowerLimit));
 	}
 	
 	//PercentOutput is the mode for setting speed
 	public void setRightShoulder(double power){
-		rightShoulder.set(ControlMode.PercentOutput, clamp(power, Constants.shoulderPowerLimit));
+		rightShoulder.set(ControlMode.PercentOutput, clamp(power, Constants.shoulderUpPowerLimit));
 	}
 	
 	public void setShoulder(double power){
 		setLeftShoulder(power);
 		setRightShoulder(power);
+	}
+	
+	public void setShoulderBalance(double power){
+		setLeftShoulder(clamp(power, Constants.shoulderBalancePowerLimit));
+		setRightShoulder(clamp(power, Constants.shoulderBalancePowerLimit));
 	}
 	
 	public void setLeftWrist(double power){
@@ -180,6 +182,10 @@ public class Arm extends Actor {
 	public double clamp(double value, double limit){
 		limit = Math.abs(limit);
 		return Math.max(Math.min(value, limit), -limit);
+	}
+	
+	public double getShoulderAngleRad(double encoder){
+		return 0.5 * Math.PI * getAveShoulderEncoder() / Constants.armShoulderVertical;
 	}
 
 }

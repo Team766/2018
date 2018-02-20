@@ -3,6 +3,10 @@ package com.team766.robot.Actors.Auton;
 import lib.Actor;
 import lib.Message;
 
+import com.team766.lib.Messages.ArmStageMessage;
+import com.team766.lib.Messages.DriveTimeMessage;
+import com.team766.lib.Messages.DriveUpdate;
+import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
@@ -56,6 +60,10 @@ public class AutonSelector extends Actor{
 		case DrivePID:
 			System.out.println("Auton: DrivePID");
 			currentMode = new DrivePID(this);
+			break;
+		case ArmPID:
+			System.out.println("Auton: ArmPID");
+			currentMode = new ArmPID(this);
 			break;
 		}
 	}

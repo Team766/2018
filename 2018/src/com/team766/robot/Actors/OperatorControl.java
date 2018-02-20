@@ -1,16 +1,18 @@
 package com.team766.robot.Actors;
 
+import com.team766.lib.Messages.ArmSimpleMessage;
 import com.team766.lib.Messages.ClimberUpdate;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveUpdate;
-//import com.team766.lib.Messages.GripperMotorUpdate;
+import com.team766.lib.Messages.IntakeMotorUpdate;
+import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.robot.Buttons;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
+import com.team766.robot.Actors.Intake.Intake;
 import com.team766.robot.Actors.Drive.Drive;
-import com.team766.robot.Actors.Gripper.Gripper;
 
 import interfaces.JoystickReader;
 import lib.Actor;
@@ -25,7 +27,7 @@ public class OperatorControl extends Actor{
 	
 	private double[] leftJoystick = new double[4];
 	private double[] rightJoystick = new double[4];
-	private boolean[] prevPress = new boolean[10];
+	private boolean[] prevPress = new boolean[14];
 	private boolean shifterStatus = false;
 	
 	private void setAxis(JoystickReader joystick, double[] axis, int axisNumber, double deadband){
@@ -46,24 +48,25 @@ public class OperatorControl extends Actor{
 		setAxis(jRight, rightJoystick, 0, Constants.rightAxisDeadband);
 		setAxis(jRight, rightJoystick, 1, Constants.rightAxisDeadband);
 		
-		//System.out.println("leftJoy: " + jLeft.getRawAxis(1));
-		//System.out.println("rightJoy: " + jRight.getRawAxis(1));
+		double leftPower = 0.0;
+		double rightPower = 0.0;
+		
+		double shoulderPower = 0.0;
+		double wristPower = 0.0;
 		
 		// normalize the input we are getting from the joysticks so that it is 
 		// easy to adapt to new joysticks
 		double scaleLR = 1.0;
 		double scaleFB = -1.0;
 
-		double leftJoystickLR = leftJoystick[0]* scaleLR;
-		double leftJoystickFB = leftJoystick[1]* scaleFB;
+		double leftJoystickLR = leftJoystick[0] * scaleLR;
+		double leftJoystickFB = leftJoystick[1] * scaleFB;
 		
-		double rightJoystickLR = rightJoystick[0]* scaleLR;
-		double rightJoystickFB = rightJoystick[1]* scaleFB;
+		double rightJoystickLR = rightJoystick[0] * scaleLR;
+		double rightJoystickFB = rightJoystick[1] * scaleFB;
 		
 		// Now that we have the normalized inputs, let's
 		// calculate motor power based on the drive mode
-		double leftPower = 0.0;
-		double rightPower = 0.0;
 		
 		if(Constants.driveType == Constants.Drives.TankDrive){			
 			leftPower = leftJoystickFB;
@@ -73,48 +76,47 @@ public class OperatorControl extends Actor{
 			leftPower = leftJoystickFB + leftJoystickLR;
 			rightPower = leftJoystickFB - leftJoystickLR;
 		}
-		
-		
-		//sending calculated motor power (DriveDoubleSideUpdate)
-		if(previousLeftPower != leftPower || previousRightPower != rightPower){
-			sendMessage(new DriveDoubleSideUpdate(leftPower, rightPower));
-			previousLeftPower = leftPower;
-			previousRightPower = rightPower;
-			System.out.println("left power = " + leftPower);
-			System.out.println("right power = " + rightPower);
+		else if(Constants.driveType == Constants.Drives.CheesyDrive){
+			leftPower = rightJoystickFB - leftJoystickLR;
+			rightPower = rightJoystickFB + leftJoystickLR;
+		}
+		else if(Constants.driveType == Constants.Drives.Arm){
+			shoulderPower = leftJoystickFB;
+			wristPower = rightJoystickFB;
+			
+			if(previousLeftPower != shoulderPower || previousRightPower != wristPower){
+				sendMessage(new ArmSimpleMessage(shoulderPower, wristPower));
+				previousLeftPower = shoulderPower;
+				previousRightPower = wristPower;
+			}
+			leftPower = leftJoystickFB + leftJoystickLR;
+			rightPower = leftJoystickFB - leftJoystickLR;
 		}
 		
 		
-		//System.out.println("left = " + leftPower + "\t\tright = " + rightPower);
-//		
-//		//button for open gripper(prevPress[0])
-//		if(!prevPress[0] && jBox.getRawButton(Buttons.openGripper)){
-//			System.out.println("button 1: " + jBox.getRawButton(Buttons.openGripper));
-//			sendMessage(new GripperUpdate(false));
-//		}
-//		prevPress[0] = jBox.getRawButton(Buttons.openGripper);
-//		
-//		//button for close gripper(prevPress[1])
-//		if(!prevPress[1] && jBox.getRawButton(Buttons.closeGripper)){
-//			System.out.println("button 2: " + jBox.getRawButton(Buttons.closeGripper));
-//			sendMessage(new GripperUpdate(true));
-//		}
-//		prevPress[1] = jBox.getRawButton(Buttons.closeGripper);
-//		
-//		//button for intake block (prevPress[5])
-//		if(!prevPress[5] && jBox.getRawButton(Buttons.intakeBlock)){
-//			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
-//			sendMessage(new GripperMotorUpdate(Constants.gripperMotorSpeed));
-//		}
-//		prevPress[5] = jBox.getRawButton(Buttons.intakeBlock);
-//		
-//		//button for stop gripper motors (prevPress[4])
-//		if(!prevPress[4] && jBox.getRawButton(Buttons.stopGripperMotor)){
-//			System.out.println("button 4(stopping): " + jBox.getRawButton(Buttons.stopGripperMotor));
-//			sendMessage(new GripperMotorUpdate(0.0));
-//		}
-//		prevPress[4] = jBox.getRawButton(Buttons.stopGripperMotor);
-//		
+		if(Constants.driveType != Constants.Drives.Arm){
+			if(previousLeftPower != leftPower || previousRightPower != rightPower){
+				sendMessage(new DriveDoubleSideUpdate(leftPower, rightPower));
+				previousLeftPower = leftPower;
+				previousRightPower = rightPower;
+			}
+		}
+		
+		
+		//button for open gripper(prevPress[0])
+		if(!prevPress[0] && jBox.getRawButton(Buttons.openGripper)){
+			System.out.println("button 1: " + jBox.getRawButton(Buttons.openGripper));
+			sendMessage(new GripperUpdate(false));
+		}
+		prevPress[0] = jBox.getRawButton(Buttons.openGripper);
+		
+		//button for close gripper(prevPress[1])
+		if(!prevPress[1] && jBox.getRawButton(Buttons.closeGripper)){
+			System.out.println("button 2: " + jBox.getRawButton(Buttons.closeGripper));
+			sendMessage(new GripperUpdate(true));
+		}
+		prevPress[1] = jBox.getRawButton(Buttons.closeGripper);
+		
 		//button for climb down (prevPress[2]) 
 		if(!prevPress[2] && jBox.getRawButton(Buttons.climbDown)) {
 			sendMessage(new ClimberUpdate(false));
@@ -127,13 +129,57 @@ public class OperatorControl extends Actor{
 			prevPress[3] = jBox.getRawButton(Buttons.climbUp);
 		}
 		
+		//button for stop gripper motors (prevPress[4])
+		if(!prevPress[4] && jBox.getRawButton(Buttons.stopGripperMotor)){
+			System.out.println("button 4(stopping): " + jBox.getRawButton(Buttons.stopGripperMotor));
+			sendMessage(new IntakeMotorUpdate(0.0));
+		}
+		prevPress[4] = jBox.getRawButton(Buttons.stopGripperMotor);
+		
+		//button for intake block (prevPress[5])
+		if(!prevPress[5] && jBox.getRawButton(Buttons.intakeBlock)){
+			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
+			sendMessage(new IntakeMotorUpdate(Constants.intakeMotorSpeed));
+		}
+		prevPress[5] = jBox.getRawButton(Buttons.intakeBlock);
+		
 		//Shifter button
 		if (!prevPress[7] && jBox.getRawButton(Buttons.shiftGear)){
 			shifterStatus = !shifterStatus;
 			sendMessage(new ShifterUpdate(shifterStatus));
-			System.out.println("Button 8 is pressed");
+			System.out.println("Button 7 is pressed");
 		}
 		prevPress[7] = jBox.getRawButton(Buttons.shiftGear);
+		
+		//button for move arm shoulder forward(prevPress[8])
+		if(!prevPress[8] && jLeft.getRawButton(Buttons.moveShoulderForward)){
+			sendMessage(new ArmSimpleMessage(0.05, 0));
+			prevPress[8] = jLeft.getRawButton(Buttons.moveShoulderForward);
+		}
+		
+		//button for move arm backward(prevPress[9])
+		if(!prevPress[9] && jLeft.getRawButton(Buttons.moveShoulderBackward)){
+			sendMessage(new ArmSimpleMessage(-0.05, 0));
+			prevPress[9] = jLeft.getRawButton(Buttons.moveShoulderBackward);
+		}
+		
+		//Button for move wrist forward(prevPress[10])
+		if(!prevPress[10] && jLeft.getRawButton(Buttons.moveWristForward)){
+			sendMessage(new ArmSimpleMessage(0, 0.05));
+			prevPress[10] = jLeft.getRawButton(Buttons.moveWristForward);
+		}
+		
+		//button for move wrist backward(prevPress[11])
+		if(!prevPress[11] && jLeft.getRawButton(Buttons.moveWristBackward)){
+			sendMessage(new ArmSimpleMessage(0, -0.05));
+			prevPress[11] = jLeft.getRawButton(Buttons.moveWristBackward);
+		}
+		
+		//button for stop arm(prevPress[12])
+		if(!prevPress[12] && jLeft.getRawButton(Buttons.stopArm)){
+			sendMessage(new ArmSimpleMessage(0, 0));
+			prevPress[12] = jLeft.getRawButton(Buttons.stopArm);
+		}
 	}
 
 	@Override

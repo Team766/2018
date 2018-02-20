@@ -1,4 +1,4 @@
-package com.team766.robot.Actors.Climb;
+package com.team766.robot.Actors.Climber;
 
 import com.team766.lib.Messages.ClimberUpdate;
 import com.team766.robot.HardwareProvider;

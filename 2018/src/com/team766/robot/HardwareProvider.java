@@ -2,6 +2,7 @@ package com.team766.robot;
 
 import com.team766.lib.ConfigFile;
 
+import interfaces.CANSpeedController;
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
 import interfaces.JoystickReader;
@@ -50,16 +51,13 @@ public class HardwareProvider {
 	public SolenoidController getGripper(){
 		return RobotProvider.instance.getSolenoid(ConfigFile.getGripper());
 	}
-	
-	/*
 	public SpeedController getGripperMotorA(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorA());
 	}
 	public SpeedController getGripperMotorB(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorB());
 	}
-	*/
-	
+
 	//Joysticks
 	public JoystickReader getLeftJoy() {
 		return RobotProvider.instance.getJoystick(ConfigFile.getLeftJoy());
@@ -71,12 +69,26 @@ public class HardwareProvider {
 		return RobotProvider.instance.getJoystick(ConfigFile.getButtonJoy());
 	}
 	
+	
+	//Arm
+	public CANSpeedController getLeftArmShoulder(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmShoulder()[0]);
+	}
+	public CANSpeedController getRightArmShoulder(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmShoulder()[1]);
+	}
+	public CANSpeedController getLeftArmWrist(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmWrist()[0]);
+	}
+	public CANSpeedController getRightArmWrist(){
+		return RobotProvider.instance.getCANMotor(ConfigFile.getArmWrist()[1]);
+	}
+	
 	//Climber
-	/*
 	public SpeedController getClimber() {
 		return RobotProvider.instance.getMotor(ConfigFile.getClimber());
 	}
-	*/
+	
 	
 	//Shifter
 	public SolenoidController getRightShifter(){

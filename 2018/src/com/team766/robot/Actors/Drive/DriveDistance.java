@@ -38,12 +38,12 @@ public class DriveDistance extends CommandBase{
 		double linearError = targetDist - Drive.averageDistance();
 		double surge_v = linearError * linearP;
 		
-		if(Math.abs(angleError) < Constants.angleThreshold){
+		if(Math.abs(angleError) < Constants.driveAngleThreshold){
 			yaw_v = 0.0;
 			angleDone = true;
 		}
 		
-		if(Math.abs(linearError) < Constants.driveThreshold){
+		if(Math.abs(linearError) < Constants.driveEncoderThreshold){
 			surge_v = 0.0;
 			linearDone = true;
 		}
@@ -51,12 +51,6 @@ public class DriveDistance extends CommandBase{
 		Drive.twist(surge_v, yaw_v);
 
 		done = done || (angleDone && linearDone);
-		
-		System.out.println("DBG: target distance = " + targetDist + "\n current distance = " + Drive.averageDistance());
-		System.out.println("DBG: angle done = " + (angleDone ? "TRUE" : "FALSE"));
-		System.out.println("DBG: linear done = " + (linearDone ? "TRUE" : "FALSE"));
-		System.out.println("DBG: done = " + (done ? "TRUE" : "FALSE"));
-		
 	}
 
 	public void stop() {

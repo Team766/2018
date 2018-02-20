@@ -188,7 +188,7 @@ public class Drive extends Actor{
 	}
 	
 	private double clamp(double power){
-		double clampedLimit = Math.max(Math.min(Constants.powerLimit, 1), -1);
+		double clampedLimit = Math.max(Math.min(Constants.drivePowerLimit, 1), -1);
 		
 		power = Math.min(power, clampedLimit);
 		power = Math.max(power, -clampedLimit);

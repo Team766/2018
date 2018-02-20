@@ -4,6 +4,7 @@ import com.team766.lib.ConfigFile;
 
 import interfaces.CANSpeedController;
 import interfaces.EncoderReader;
+import interfaces.GyroReader;
 import interfaces.JoystickReader;
 import interfaces.RobotProvider;
 import interfaces.SolenoidController;
@@ -34,13 +35,16 @@ public class HardwareProvider {
 		return RobotProvider.instance.getMotor(ConfigFile.getRightMotor()[1]);
 	}
 	
+	public GyroReader getGyro(){
+		return RobotProvider.instance.getGyro(ConfigFile.getGyro());
+	}
 	
-//	public EncoderReader getLeftEncoder(){
-//		return RobotProvider.instance.getEncoder(ConfigFile.getLeftEncoder()[0], ConfigFile.getLeftEncoder()[1]);
-//	}
-//	public EncoderReader getRightEncoder(){
-//		return RobotProvider.instance.getEncoder(ConfigFile.getRightEncoder()[0], ConfigFile.getRightEncoder()[1]);
-//	}
+	public EncoderReader getLeftEncoder(){
+		return RobotProvider.instance.getEncoder(ConfigFile.getLeftEncoder()[0], ConfigFile.getLeftEncoder()[1]);
+	}
+	public EncoderReader getRightEncoder(){
+		return RobotProvider.instance.getEncoder(ConfigFile.getRightEncoder()[0], ConfigFile.getRightEncoder()[1]);
+	}
 
 	
 	//Gripper
@@ -53,8 +57,7 @@ public class HardwareProvider {
 	public SpeedController getGripperMotorB(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorB());
 	}
-	
-	
+
 	//Joysticks
 	public JoystickReader getLeftJoy() {
 		return RobotProvider.instance.getJoystick(ConfigFile.getLeftJoy());
@@ -82,9 +85,16 @@ public class HardwareProvider {
 	}
 	
 	//Climber
-	/*
 	public SpeedController getClimber() {
 		return RobotProvider.instance.getMotor(ConfigFile.getClimber());
 	}
-	*/
+	
+	
+	//Shifter
+	public SolenoidController getRightShifter(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getRightShifter());
+	}
+	public SolenoidController getLeftShifter(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getLeftShifter());
+	}
 }

@@ -18,5 +18,8 @@ public class Buttons {
 	public static final int moveWristForward = 3;
 	public static final int moveWristBackward = 4;
 	public static final int stopArm = 5;
+
+	//shifter
+	public static final int shiftGear = 8;
 	
 }

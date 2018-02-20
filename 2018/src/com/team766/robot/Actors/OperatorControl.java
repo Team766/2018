@@ -7,10 +7,12 @@ import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.IntakeMotorUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.GripperUpdate;
+import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.robot.Buttons;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 import com.team766.robot.Actors.Intake.Intake;
+import com.team766.robot.Actors.Drive.Drive;
 
 import interfaces.JoystickReader;
 import lib.Actor;
@@ -23,9 +25,10 @@ public class OperatorControl extends Actor{
 	
 	private double previousLeftPower, previousRightPower, previousHeading;
 	
-	private double[] leftAxis = new double[4];
-	private double[] rightAxis = new double[4];
+	private double[] leftJoystick = new double[4];
+	private double[] rightJoystick = new double[4];
 	private boolean[] prevPress = new boolean[14];
+	private boolean shifterStatus = false;
 	
 	private void setAxis(JoystickReader joystick, double[] axis, int axisNumber, double deadband){
 		axis[axisNumber] = (Math.abs(joystick.getRawAxis(axisNumber)) > deadband)? joystick.getRawAxis(axisNumber) : 0.0;
@@ -39,11 +42,11 @@ public class OperatorControl extends Actor{
 		 * 1 axis F/B
 		 */
 		
-		setAxis(jLeft, leftAxis, 0, Constants.leftAxisDeadband);
-		setAxis(jLeft, leftAxis, 1, Constants.leftAxisDeadband);
+		setAxis(jLeft, leftJoystick, 0, Constants.leftAxisDeadband);
+		setAxis(jLeft, leftJoystick, 1, Constants.leftAxisDeadband);
 		
-		setAxis(jRight, rightAxis, 0, Constants.rightAxisDeadband);
-		setAxis(jRight, rightAxis, 1, Constants.rightAxisDeadband);
+		setAxis(jRight, rightJoystick, 0, Constants.rightAxisDeadband);
+		setAxis(jRight, rightJoystick, 1, Constants.rightAxisDeadband);
 		
 		double leftPower = 0.0;
 		double rightPower = 0.0;
@@ -51,28 +54,43 @@ public class OperatorControl extends Actor{
 		double shoulderPower = 0.0;
 		double wristPower = 0.0;
 		
-		//calculating motor power based on the drive mode
+		// normalize the input we are getting from the joysticks so that it is 
+		// easy to adapt to new joysticks
+		double scaleLR = 1.0;
+		double scaleFB = -1.0;
+
+		double leftJoystickLR = leftJoystick[0] * scaleLR;
+		double leftJoystickFB = leftJoystick[1] * scaleFB;
+		
+		double rightJoystickLR = rightJoystick[0] * scaleLR;
+		double rightJoystickFB = rightJoystick[1] * scaleFB;
+		
+		// Now that we have the normalized inputs, let's
+		// calculate motor power based on the drive mode
+		
 		if(Constants.driveType == Constants.Drives.TankDrive){			
-			leftPower = leftAxis[1];
-			rightPower = rightAxis[1];
+			leftPower = leftJoystickFB;
+			rightPower = rightJoystickFB;
 		}
 		else if(Constants.driveType == Constants.Drives.SingleStick){
-			leftPower = leftAxis[1] - leftAxis[0];
-			rightPower = leftAxis[1] + leftAxis[0];
+			leftPower = leftJoystickFB + leftJoystickLR;
+			rightPower = leftJoystickFB - leftJoystickLR;
 		}
 		else if(Constants.driveType == Constants.Drives.CheesyDrive){
-			leftPower = leftAxis[1] - rightAxis[0];
-			rightPower = leftAxis[1] + rightAxis[0];
+			leftPower = rightJoystickFB - leftJoystickLR;
+			rightPower = rightJoystickFB + leftJoystickLR;
 		}
 		else if(Constants.driveType == Constants.Drives.Arm){
-			shoulderPower = leftAxis[1];
-			wristPower = rightAxis[1];
+			shoulderPower = leftJoystickFB;
+			wristPower = rightJoystickFB;
 			
 			if(previousLeftPower != shoulderPower || previousRightPower != wristPower){
-			sendMessage(new ArmSimpleMessage(shoulderPower, wristPower));
-			previousLeftPower = shoulderPower;
-			previousRightPower = wristPower;
+				sendMessage(new ArmSimpleMessage(shoulderPower, wristPower));
+				previousLeftPower = shoulderPower;
+				previousRightPower = wristPower;
 			}
+			leftPower = leftJoystickFB + leftJoystickLR;
+			rightPower = leftJoystickFB - leftJoystickLR;
 		}
 		
 		
@@ -81,9 +99,6 @@ public class OperatorControl extends Actor{
 				sendMessage(new DriveDoubleSideUpdate(leftPower, rightPower));
 				previousLeftPower = leftPower;
 				previousRightPower = rightPower;
-				//System.out.println("left power = " + leftPower);
-				//System.out.println("right power = " + rightPower);
-			
 			}
 		}
 		
@@ -102,20 +117,6 @@ public class OperatorControl extends Actor{
 		}
 		prevPress[1] = jBox.getRawButton(Buttons.closeGripper);
 		
-		//button for intake block (prevPress[5])
-		if(!prevPress[5] && jBox.getRawButton(Buttons.intakeBlock)){
-			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
-			sendMessage(new IntakeMotorUpdate(Constants.intakeMotorSpeed));
-		}
-		prevPress[5] = jBox.getRawButton(Buttons.intakeBlock);
-		
-		//button for stop gripper motors (prevPress[4])
-		if(!prevPress[4] && jBox.getRawButton(Buttons.stopGripperMotor)){
-			System.out.println("button 4(stopping): " + jBox.getRawButton(Buttons.stopGripperMotor));
-			sendMessage(new IntakeMotorUpdate(0.0));
-		}
-		prevPress[4] = jBox.getRawButton(Buttons.stopGripperMotor);
-		
 		//button for climb down (prevPress[2]) 
 		if(!prevPress[2] && jBox.getRawButton(Buttons.climbDown)) {
 			sendMessage(new ClimberUpdate(false));
@@ -127,6 +128,28 @@ public class OperatorControl extends Actor{
 			sendMessage(new ClimberUpdate(true));
 			prevPress[3] = jBox.getRawButton(Buttons.climbUp);
 		}
+		
+		//button for stop gripper motors (prevPress[4])
+		if(!prevPress[4] && jBox.getRawButton(Buttons.stopGripperMotor)){
+			System.out.println("button 4(stopping): " + jBox.getRawButton(Buttons.stopGripperMotor));
+			sendMessage(new IntakeMotorUpdate(0.0));
+		}
+		prevPress[4] = jBox.getRawButton(Buttons.stopGripperMotor);
+		
+		//button for intake block (prevPress[5])
+		if(!prevPress[5] && jBox.getRawButton(Buttons.intakeBlock)){
+			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
+			sendMessage(new IntakeMotorUpdate(Constants.intakeMotorSpeed));
+		}
+		prevPress[5] = jBox.getRawButton(Buttons.intakeBlock);
+		
+		//Shifter button
+		if (!prevPress[7] && jBox.getRawButton(Buttons.shiftGear)){
+			shifterStatus = !shifterStatus;
+			sendMessage(new ShifterUpdate(shifterStatus));
+			System.out.println("Button 7 is pressed");
+		}
+		prevPress[7] = jBox.getRawButton(Buttons.shiftGear);
 		
 		//button for move arm shoulder forward(prevPress[8])
 		if(!prevPress[8] && jLeft.getRawButton(Buttons.moveShoulderForward)){
@@ -157,7 +180,6 @@ public class OperatorControl extends Actor{
 			sendMessage(new ArmSimpleMessage(0, 0));
 			prevPress[12] = jLeft.getRawButton(Buttons.stopArm);
 		}
-		
 	}
 
 	@Override

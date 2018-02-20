@@ -1,23 +1,22 @@
 package com.team766.robot.Actors.Auton;
 
-import com.team766.lib.Messages.ArmStageMessage;
-import com.team766.lib.Messages.ShoulderPIDMessage;
+import com.team766.lib.Messages.DriveEncoderMessage;
 
 import interfaces.AutonMode;
 
-public class ArmPID implements AutonMode{
-	
-	private State currState;
-	private AutonSelector parent;
+public class DriveEncoder implements AutonMode{
+
 	private boolean commandDone;
+	private AutonSelector parent;
+	private State currState;
 	
 	private enum State{
 		Start,
-		ArmMovement,
+		Drive,
 		Done
 	}
-
-	public ArmPID(AutonSelector parent){
+	
+	public DriveEncoder(AutonSelector parent){
 		this.parent = parent;
 		currState = State.Start;
 		commandDone = false;
@@ -27,10 +26,10 @@ public class ArmPID implements AutonMode{
 	public void iterate() {
 		switch (currState){
 			case Start:
-				setState(State.ArmMovement);
-				parent.sendMessage(new ShoulderPIDMessage(true)); //moves shoulder up to vertical
+				setState(State.Drive);
+				parent.sendMessage(new DriveEncoderMessage(6.0, 0.0));
 				break;
-			case ArmMovement:
+			case Drive:
 				if(commandDone){
 					setState(State.Done);
 				}
@@ -40,14 +39,17 @@ public class ArmPID implements AutonMode{
 				break;
 		}
 	}
+
+	public State getState(){
+		return currState;
+	}
 	
 	private void setState(State s){
 		currState = s;
 	}
-
+	
 	@Override
-	public void commandDone(boolean done) {
+	public void commandDone(boolean done){
 		commandDone = done;
 	}
-
 }

@@ -11,11 +11,13 @@ public class Constants {
 		Exchange,
 		CrossLine,
 		DriveStraightTime,
-		DriveSquareTime,
-		ArmPID
+		ArmPID,
+		DriveSquare,
+		DriveEncoder,
+		DrivePID
 	};
-	//1 = right and -1 = left
-	public static int scale_side;
+	//game data
+	public static int scale_side; //1 = right and -1 = left
 	public static int switch_side;
 	
 	
@@ -29,9 +31,36 @@ public class Constants {
 		Arm
 	};
 	public static final Drives driveType = Drives.SingleStick;
+	public static final double drivePowerLimit = 0.4;
 	
+	//encoder
 	public static final double wheel_circumference = 4.0 * Math.PI; //note: mule = 4 in ; revA = 6 in
+	public static final int counts_per_revolution = 1024;
+	public static final int leftEncoderDirection = -1;
+	public static final int rightEncoderDirection = 1;
 	
+	//gyro
+	public static final int gyroDirection = 1; //turning right increases angle
+	public static final double startAngle = 0.0;
+	
+	//encoder drive
+	public static final double driveEncoderThreshold = 0.3;
+	public static final double driveAngleThreshold = 5.0; 
+	
+	//shifters
+	public static final boolean negateRightShifter = false;
+	public static final boolean negateLeftShifter = false;
+	
+	//PID
+	public static final double k_linearP = 0.4; 
+	public static final double k_linearI = 0.0;
+	public static final double k_linearD = 0.02; //1/max linear vel
+	public static final double k_linearThresh = 0.2;
+	
+	public static final double k_angularP = 0.1; //1/max angular vel
+	public static final double k_angularI = 0.0;
+	public static final double k_angularD = 0.005;
+	public static final double k_angularThresh = 2.0;
 	
 	/*
 	 * Joysticks
@@ -45,7 +74,6 @@ public class Constants {
 	 */
 	public static final double intakeMotorSpeed = 0.4;
 	public static final double intakePowerLimit = 0.7;
-	
 	
 	/*
 	 * Climber

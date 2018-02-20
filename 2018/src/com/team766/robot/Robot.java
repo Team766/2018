@@ -80,19 +80,21 @@ public class Robot implements MyRobot {
 		Constants.Autons selected_auton = httpServer.getSelectedAutonMode(Constants.Autons.class);
 		
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
-		
-		for(int i = 0; i < 2; i++){
-			boolean right = true;
-			if(gameData.charAt(i) == 'L'){
-				right = false;
+
+		System.out.println("game data: " + gameData);
+		if(gameData.length() > 2){
+			for(int i = 0; i < 2; i++){
+				boolean right = true;
+				if(gameData.charAt(i) == 'L'){
+					right = false;
+				}
+				if(i == 0){
+					Constants.switch_side = right ? 1 : -1;
+					break;
+				}
+				Constants.scale_side = right ? 1 : -1;
 			}
-			if(i == 0){
-				Constants.switch_side = right ? 1 : -1;
-				break;
-			}
-			Constants.scale_side = right ? 1 : -1;
 		}
-		
 		
 		Scheduler.getInstance().add(new AutonSelector(selected_auton));
 	}

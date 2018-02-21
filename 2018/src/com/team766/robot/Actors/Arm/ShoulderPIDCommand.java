@@ -4,6 +4,7 @@ import com.team766.lib.CommandBase;
 import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.robot.Constants;
 
+import lib.ConstantsFileReader;
 import lib.Message;
 
 public class ShoulderPIDCommand extends CommandBase{
@@ -25,14 +26,13 @@ public class ShoulderPIDCommand extends CommandBase{
 		message = (ShoulderPIDMessage) m;
 		done = false;
 		currentState = State.Stop;
-		Arm.setShoulderEncoders(0);
 		
 		if(message.toVertical()){
 			switchState(State.Up);
-			Arm.shoulderUpPID.setSetpoint(Constants.armShoulderVertical);
-			Arm.shoulderBalancePID.setSetpoint(Constants.armShoulderVertical);
+			Arm.shoulderUpPID.setSetpoint(ConstantsFileReader.getInstance().get("armShoulderVertical"));
 		} else{
 			switchState(State.Down);
+			Arm.shoulderUpPID.setSetpoint(ConstantsFileReader.getInstance().get("armShoulderBottom"));
 		}
 	}
 
@@ -41,26 +41,26 @@ public class ShoulderPIDCommand extends CommandBase{
 		switch (currentState){
 			case Up:
 				Arm.shoulderUpPID.calculate(Arm.getAveShoulderEncoder(), false);
-				Arm.setShoulder(Constants.shoulderUpPIDScale * Arm.shoulderUpPID.getOutput() + Constants.shoulderUpFeedForward * Math.cos(Arm.getShoulderAngleRad(Arm.getAveShoulderEncoder()))); //radians
-				if(Arm.shoulderUpPID.isDone()){
+				Arm.setShoulder(Constants.shoulderUpPIDScale * Arm.shoulderUpPID.getOutput() + ConstantsFileReader.getInstance().get("shoulderUpFeedForward") * Math.cos(Arm.getShoulderAngleRad(Arm.getAveShoulderEncoder()))); //radians
+				if(Arm.getAveShoulderEncoder() > ConstantsFileReader.getInstance().get("armShoulderVertical") - ConstantsFileReader.getInstance().get("k_shoulderUpThresh")){
 					switchState(State.StayVertical);
 				}
 				break;
 			case StayVertical:
-				Arm.shoulderBalancePID.calculate(Arm.getAveShoulderEncoder(), false);
-				Arm.setShoulderBalance(Constants.shoulderBalancePIDScale * Arm.shoulderBalancePID.getOutput());
-				if(Arm.getAveShoulderEncoder() < Constants.armShoulderVertical - Constants.k_shoulderUpThresh){
+				Arm.shoulderUpPID.calculate(Arm.getAveShoulderEncoder(), false);
+				Arm.setShoulderBalance(Constants.shoulderUpPIDScale * Arm.shoulderUpPID.getOutput() + ConstantsFileReader.getInstance().get("shoulderUpFeedForward") * Math.cos(Arm.getShoulderAngleRad(Arm.getAveShoulderEncoder())));
+				if(Arm.getAveShoulderEncoder() < ConstantsFileReader.getInstance().get("armShoulderVertical") - ConstantsFileReader.getInstance().get("shoulderSwitchClamp")){
 					switchState(State.Up);
 				}
 				break;
 			case Down:
-				if(Arm.shoulderUpPID.isDone()){
-					switchState(State.Stop);
-				}
+				double ff = ConstantsFileReader.getInstance().get("shoulderUpFeedForward") * Math.cos(Arm.getShoulderAngleRad(Arm.getAveShoulderEncoder()));
+				Arm.shoulderUpPID.calculate(Arm.getAveShoulderEncoder(), false);
+				Arm.setShoulder(Constants.shoulderUpPIDScale * Arm.shoulderUpPID.getOutput() + ff);
+				
 				break;
 			case Stop:
-				stop();
-				done = true;
+				
 				break;
 		}
 		

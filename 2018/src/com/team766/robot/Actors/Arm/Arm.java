@@ -86,10 +86,12 @@ public class Arm extends Actor {
 
 		if (currentCommand != null) {
 			currentCommand.update();
+			/*
 			if(currentCommand.isDone()){ 
 				sendMessage(new Done());
 				currentCommand = null;
 			}
+			*/
 		}
 	}
 	

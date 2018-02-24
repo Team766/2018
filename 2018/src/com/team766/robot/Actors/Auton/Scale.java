@@ -34,6 +34,7 @@ public class Scale implements AutonMode{
 				parent.sendMessage(new ShoulderPIDMessage(true));
 				break;
 			case DriveRaiseArm:
+				System.out.println("driving and raising the arm");
 				if(commandDone){
 					if(!lock){
 						startTime = System.currentTimeMillis();
@@ -48,6 +49,7 @@ public class Scale implements AutonMode{
 				}
 				break;
 			case LowerArm:
+				System.out.println("lowering the arm");
 				if(commandDone){
 					switchState(State.Done);
 				}
@@ -65,6 +67,7 @@ public class Scale implements AutonMode{
 	
 	private void switchState(State state){
 		currentState = state;
+		commandDone(false);
 	}
 
 }

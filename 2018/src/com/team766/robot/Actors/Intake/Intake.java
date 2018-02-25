@@ -31,9 +31,10 @@ public class Intake extends Actor{
 	
 	public void iterate() {
 		if(newMessage()){
-			if(currentCommand != null)
+			if(currentCommand != null){
+				System.out.println("got new arm message, stopping current command");
 				currentCommand.stop();
-			
+			}
 			commandFinished = false;
 			
 			currentMessage = readMessage();

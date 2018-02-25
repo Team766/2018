@@ -91,6 +91,7 @@ public class AutonSelector extends Actor{
 	
 	private void stopCurrentCommand(){
 		if(currentCommand != null){
+			System.out.println("got new auton command, stopping current command");
 			currentCommand.stop();
 		}
 		currentCommand = null;

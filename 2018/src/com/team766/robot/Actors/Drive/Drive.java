@@ -18,6 +18,7 @@ import interfaces.SolenoidController;
 import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
+import lib.ConstantsFileReader;
 import lib.Message;
 import lib.PIDController;
 
@@ -36,8 +37,8 @@ public class Drive extends Actor{
 	
 	GyroReader gyro = HardwareProvider.getInstance().getGyro();
 	
-	PIDController distancePID = new PIDController(Constants.k_linearP, Constants.k_linearI, Constants.k_linearD, Constants.k_linearThresh);
-	PIDController anglePID = new PIDController(Constants.k_angularP, Constants.k_angularI, Constants.k_angularD, Constants.k_angularThresh);
+	PIDController distancePID = new PIDController(ConstantsFileReader.getInstance().get("k_linearP"), ConstantsFileReader.getInstance().get("k_linearI"), ConstantsFileReader.getInstance().get("k_linearD"), ConstantsFileReader.getInstance().get("k_linearThresh"));
+	PIDController anglePID = new PIDController(ConstantsFileReader.getInstance().get("k_angularP"), ConstantsFileReader.getInstance().get("k_angularI"), ConstantsFileReader.getInstance().get("k_angularD"), ConstantsFileReader.getInstance().get("k_angularThresh"));
 
 	private SubActor currentCommand;
 	private double gyroOffset;
@@ -118,11 +119,11 @@ public class Drive extends Actor{
 	}
 	
 	public double leftDistance(){
-		return Constants.leftEncoderDirection * (leftEncoder.getRaw() / Constants.counts_per_revolution * 4.0/12.0 * Math.PI);
+		return ConstantsFileReader.getInstance().get("leftEncoderDirection") * (leftEncoder.getRaw() / ConstantsFileReader.getInstance().get("counts_per_revolution") * ConstantsFileReader.getInstance().get("wheel_diameter") / 12.0 * Math.PI);
 	}
 	
 	public double rightDistance(){
-		return Constants.rightEncoderDirection * (rightEncoder.getRaw() / Constants.counts_per_revolution * 4.0/12.0 * Math.PI);
+		return ConstantsFileReader.getInstance().get("rightEncoderDirection") * (rightEncoder.getRaw() / ConstantsFileReader.getInstance().get("counts_per_revolution") * ConstantsFileReader.getInstance().get("wheel_diameter") / 12.0 * Math.PI);
 	}
 	
 	public double averageDistance(){
@@ -135,19 +136,19 @@ public class Drive extends Actor{
 	}
 
 	public void setRightShifter(boolean setHighGear){
-		rightShifter.set(setHighGear^Constants.negateRightShifter);
+		rightShifter.set(ConstantsFileReader.getInstance().get("negateRightShifter") == 1 ? !setHighGear : setHighGear);
 	}
 
 	public boolean getRightShifter(){
-		return rightShifter.get()^Constants.negateRightShifter;
+		return ConstantsFileReader.getInstance().get("negateRightShifter") == 1 ? !rightShifter.get() : rightShifter.get();
 	}
 
 	public void setLeftShifter(boolean setHighGear){
-		leftShifter.set(setHighGear^Constants.negateLeftShifter);
+		leftShifter.set(ConstantsFileReader.getInstance().get("negateLeftShifter") == 1 ? !setHighGear : setHighGear);
 	}
 
 	public boolean getLeftShifter(){
-		return leftShifter.get()^Constants.negateLeftShifter;
+		return ConstantsFileReader.getInstance().get("negateLeftShifter") == 1 ? !leftShifter.get() : leftShifter.get();
 	}
 
 
@@ -156,7 +157,7 @@ public class Drive extends Actor{
 	}
 	
 	private void swapCurrentCommand(SubActor newCommand, String reason){
-		//System.out.println("DMDBG: swapping currentCommand because: " + reason);
+		System.out.println("DMDBG: swapping currentCommand because: " + reason);
 		if(currentCommand != null){
 			currentCommand.stop();
 		}

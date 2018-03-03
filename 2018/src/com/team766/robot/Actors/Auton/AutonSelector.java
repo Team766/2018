@@ -38,6 +38,7 @@ public class AutonSelector extends Actor{
 			break;
 		case Scale:
 			System.out.println("Auton: Scale");
+			currentMode = new Scale(this);
 			break;
 		case CrossLine:
 			System.out.println("Auton: CrossLine");
@@ -83,6 +84,7 @@ public class AutonSelector extends Actor{
 			}
 			stopCurrentCommand();
 			if(currentMessage instanceof Done){
+				System.out.println("setting command to done ");
 				currentMode.commandDone(true);
 			}
 		}

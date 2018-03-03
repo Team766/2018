@@ -36,8 +36,6 @@ public class ShoulderPIDCommand extends CommandBase{
 		
 		switchState(positions[message.getDesiredPos()]);
 		Arm.shoulderUpPID.setSetpoint(constants_file.get(encoderPos[message.getDesiredPos()]));
-		
-		
 	}
 
 	@Override
@@ -63,6 +61,12 @@ public class ShoulderPIDCommand extends CommandBase{
 					done = true;
 				}
 				break;
+			case Middle:
+				Arm.setShoulder(Constants.shoulderUpPIDScale * output + ff);
+				if(Arm.shoulderUpPID.isDone()){
+					done = true;
+				}
+				break;
 			case Down:
 				Arm.setShoulder(Constants.shoulderUpPIDScale * output + ff);
 				if(Arm.shoulderUpPID.isDone()){
@@ -75,7 +79,7 @@ public class ShoulderPIDCommand extends CommandBase{
 
 	@Override
 	public void stop() {
-		//Arm.setShoulder(0.0);
+		Arm.setShoulder(0.0);
 	}
 
 	@Override
@@ -85,6 +89,7 @@ public class ShoulderPIDCommand extends CommandBase{
 	
 	private void switchState(State state){
 		currentState = state;
+		System.out.println("Switching to state " + state.name());
 	}
 
 }

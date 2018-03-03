@@ -2,12 +2,14 @@ package com.team766.robot.Actors;
 
 import com.team766.lib.Messages.ArmSimpleMessage;
 import com.team766.lib.Messages.ClimberUpdate;
+import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.IntakeMotorUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.lib.Messages.ShifterUpdate;
+import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.robot.Buttons;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
@@ -152,16 +154,24 @@ public class OperatorControl extends Actor{
 		prevPress[7] = jBox.getRawButton(Buttons.shiftGear);
 		
 		//button for move arm shoulder forward(prevPress[8])
-		if(!prevPress[8] && jLeft.getRawButton(Buttons.moveShoulderForward)){
-			sendMessage(new ArmSimpleMessage(0.05, 0));
-			prevPress[8] = jLeft.getRawButton(Buttons.moveShoulderForward);
+		if(!prevPress[8] && jBox.getRawButton(Buttons.shoulderTop)){
+			sendMessage(new Done());
+			sendMessage(new ShoulderPIDMessage(2));
 		}
+		prevPress[8] = jBox.getRawButton(Buttons.shoulderTop);
+		 
+		if(!prevPress[6] && jBox.getRawButton(Buttons.shoulderMiddle)){
+			sendMessage(new Done());
+			sendMessage(new ShoulderPIDMessage(1));
+		}
+		prevPress[6] = jBox.getRawButton(Buttons.shoulderMiddle);
 		
 		//button for move arm backward(prevPress[9])
-		if(!prevPress[9] && jLeft.getRawButton(Buttons.moveShoulderBackward)){
-			sendMessage(new ArmSimpleMessage(-0.05, 0));
-			prevPress[9] = jLeft.getRawButton(Buttons.moveShoulderBackward);
+		if(!prevPress[9] && jBox.getRawButton(Buttons.shoulderBottom)){
+			sendMessage(new Done());
+			sendMessage(new ShoulderPIDMessage(0));
 		}
+		prevPress[9] = jBox.getRawButton(Buttons.shoulderBottom);
 		
 		//Button for move wrist forward(prevPress[10])
 		if(!prevPress[10] && jLeft.getRawButton(Buttons.moveWristForward)){

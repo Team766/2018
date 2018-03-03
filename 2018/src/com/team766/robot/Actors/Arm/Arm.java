@@ -56,11 +56,13 @@ public class Arm extends Actor {
 				return;
 			
 			else if(currentMessage instanceof Stop){
+				System.out.println("stopping shoulder");
 				currentCommand = null;
 				setShoulder(0.0);
 				setWrist(0.0);
 			}
 			else if(currentMessage instanceof ArmSimpleMessage){
+				System.out.println("got arm simple message");
 				currentCommand = null;
 				ArmSimpleMessage armMessage = (ArmSimpleMessage)currentMessage;
 				if(getAveShoulderEncoder() < ConstantsFileReader.getInstance().get("armShoulderVertical")){
@@ -92,11 +94,14 @@ public class Arm extends Actor {
 
 		if (currentCommand != null) {
 			currentCommand.update();
+			
 			if(currentCommand.isDone()){
 				sendMessage(new Done());
 			}
+			
 		}
-		
+		System.out.println("shoulder encoder: " + getAveShoulderEncoder());
+
 		System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
 		//System.out.println("left wrist: " + getLeftWristEncoder());
 		//System.out.println("right wrist: " + getRightWristEncoder());

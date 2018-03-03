@@ -66,6 +66,10 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton: ArmPID");
 			currentMode = new ArmPID(this);
 			break;
+		case WristPID:
+			System.out.println("Auton: WristPID");
+			currentMode = new WristPID(this);
+			break;
 		}
 	}
 

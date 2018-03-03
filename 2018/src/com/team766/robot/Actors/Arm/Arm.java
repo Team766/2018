@@ -1,6 +1,7 @@
 package com.team766.robot.Actors.Arm;
 
 import com.team766.lib.Messages.Stop;
+import com.team766.lib.Messages.WristPIDMessage;
 import com.team766.lib.Messages.ArmSimpleMessage;
 import com.team766.lib.Messages.ArmStageMessage;
 import com.team766.lib.Messages.Done;
@@ -24,6 +25,8 @@ public class Arm extends Actor {
 	
 	PIDController shoulderUpPID = new PIDController(ConstantsFileReader.getInstance().get("k_shoulderUpP"), ConstantsFileReader.getInstance().get("k_shoulderUpI"), ConstantsFileReader.getInstance().get("k_shoulderUpD"), ConstantsFileReader.getInstance().get("k_shoulderUpThresh"));
 	
+	PIDController wristPID = new PIDController(Constants.k_wristP, Constants.k_wristI, Constants.k_wristD, Constants.k_wristThresh);
+	
 	private boolean commandFinished;
 
 	private double shoulderSetPoint;
@@ -32,8 +35,8 @@ public class Arm extends Actor {
 	private SubActor currentCommand;
 	
 	public void init(){
-		acceptableMessages = new Class[]{ArmSimpleMessage.class, ArmStageMessage.class, Stop.class, ShoulderPIDMessage.class};
-		
+		acceptableMessages = new Class[]{ArmSimpleMessage.class, ArmStageMessage.class, Stop.class, ShoulderPIDMessage.class, WristPIDMessage.class};
+		setWristEncoders(0);
 		setShoulderEncoders(0);
 	}
 	
@@ -84,18 +87,25 @@ public class Arm extends Actor {
 			else if(currentMessage instanceof ShoulderPIDMessage){
 				currentCommand = new ShoulderPIDCommand(currentMessage);
 			}
+			else if(currentMessage instanceof WristPIDMessage){
+				currentCommand = new WristPIDCommand(currentMessage);
+			}
 		}
 
 		if (currentCommand != null) {
 			currentCommand.update();
 			
-			if(currentCommand.isDone()){ 
+			if(currentCommand.isDone()){
 				sendMessage(new Done());
-				currentCommand = null;
 			}
 			
 		}
 		System.out.println("shoulder encoder: " + getAveShoulderEncoder());
+
+		System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
+		//System.out.println("left wrist: " + getLeftWristEncoder());
+		//System.out.println("right wrist: " + getRightWristEncoder());
+		
 	}
 	
 	//mule: one shoulder motor is cross wired so they spin the same way, no need to negate one side
@@ -155,7 +165,7 @@ public class Arm extends Actor {
 	}
 	
 	public double getAveWristEncoder(){
-		return 0.5 * (getLeftWristEncoder() + getRightWristEncoder());
+		return 0.5 * (Math.abs(getLeftWristEncoder()) + Math.abs(getRightWristEncoder()));
 	}
 	
 	public double getShoulderAngle(){

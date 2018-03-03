@@ -14,7 +14,8 @@ public class Constants {
 		ArmPID,
 		DriveSquare,
 		DriveEncoder,
-		DrivePID
+		DrivePID,
+		WristPID
 	};
 	//game data
 	public static int scale_side; //1 = right and -1 = left
@@ -109,6 +110,19 @@ public class Constants {
 	public static final double shoulderBalancePowerLimit = 0.25;
 	
 	//Wrist
+	public static final double armWristDown = 50;
+	public static final double armWristMiddle = 2000; //value needs to be tested
+	public static final double armWristBack = 4000; //still needs to be tested
+	
+	public static final double k_wristP = 0.1;
+	public static final double k_wristI = 0;
+	public static final double k_wristD = 0;
+	public static final double k_wristThresh = 500.0;
+	
+	public static final double wristMiddlePIDScale = 1.0 / (armWristMiddle * k_wristP);
+	public static final double wristBackPIDScale = 1.0 / (armWristBack * k_wristP);
+	public static final double wristDownPIDScale = 1.0 / (armWristDown * k_wristP);
+	
 	public static final double wristPowerLimit = 0.4;
 	public static final double armWristLimit = 1000; //not tested - delta value
 }

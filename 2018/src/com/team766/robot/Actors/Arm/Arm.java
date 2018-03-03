@@ -90,6 +90,9 @@ public class Arm extends Actor {
 			else if(currentMessage instanceof WristPIDMessage){
 				currentCommand = new WristPIDCommand(currentMessage);
 			}
+			else if(currentMessage instanceof Done){
+				currentCommand.stop();
+			}
 		}
 
 		if (currentCommand != null) {
@@ -102,7 +105,7 @@ public class Arm extends Actor {
 		}
 		System.out.println("shoulder encoder: " + getAveShoulderEncoder());
 
-		System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
+		//System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
 		//System.out.println("left wrist: " + getLeftWristEncoder());
 		//System.out.println("right wrist: " + getRightWristEncoder());
 		

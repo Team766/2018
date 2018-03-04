@@ -56,11 +56,13 @@ public class Arm extends Actor {
 				return;
 			
 			else if(currentMessage instanceof Stop){
+				System.out.println("stopping shoulder");
 				currentCommand = null;
 				setShoulder(0.0);
 				setWrist(0.0);
 			}
 			else if(currentMessage instanceof ArmSimpleMessage){
+				System.out.println("got arm simple message");
 				currentCommand = null;
 				ArmSimpleMessage armMessage = (ArmSimpleMessage)currentMessage;
 				if(getAveShoulderEncoder() < ConstantsFileReader.getInstance().get("armShoulderVertical")){
@@ -88,19 +90,23 @@ public class Arm extends Actor {
 			else if(currentMessage instanceof WristPIDMessage){
 				currentCommand = new WristPIDCommand(currentMessage);
 			}
+			else if(currentMessage instanceof Done){
+				currentCommand.stop();
+			}
 		}
 
 		if (currentCommand != null) {
 			currentCommand.update();
+			
 			if(currentCommand.isDone()){
 				sendMessage(new Done());
 			}
+			
 		}
-		
-		System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
-		System.out.println("left wrist encoder: " + getLeftWristEncoder());
-		System.out.println("right wrist encoder: " + getRightWristEncoder());
-		
+
+		//System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
+		//System.out.println("left wrist: " + getLeftWristEncoder());
+		//System.out.println("right wrist: " + getRightWristEncoder());		
 	}
 	
 	//mule: one shoulder motor is cross wired so they spin the same way, no need to negate one side

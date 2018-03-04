@@ -74,7 +74,7 @@ public class Robot implements MyRobot {
 		Scheduler.getInstance().remove(OperatorControl.class);
 		Scheduler.getInstance().remove(AutonSelector.class);
 
-		sendStopMessage();
+//		sendStopMessage();
 
 		log(Level.INFO, "Starting AutonSelector");
 		Constants.Autons selected_auton = httpServer.getSelectedAutonMode(Constants.Autons.class);

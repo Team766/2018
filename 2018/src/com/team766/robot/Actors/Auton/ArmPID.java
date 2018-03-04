@@ -25,10 +25,11 @@ public class ArmPID implements AutonMode{
 	
 	@Override
 	public void iterate() {
+		System.out.println("inside arm PID auton");
 		switch (currState){
 			case Start:
 				setState(State.ArmMovement);
-				parent.sendMessage(new ShoulderPIDMessage(true)); //moves shoulder up to vertical
+				parent.sendMessage(new ShoulderPIDMessage(2)); //moves shoulder up to vertical
 				break;
 			case ArmMovement:
 				if(commandDone){

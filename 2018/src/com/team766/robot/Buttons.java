@@ -13,11 +13,13 @@ public class Buttons {
 	public static final int climbUp = 3;
 	
 	//arm
-	public static final int moveShoulderForward = 8;
-	public static final int moveShoulderBackward = 9;
+
 	public static final int wristIntake = 10;
 	public static final int wristMiddle = 11;
 	public static final int wristBack = 12;
+	public static final int shoulderTop = 8;
+	public static final int shoulderBottom = 9;
+	public static final int shoulderMiddle = 6;
 
 	//shifter
 	public static final int shiftGear = 7;

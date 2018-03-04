@@ -3,14 +3,14 @@ package com.team766.lib.Messages;
 import lib.Message;
 
 public class ShoulderPIDMessage implements Message{
-	private boolean vertical;
+	private int position;
 	
-	//true --> vertical; false --> down
-	public ShoulderPIDMessage(boolean vertical){
-		this.vertical = vertical;
+	//0,1,2 --> Down, Middle, Vertical
+	public ShoulderPIDMessage(int position){
+		this.position = position;
 	}
 	
-	public boolean toVertical(){
-		return vertical;
+	public int getDesiredPos(){
+		return position;
 	}
 }

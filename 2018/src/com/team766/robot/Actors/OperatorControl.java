@@ -6,6 +6,7 @@ import com.team766.lib.Messages.DriveDoubleSideUpdate;
 import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.IntakeMotorUpdate;
 import com.team766.lib.Messages.Stop;
+import com.team766.lib.Messages.WristPIDMessage;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.robot.Buttons;
@@ -163,23 +164,28 @@ public class OperatorControl extends Actor{
 			prevPress[9] = jLeft.getRawButton(Buttons.moveShoulderBackward);
 		}
 		
-		//Button for move wrist forward(prevPress[10])
-		if(!prevPress[10] && jLeft.getRawButton(Buttons.moveWristForward)){
-			sendMessage(new ArmSimpleMessage(0, 0.05));
-			prevPress[10] = jLeft.getRawButton(Buttons.moveWristForward);
+		//Button for moving wrist to the intake position(prevPress[10])
+		if(!prevPress[10] && jBox.getRawButton(Buttons.wristIntake)){
+			System.out.println("button 10 is pressed");
+			sendMessage(new WristPIDMessage(2));
+			prevPress[10] = jBox.getRawButton(Buttons.wristIntake);
 		}
+		prevPress[10] = jBox.getRawButton(Buttons.wristIntake);
 		
-		//button for move wrist backward(prevPress[11])
-		if(!prevPress[11] && jLeft.getRawButton(Buttons.moveWristBackward)){
-			sendMessage(new ArmSimpleMessage(0, -0.05));
-			prevPress[11] = jLeft.getRawButton(Buttons.moveWristBackward);
+		//button for moving wrist to the middle(prevPress[11])
+		if(!prevPress[11] && jBox.getRawButton(Buttons.wristMiddle)){
+			System.out.println("11 is pressed");
+			sendMessage(new WristPIDMessage(1));
+			prevPress[11] = jBox.getRawButton(Buttons.wristMiddle);
 		}
+		prevPress[11] = jBox.getRawButton(Buttons.wristMiddle);
 		
-		//button for stop arm(prevPress[12])
-		if(!prevPress[12] && jLeft.getRawButton(Buttons.stopArm)){
-			sendMessage(new ArmSimpleMessage(0, 0));
-			prevPress[12] = jLeft.getRawButton(Buttons.stopArm);
+		//button for moving wrist all the way to the back(prevPress[12])
+		if(!prevPress[12] && jBox.getRawButton(Buttons.wristBack)){
+			sendMessage(new WristPIDMessage(0));
+			prevPress[12] = jBox.getRawButton(Buttons.wristBack);
 		}
+		prevPress[12] = jBox.getRawButton(Buttons.wristBack);
 	}
 
 	@Override

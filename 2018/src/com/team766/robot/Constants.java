@@ -70,9 +70,9 @@ public class Constants {
 	public static final double shoulderUpPIDScale = 1.0 / (ConstantsFileReader.getInstance().get("armShoulderVertical") * ConstantsFileReader.getInstance().get("k_shoulderUpP"));
 	
 	//Wrist
-	public static final double armWristDown = 50;
-	public static final double armWristMiddle = 2000; //value needs to be tested
-	public static final double armWristBack = 4000; //still needs to be tested
+	public static final double armWristDown = 3900;
+	public static final double armWristMiddle = 2600; //value needs to be tested
+	public static final double armWristBack = 200; //still needs to be tested
 	
 	public static final double k_wristP = 0.1;
 	public static final double k_wristI = 0;
@@ -83,6 +83,7 @@ public class Constants {
 	public static final double wristBackPIDScale = 1.0 / (armWristBack * k_wristP);
 	public static final double wristDownPIDScale = 1.0 / (armWristDown * k_wristP);
 	
-	public static final double wristPowerLimit = 0.4;
+	public static final double wristPowerLimit = 0.86;
 	public static final double armWristLimit = 1000; //not tested - delta value
+	public static final double armWrisFeedForward = 0.5;
 }

@@ -98,8 +98,8 @@ public class Arm extends Actor {
 		}
 		
 		System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
-		//System.out.println("left wrist: " + getLeftWristEncoder());
-		//System.out.println("right wrist: " + getRightWristEncoder());
+		System.out.println("left wrist encoder: " + getLeftWristEncoder());
+		System.out.println("right wrist encoder: " + getRightWristEncoder());
 		
 	}
 	
@@ -127,11 +127,11 @@ public class Arm extends Actor {
 	}
 	
 	public void setLeftWrist(double power){
-		leftWrist.set(ControlMode.PercentOutput, clamp(power, ConstantsFileReader.getInstance().get("wristPowerLimit")));
+		leftWrist.set(ControlMode.PercentOutput, clamp(power, Constants.armWristLimit));
 	}
 	
 	public void setRightWrist(double power){
-		rightWrist.set(ControlMode.PercentOutput, clamp(-power, ConstantsFileReader.getInstance().get("wristPowerLimit")));
+		rightWrist.set(ControlMode.PercentOutput, clamp(-power, Constants.armWristLimit));
 	}
 	
 	public void setWrist(double power){
@@ -206,6 +206,10 @@ public class Arm extends Actor {
 	
 	public double getShoulderAngleRad(double encoder){
 		return 0.5 * Math.PI * getAveShoulderEncoder() / ConstantsFileReader.getInstance().get("armShoulderVertical");
+	}
+	
+	public double getWristAngleRad(double encoder){
+		return 0.5 * Math.PI * getAveWristEncoder() / Constants.armWristMiddle;
 	}
 
 }

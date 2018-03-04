@@ -6,7 +6,7 @@ public class WristPIDMessage implements Message {
 	private int position;
 	
 	//assume there are three positions for now
-	//0 = down, 1 = middle, 2 = back
+	//0 = back, 1 = middle, 2 = intake
 	public WristPIDMessage(int position) {
 		this.position = position;
 		System.out.println("Inside wrist message.");

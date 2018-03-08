@@ -1,4 +1,4 @@
-package com.team766.robot.Actors.Arm;
+package com.team766.robot.Actors.Shoulder;
 
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.WristPIDMessage;
@@ -17,16 +17,12 @@ import lib.ConstantsFileReader;
 import lib.Message;
 import lib.PIDController;
 
-public class Arm extends Actor {
+public class Shoulder extends Actor {
 	CANSpeedController leftShoulder = HardwareProvider.getInstance().getLeftArmShoulder();
 	CANSpeedController rightShoulder = HardwareProvider.getInstance().getRightArmShoulder();
-	CANSpeedController leftWrist = HardwareProvider.getInstance().getLeftArmWrist();
-	CANSpeedController rightWrist = HardwareProvider.getInstance().getRightArmWrist();
 	
 	PIDController shoulderUpPID = new PIDController(ConstantsFileReader.getInstance().get("k_shoulderUpP"), ConstantsFileReader.getInstance().get("k_shoulderUpI"), ConstantsFileReader.getInstance().get("k_shoulderUpD"), ConstantsFileReader.getInstance().get("k_shoulderUpThresh"));
-	
-	PIDController wristPID = new PIDController(Constants.k_wristP, Constants.k_wristI, Constants.k_wristD, Constants.k_wristThresh);
-	
+		
 	private boolean commandFinished;
 
 	private double shoulderSetPoint;
@@ -35,13 +31,12 @@ public class Arm extends Actor {
 	private SubActor currentCommand;
 	
 	public void init(){
-		acceptableMessages = new Class[]{ArmSimpleMessage.class, ArmStageMessage.class, Stop.class, ShoulderPIDMessage.class, WristPIDMessage.class};
-		setWristEncoders(0);
+		acceptableMessages = new Class[]{ArmSimpleMessage.class, ArmStageMessage.class, Stop.class, ShoulderPIDMessage.class};
 		setShoulderEncoders(0);
 	}
 	
 	public String toString() {
-		return "Actor: Arm";
+		return "Actor: Shoulder";
 	}
 
 	public void iterate() {
@@ -59,7 +54,6 @@ public class Arm extends Actor {
 				System.out.println("stopping shoulder");
 				currentCommand = null;
 				setShoulder(0.0);
-				setWrist(0.0);
 			}
 			else if(currentMessage instanceof ArmSimpleMessage){
 				System.out.println("got arm simple message");
@@ -72,23 +66,13 @@ public class Arm extends Actor {
 					leftShoulder.stopMotor();
 					rightShoulder.stopMotor();				
 				}
-				
-				if(getAveWristEncoder() < ConstantsFileReader.getInstance().get("armWristLimit")){
-					setWrist(armMessage.getWristSpeed());
-				}else{
-					leftWrist.stopMotor();
-					rightWrist.stopMotor();			
-				}
-				
 			}
 			else if(currentMessage instanceof ArmStageMessage){
 				currentCommand = new ArmStageCommand(currentMessage);
 			}
 			else if(currentMessage instanceof ShoulderPIDMessage){
 				currentCommand = new ShoulderPIDCommand(currentMessage);
-			}
-			else if(currentMessage instanceof WristPIDMessage){
-				currentCommand = new WristPIDCommand(currentMessage);
+				System.out.println("receiving message");
 			}
 			else if(currentMessage instanceof Done){
 				currentCommand.stop();
@@ -100,13 +84,8 @@ public class Arm extends Actor {
 			
 			if(currentCommand.isDone()){
 				sendMessage(new Done());
-			}
-			
+			}	
 		}
-
-		//System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
-		//System.out.println("left wrist: " + getLeftWristEncoder());
-		//System.out.println("right wrist: " + getRightWristEncoder());		
 	}
 	
 	//mule: one shoulder motor is cross wired so they spin the same way, no need to negate one side
@@ -129,20 +108,7 @@ public class Arm extends Actor {
 		double clamped_power = clamp(power, ConstantsFileReader.getInstance().get("shoulderBalancePowerLimit"));
 		setLeftShoulder(clamped_power);
 		setRightShoulder(clamped_power);
-		System.out.println("shoudler 2: " + clamped_power);
-	}
-	
-	public void setLeftWrist(double power){
-		leftWrist.set(ControlMode.PercentOutput, clamp(power, Constants.armWristLimit));
-	}
-	
-	public void setRightWrist(double power){
-		rightWrist.set(ControlMode.PercentOutput, clamp(-power, Constants.armWristLimit));
-	}
-	
-	public void setWrist(double power){
-		setLeftWrist(power);
-		setRightWrist(power);
+		//System.out.println("shoudler 2: " + clamped_power);
 	}
 	
 	public double getLeftShoulderEncoder(){
@@ -155,18 +121,6 @@ public class Arm extends Actor {
 	
 	public double getAveShoulderEncoder(){
 		return 0.5 * (Math.abs(getLeftShoulderEncoder()) + Math.abs(getRightShoulderEncoder()));
-	}
-	
-	public double getLeftWristEncoder(){
-		return leftWrist.getSensorPosition();
-	}
-	
-	public double getRightWristEncoder(){
-		return rightWrist.getSensorPosition();
-	}
-	
-	public double getAveWristEncoder(){
-		return 0.5 * (Math.abs(getLeftWristEncoder()) + Math.abs(getRightWristEncoder()));
 	}
 	
 	public double getShoulderAngle(){
@@ -195,14 +149,8 @@ public class Arm extends Actor {
 		rightShoulder.setPosition(position);
 	}
 	
-	public void setWristEncoders(int position){
-		leftWrist.setPosition(position);
-		rightWrist.setPosition(position);
-	}
-	
 	public void setEncoders(int position){
 		setShoulderEncoders(position);
-		setWristEncoders(position);
 	}
 	
 	public double clamp(double value, double limit){
@@ -214,8 +162,4 @@ public class Arm extends Actor {
 		return 0.5 * Math.PI * getAveShoulderEncoder() / ConstantsFileReader.getInstance().get("armShoulderVertical");
 	}
 	
-	public double getWristAngleRad(double encoder){
-		return 0.5 * Math.PI * getAveWristEncoder() / Constants.armWristMiddle;
-	}
-
 }

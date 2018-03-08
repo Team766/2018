@@ -1,4 +1,4 @@
-package com.team766.robot.Actors.Arm;
+package com.team766.robot.Actors.Shoulder;
 
 import com.team766.lib.CommandBase;
 import com.team766.lib.Messages.ShoulderPIDMessage;
@@ -35,41 +35,45 @@ public class ShoulderPIDCommand extends CommandBase{
 		encoderPos = new String[]{"armShoulderBottom", "armShoulderMiddle", "armShoulderVertical"};
 		
 		switchState(positions[message.getDesiredPos()]);
-		Arm.shoulderUpPID.setSetpoint(constants_file.get(encoderPos[message.getDesiredPos()]));
+		Shoulder.shoulderUpPID.setSetpoint(constants_file.get(encoderPos[message.getDesiredPos()]));
 	}
 
 	@Override
 	public void update() {
-		double currPos = Arm.getAveShoulderEncoder();
-		Arm.shoulderUpPID.calculate(currPos, false);
-		double output = Arm.shoulderUpPID.getOutput();
-		double ff = constants_file.get("shoulderUpFeedForward") * Math.cos(Arm.getShoulderAngleRad(currPos));
-		System.out.println("pid setpoint: " + Arm.shoulderUpPID.getSetpoint());
+		double currPos = Shoulder.getAveShoulderEncoder();
+		Shoulder.shoulderUpPID.calculate(currPos, false);
+		double output = Shoulder.shoulderUpPID.getOutput();
+		double ff = constants_file.get("shoulderUpFeedForward") * Math.cos(Shoulder.getShoulderAngleRad(currPos));
+		System.out.println("pid setpoint: " + Shoulder.shoulderUpPID.getSetpoint());
 		switch (currentState){
 			case Up:
-				Arm.setShoulder(Constants.shoulderUpPIDScale * output + ff); //radians
+				Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff); //radians
 				if(currPos > constants_file.get("armShoulderVertical") - constants_file.get("k_shoulderUpThresh")){
 					switchState(State.StayVertical);
+					System.out.println("Shoulder case up command");
 				}
 				break;
 			case StayVertical:
-				Arm.setShoulderBalance(Constants.shoulderUpPIDScale * output + ff);
+				Shoulder.setShoulderBalance(Constants.shoulderUpPIDScale * output + ff);
+				System.out.println("stay vertical");
 				if(currPos < constants_file.get("armShoulderVertical") - constants_file.get("shoulderSwitchClamp")){
 					switchState(State.Up);
 				}
-				if(Arm.shoulderUpPID.isDone()){
+				if(Shoulder.shoulderUpPID.isDone()){
 					done = true;
 				}
 				break;
 			case Middle:
-				Arm.setShoulder(Constants.shoulderUpPIDScale * output + ff);
-				if(Arm.shoulderUpPID.isDone()){
+				Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff);
+				System.out.println(" Case Middle");
+				if(Shoulder.shoulderUpPID.isDone()){
 					done = true;
 				}
 				break;
 			case Down:
-				Arm.setShoulder(Constants.shoulderUpPIDScale * output + ff);
-				if(Arm.shoulderUpPID.isDone()){
+				Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff);
+				System.out.println("Case Down");
+				if(Shoulder.shoulderUpPID.isDone()){
 					System.out.println("done going down");
 					done = true;
 				}
@@ -79,7 +83,7 @@ public class ShoulderPIDCommand extends CommandBase{
 
 	@Override
 	public void stop() {
-		Arm.setShoulder(0.0);
+		Shoulder.setShoulder(0.0);
 	}
 
 	@Override

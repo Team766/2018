@@ -156,20 +156,20 @@ public class OperatorControl extends Actor{
 		
 		//button for move arm shoulder forward(prevPress[8])
 		if(!prevPress[8] && jBox.getRawButton(Buttons.shoulderTop)){
-			sendMessage(new Done());
+			//sendMessage(new Done());
 			sendMessage(new ShoulderPIDMessage(2));
 		}
 		prevPress[8] = jBox.getRawButton(Buttons.shoulderTop);
 		 
 		if(!prevPress[6] && jBox.getRawButton(Buttons.shoulderMiddle)){
-			sendMessage(new Done());
+			//sendMessage(new Done());
 			sendMessage(new ShoulderPIDMessage(1));
 		}
 		prevPress[6] = jBox.getRawButton(Buttons.shoulderMiddle);
 		
 		//button for move arm backward(prevPress[9])
 		if(!prevPress[9] && jBox.getRawButton(Buttons.shoulderBottom)){
-			sendMessage(new Done());
+			//sendMessage(new Done());
 			sendMessage(new ShoulderPIDMessage(0));
 		}
 		prevPress[9] = jBox.getRawButton(Buttons.shoulderBottom);

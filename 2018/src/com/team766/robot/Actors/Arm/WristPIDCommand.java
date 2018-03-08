@@ -7,8 +7,6 @@ import com.team766.robot.Constants;
 import lib.ConstantsFileReader;
 import lib.Message;
 
-
-
 public class WristPIDCommand extends CommandBase {
 	/*
 	 * This command moves the wrist between the lowest resting point and back position
@@ -47,49 +45,18 @@ public class WristPIDCommand extends CommandBase {
 
 	@Override
 	public void update() {
-		switch(currentState){
-			case middle:
-				System.out.println("___________________the middle case for wrist");
-				System.out.println("Wrist PID setpoint: " + Arm.wristPID.getSetpoint());
-				Arm.wristPID.calculate(Arm.getAveWristEncoder(), false);
-				Arm.setWrist(negate * (Arm.wristPID.getOutput() * Constants.wristBackPIDScale + Constants.armWrisFeedForward * Math.cos(Arm.getWristAngleRad(Arm.getAveWristEncoder()))));
-				System.out.println("__________________WristPower: " + Arm.wristPID.getOutput() * Constants.wristMiddlePIDScale + Constants.armWrisFeedForward * Math.cos(Arm.getWristAngleRad(Arm.getAveWristEncoder())));
-				//System.out.println("WristPower: " + Arm.leftWrist.get());
-				
-				
-				if(Arm.wristPID.isDone()){
-					done = true;
-					System.out.println("done middle");
-				}
-				break;
-			case intake:
-				//System.out.println("___________________the intake case for wrist");
-				System.out.println("Wrist PID setpoint: " + Arm.wristPID.getSetpoint());
-				Arm.wristPID.calculate(Arm.getAveWristEncoder(), false);
-				Arm.setWrist(negate * (Arm.wristPID.getOutput() * Constants.wristBackPIDScale + Constants.armWrisFeedForward * Math.cos(Arm.getWristAngleRad(Arm.getAveWristEncoder()))));
-				System.out.println("__________________WristPower: " + Arm.wristPID.getOutput() * Constants.wristBackPIDScale + Constants.armWrisFeedForward * Math.cos(Arm.getWristAngleRad(Arm.getAveWristEncoder())));
-				//System.out.println("WristPower: " + Arm.leftWrist.get());
-				if(Arm.wristPID.isDone()){
-					done = true;
-					System.out.println("done intake");
-				}
-				
-				break;
-			case back:
-				//System.out.println("___________________the back case for wrist");
-				System.out.println("Wrist PID setpoint: " + Arm.wristPID.getSetpoint());
-				Arm.wristPID.calculate(Arm.getAveWristEncoder(), false);
-				Arm.setWrist(negate * (Arm.wristPID.getOutput() * Constants.wristDownPIDScale + Constants.armWrisFeedForward * Math.cos(Arm.getWristAngleRad(Arm.getAveWristEncoder()))));
-				System.out.println("__________________WristPower: " + Arm.wristPID.getOutput() * Constants.wristBackPIDScale + Constants.armWrisFeedForward * Math.cos(Arm.getWristAngleRad(Arm.getAveWristEncoder())));
-				//System.out.println("WristPower: " + Arm.leftWrist.get());
-				if(Arm.wristPID.isDone()){
-					done = true;
-					System.out.println("done back");
-				}
-				break;
-			case stop:
-				System.out.println("stopping");
-				break;
+		Arm.wristPID.calculate(Arm.getAveWristEncoder(), false);
+		double pidOutput = negate * (Arm.wristPID.getOutput() * Constants.wristBackPIDScale);
+		double feedforward = Constants.armWristFeedForward * Math.cos(Arm.getWristAngleRad(Arm.getAveWristEncoder()));
+		System.out.println("Arm wrist encoder value: " + Arm.getAveWristEncoder());
+		System.out.println("Wrist PID setpoint: " + Arm.wristPID.getSetpoint());
+		System.out.println("Pid outpput: " + pidOutput);
+		System.out.println("feed forward: " + feedforward);
+		Arm.setWrist(pidOutput + feedforward);
+		System.out.println("WristPower: " + Arm.leftWrist.get());
+		if(Arm.wristPID.isDone()){
+			done = true;
+			System.out.println("wrist done");
 		}
 
 	}
@@ -97,7 +64,6 @@ public class WristPIDCommand extends CommandBase {
 	@Override
 	public void stop() {
 		Arm.setWrist(0);
-
 	}
 
 	@Override

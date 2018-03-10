@@ -8,6 +8,7 @@ public class ShoulderPIDMessage implements Message{
 	//0,1,2 --> Down, Middle, Vertical
 	public ShoulderPIDMessage(int position){
 		this.position = position;
+		System.out.println("inside shoulder message");
 	}
 	
 	public int getDesiredPos(){

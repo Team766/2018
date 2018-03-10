@@ -20,8 +20,8 @@ public class Constants {
 		WristPID
 	};
 	//game data
-	public static int scale_side; //1 = right and -1 = left
-	public static int switch_side;
+	public static boolean scale_side; //true = right and false = left
+	public static boolean switch_side;
 	
 	
 	/*

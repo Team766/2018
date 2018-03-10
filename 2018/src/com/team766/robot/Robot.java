@@ -90,10 +90,11 @@ public class Robot implements MyRobot {
 					right = false;
 				}
 				if(i == 0){
-					Constants.switch_side = right ? 1 : -1;
+					// right = true, Left = false
+					Constants.switch_side = right;
 					break;
 				}
-				Constants.scale_side = right ? 1 : -1;
+				Constants.scale_side = right;
 			}
 		}
 		

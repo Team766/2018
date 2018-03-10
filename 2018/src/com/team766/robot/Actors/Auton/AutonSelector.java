@@ -38,7 +38,7 @@ public class AutonSelector extends Actor{
 			break;
 		case Scale:
 			System.out.println("Auton: Scale");
-			currentMode = new Scale(this);
+			currentMode = new LeftToScale(this);
 			break;
 		case CrossLine:
 			System.out.println("Auton: CrossLine");

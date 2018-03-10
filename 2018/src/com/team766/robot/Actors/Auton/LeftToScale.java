@@ -5,7 +5,7 @@ import com.team766.lib.Messages.ShoulderPIDMessage;
 
 import interfaces.AutonMode;
 
-public class Scale implements AutonMode{
+public class LeftToScale implements AutonMode{
 	private boolean commandDone, lock;
 	private AutonSelector parent;
 	private State currentState;
@@ -14,17 +14,16 @@ public class Scale implements AutonMode{
 	private enum State{
 		Start,
 		DriveRaiseArm,
-		LowerArm,
 		Done
 	}
 	
-	public Scale(AutonSelector parent){
+	public LeftToScale(AutonSelector parent){
 		this.parent = parent;
 		commandDone = false;
 		currentState = State.Start;
 		lock = false;
 	}
-
+// Left Scale
 	@Override
 	public void iterate() {
 		switch(currentState){
@@ -47,12 +46,6 @@ public class Scale implements AutonMode{
 						switchState(State.LowerArm);
 						parent.sendMessage(new ShoulderPIDMessage(2));
 					}
-				}
-				break;
-			case LowerArm:
-				System.out.println("lowering the arm");
-				if(commandDone){
-					switchState(State.Done);
 				}
 				break;
 			case Done:

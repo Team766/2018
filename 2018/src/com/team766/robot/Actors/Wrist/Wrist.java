@@ -66,7 +66,7 @@ public class Wrist extends Actor {
 			currentCommand.update();
 			
 			if(currentCommand.isDone()){
-				sendMessage(new Done());
+				sendMessage(new Done("Wrist"));
 			}
 			
 		}

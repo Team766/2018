@@ -4,8 +4,14 @@ import lib.Message;
 
 public class Done implements Message{
 	
-	public boolean isDone(){
-		return true;
+	private String actor;
+	
+	public Done(String actor){
+		this.actor = actor;
+	}
+	
+	public String getSender(){
+		return actor;
 	}
 
 }

@@ -6,6 +6,7 @@ public class GripperUpdate implements Message{
 
 	private boolean grab;
 	
+	//true = close, false = open
 	public GripperUpdate(boolean grab) {
 		System.out.println("inside gripper message!");
 		this.grab = grab;

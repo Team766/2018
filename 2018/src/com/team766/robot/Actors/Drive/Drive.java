@@ -83,6 +83,8 @@ public class Drive extends Actor{
 			else if (currentMessage instanceof DrivePIDMessage){
 				swapCurrentCommand(new DrivePIDCommand(currentMessage), "got new drive PID message");
 			}
+			System.out.println("leftDrive power: " + leftDriveA.get());
+			System.out.println("rightDrive power: " + rightDriveA.get());
 		}
 		
 		if (currentCommand != null) {

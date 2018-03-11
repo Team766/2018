@@ -10,6 +10,7 @@ import interfaces.CANSpeedController;
 import interfaces.SubActor;
 import interfaces.CANSpeedController.ControlMode;
 import lib.Actor;
+import lib.ConstantsFileReader;
 import lib.Message;
 import lib.PIDController;
 
@@ -18,7 +19,7 @@ public class Wrist extends Actor {
 	CANSpeedController leftWrist = HardwareProvider.getInstance().getLeftArmWrist();
 	CANSpeedController rightWrist = HardwareProvider.getInstance().getRightArmWrist();
 	
-	PIDController wristPID = new PIDController(Constants.k_wristP, Constants.k_wristI, Constants.k_wristD, Constants.k_wristThresh);
+	PIDController wristPID = new PIDController(ConstantsFileReader.getInstance().get("k_wristP"), ConstantsFileReader.getInstance().get("k_wristI"), ConstantsFileReader.getInstance().get("k_wristD"), ConstantsFileReader.getInstance().get("k_wristThresh"));
 	
 	private boolean commandFinished;
 
@@ -116,7 +117,7 @@ public class Wrist extends Actor {
 	}
 	
 	public double getWristAngleRad(double encoder){
-		return 0.5 * Math.PI * getAveWristEncoder() / Constants.armWristMiddle;
+		return 0.5 * Math.PI * getAveWristEncoder() / ConstantsFileReader.getInstance().get("armWristMiddle");
 	}
 
 	

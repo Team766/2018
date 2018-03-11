@@ -17,7 +17,9 @@ public class Constants {
 		DriveSquare,
 		DriveEncoder,
 		DrivePID,
-		WristPID
+		WristPID,
+		LeftToSwitch,
+		RightToSwitch
 	};
 	//game data
 	public static int scale_side; //1 = right and -1 = left
@@ -68,22 +70,21 @@ public class Constants {
 	 * Arm
 	 */
 	public static final double shoulderUpPIDScale = 1.0 / (ConstantsFileReader.getInstance().get("armShoulderVertical") * ConstantsFileReader.getInstance().get("k_shoulderUpP"));
-	
+	public static final double shoulderTimeLimit = 8000;
 	//Wrist
-	public static final double armWristDown = 3900;
-	public static final double armWristMiddle = 2600;
-	public static final double armWristBack = 200; 
-	
-	public static final double k_wristP = 0.0005;
-	public static final double k_wristI = 0;
-	public static final double k_wristD = 0.0001;
-	public static final double k_wristThresh = 5.0;
-	
-	public static final double wristMiddlePIDScale = 1.0;
-	public static final double wristBackPIDScale = 1.0;
-	public static final double wristDownPIDScale = 1.0;
-	
 	public static final double wristPowerLimit = 0.7;
 	public static final double armWristLimit = 1000; //not tested - delta value
-	public static final double armWrisFeedForward = 0.08;
+	
+	/*
+	 * To Switch
+	 */
+	//starting from sides
+	public static final double switchStraight = 11.0; //distance to the switch if same side
+	public static final double switchToMiddle = 3.0; //distance to the point preparing to turn
+	public static final double switchHorizontal = 6.0; //horizontal distance for going to the switch at opposite direction
+	public static final double switchToScore = 4.0; //distance to the switch for dropping cube after turning
+	public static final double switchFirstTurnAngle = -90.0;
+	public static final double switchSecondTurnAngle = 90.0;
+	
+	
 }

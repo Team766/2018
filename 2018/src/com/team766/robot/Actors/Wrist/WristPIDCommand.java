@@ -17,6 +17,7 @@ public class WristPIDCommand extends CommandBase {
 	private State currentState;
 	private WristPIDMessage message;
 	private int negate = 1;
+	ConstantsFileReader constants_file;
 	
 	private enum State{
 		back,
@@ -29,19 +30,20 @@ public class WristPIDCommand extends CommandBase {
 		this.message = (WristPIDMessage)m;
 		done = false;
 		currentState = State.stop;
+		constants_file = ConstantsFileReader.getInstance();
 		
 		if(message.getWristPosition() == 1){
 			//System.out.println("to middle__________");
 			switchState(State.middle);
-			Wrist.wristPID.setSetpoint(Constants.armWristMiddle);
+			Wrist.wristPID.setSetpoint(constants_file.get("armWristMiddle"));
 		}
 		else if(message.getWristPosition() == 2){
 			switchState(State.intake);
-			Wrist.wristPID.setSetpoint(Constants.armWristBack);
+			Wrist.wristPID.setSetpoint(constants_file.get("armWristBack"));
 		}
 		else{
 			switchState(State.back);
-			Wrist.wristPID.setSetpoint(Constants.armWristDown);
+			Wrist.wristPID.setSetpoint(constants_file.get("armWristDown"));
 		}
 	}
 
@@ -49,13 +51,13 @@ public class WristPIDCommand extends CommandBase {
 	public void update() {
 				
 				System.out.println("Wrist PID setpoint: " + Wrist.wristPID.getSetpoint());
-				Wrist.wristPID.calculate(Wrist.getAveWristEncoder(), false);
-				Wrist.setWrist(negate * (Wrist.wristPID.getOutput() * Constants.wristBackPIDScale + Constants.armWrisFeedForward * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()))));
-				System.out.println("__________________WristPower: " + Wrist.wristPID.getOutput() * Constants.wristBackPIDScale + Constants.armWrisFeedForward * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder())));
+				Wrist.wristPID.calculate(Wrist.getRightWristEncoder(), false);
+				Wrist.setWrist(negate * (Wrist.wristPID.getOutput() * constants_file.get("wristBackPIDScale") + constants_file.get("armWrisFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()))));
+				System.out.println("__________________WristPower: " + Wrist.wristPID.getOutput() * constants_file.get("wristBackPIDScale") + constants_file.get("armWrisFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder())));
 				
 				if(Wrist.wristPID.isDone()){
 					done = true;
-					System.out.println("done middle");
+					System.out.println("done moving");
 				}
 	}
 

@@ -70,6 +70,13 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton: WristPID");
 			currentMode = new WristPID(this);
 			break;
+		case LeftToSwitch:
+			System.out.println("Auton: LeftToSwitch");
+			currentMode = new SideToSwitch(this, true);
+			break;
+		case RightToSwitch:
+			System.out.println("Auton: RightToSwitch");
+			currentMode = new SideToSwitch(this, false);
 		}
 	}
 

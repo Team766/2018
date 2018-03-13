@@ -48,8 +48,8 @@ public class Intake extends Actor{
 			else if(currentMessage instanceof GripperUpdate){
 				currentCommand = null;
 				GripperUpdate gripperMessage = (GripperUpdate)currentMessage;
-				setGripper(gripperMessage.getGrab());
-				System.out.println("set: " + gripperMessage.getGrab() + "actual: " + getGripper());
+				setGripper(gripperMessage.getOpen());
+				System.out.println("set: " + gripperMessage.getOpen() + "actual: " + getGripper());
 			}
 			else if(currentMessage instanceof IntakeMotorUpdate){
 				currentCommand = null;

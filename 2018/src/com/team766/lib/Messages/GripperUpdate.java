@@ -4,17 +4,17 @@ import lib.Message;
 
 public class GripperUpdate implements Message{
 
-	private boolean grab;
+	private boolean open;
 	
-	//true = close, false = open
-	public GripperUpdate(boolean grab) {
+	//true = open, false = close
+	public GripperUpdate(boolean open) {
 		System.out.println("inside gripper message!");
-		this.grab = grab;
+		this.open = open;
 	}
 	
 	//open or close the gripper
-	public boolean getGrab(){
-		return grab;
+	public boolean getOpen(){
+		return open;
 	}
 	
 	public String toString(){

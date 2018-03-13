@@ -22,22 +22,26 @@ public class SideToSwitch implements AutonMode{
 	
 	private enum State{
 		Start,
-		//GrabCube,
 		DriveStraight,
 		Turn,
-		RaiseArm,
+		DriveRaiseArm,
 		DropCube,
 		Done
 	}
 	public SideToSwitch(AutonSelector parent, boolean isStartingRight){
 		this.parent = parent;
-		negateAngle = isStartingRight? 1 : -1;
+		negateAngle = isStartingRight? -1 : 1;
 		commandDone = false;
 		currentState = State.Start;
 		count = 0;
-		isOppositeSide = true;//Constants.switch_side == 1? true : false;
-		straightDist = new double[]{Constants.switchToMiddle, Constants.switchHorizontal, Constants.switchToScore};
-		turnAngle = new double[]{negateAngle * Constants.switchFirstTurnAngle, negateAngle * Constants.switchSecondTurnAngle, 0.0};
+		isOppositeSide = Constants.switch_side != negateAngle ;
+		if(Constants.switch_side == 1){
+			straightDist = new double[]{Constants.side_switch_forward, Constants.side_switch_forward_side, Constants.side_switch_forward_side_forward};
+			turnAngle = new double[]{negateAngle * Constants.switchFirstTurnAngle, negateAngle * Constants.switchSecondTurnAngle, 0.0};
+		} else{
+			straightDist = new double[]{Constants.side_switch_straight, Constants.side_switch_straight_side};
+			turnAngle = new double[]{negateAngle * Constants.switchFirstTurnAngle, 0.0};
+		}
 		
 	}
 
@@ -45,53 +49,37 @@ public class SideToSwitch implements AutonMode{
 	public void iterate() {
 		switch(currentState){
 			case Start:
-				//setState(State.GrabCube);
-				//parent.sendMessage(new GripperUpdate(true));
-				//parent.sendMessage(new WristPIDMessage(2));
-				double dist = isOppositeSide? straightDist[count] : Constants.switchStraight;
+				double dist = isOppositeSide? straightDist[count] : Constants.side_switch_straight;
 				switchState(State.DriveStraight, new DrivePIDMessage(dist, 0));
-				
 				break;
-//			case GrabCube:
-//				System.out.println("grabbing the cube");
-//				if(commandDone){
-//					double dist = isRight? straightDist[count] : Constants.switchStraight;
-//					switchState(State.DriveStraight, new DrivePIDMessage(dist, 0));
-//				}
-//				break;
 			case DriveStraight:
 				System.out.println("driving for " + straightDist[count] + " feet");
 				if(commandDone){
-					if(isOppositeSide){
-						switchState(State.Turn, new DrivePIDMessage(0.0, turnAngle[count]));
-					} else{
-						//switchState(State.RaiseArm, new ShoulderPIDMessage(1));
-						setState(State.Done);
-					}
-				}
+					switchState(State.Turn, new DrivePIDMessage(0.0, turnAngle[count]));
+				} 
 				break;
 			case Turn:
 				System.out.println("turning for " + turnAngle[count] + " degrees");
 				if(commandDone){
-					if(count < 2){
+					if((count < 2 && isOppositeSide) || (count < 1 && !isOppositeSide)){
 						count += 1;
 						switchState(State.DriveStraight, new DrivePIDMessage(straightDist[count], 0.0));
 					} else{
-						switchState(State.RaiseArm, new ShoulderPIDMessage(1));
-						//setState(State.Done);
+						setState(State.DriveRaiseArm);
+						parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0));
+						parent.sendMessage(new ShoulderPIDMessage(1));
 					}	
 				}
 				break;
-			case RaiseArm:
+			case DriveRaiseArm:
 				System.out.println("raising arms to the middle");
 				if(commandDone)
-					//switchState(State.DropCube, new GripperUpdate(false));
+					switchState(State.DropCube, new GripperUpdate(true));
 					setState(State.Done);
 				break;
 			case DropCube:
 				System.out.println("dropping the cube");
-				if(commandDone)
-					setState(State.Done);
+				setState(State.Done);
 				break;
 			case Done:
 				parent.setDone(true);

@@ -19,7 +19,8 @@ public class Constants {
 		DrivePID,
 		WristPID,
 		LeftToSwitch,
-		RightToSwitch
+		RightToSwitch,
+		MiddleToSwitch
 	};
 	//game data
 	public static int scale_side; //1 = right and -1 = left
@@ -78,13 +79,22 @@ public class Constants {
 	/*
 	 * To Switch
 	 */
+	public static final double switch_final_forward = 1.0;
+	
 	//starting from sides
-	public static final double switchStraight = 11.0; //distance to the switch if same side
-	public static final double switchToMiddle = 3.0; //distance to the point preparing to turn
-	public static final double switchHorizontal = 6.0; //horizontal distance for going to the switch at opposite direction
-	public static final double switchToScore = 4.0; //distance to the switch for dropping cube after turning
+	public static final double side_switch_straight = 7.45; //distance to the switch if same side 
+	public static final double side_switch_straight_side = 3.4; //distance from side to the switch if same side
+	public static final double side_switch_forward = 3.0; //distance to the point preparing to turn
+	public static final double side_switch_forward_side = 5; //(actual value: 15 feet) horizontal distance for going to the switch at opposite direction
+	public static final double side_switch_forward_side_forward = 4.45; //distance to the switch for dropping cube after turning
 	public static final double switchFirstTurnAngle = -90.0;
 	public static final double switchSecondTurnAngle = 90.0;
+	
+	//starting from middle
+	public static final double middle_switch_forward = 3.0;
+	public static final double middle_switch_forward_leftSide = 5.82;
+	public static final double middle_switch_forward_rightSide = 4.00; //actual value: 6.66 feet
+	public static final double middle_switch_forward_side_forward = 4.45;
 	
 	
 }

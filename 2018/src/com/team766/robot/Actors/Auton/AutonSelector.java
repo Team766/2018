@@ -1,14 +1,14 @@
 package com.team766.robot.Actors.Auton;
 
 import lib.Actor;
+
 import lib.Message;
 
-import com.team766.lib.Messages.ArmStageMessage;
-import com.team766.lib.Messages.DriveTimeMessage;
-import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.lib.Messages.Done;
+import com.team766.lib.Messages.GripperUpdate;
 import com.team766.lib.Messages.Stop;
+import com.team766.lib.Messages.WristPIDMessage;
 import com.team766.robot.Constants;
 import com.team766.robot.Constants.Autons;
 import com.team766.robot.Actors.Auton.DriveStraightTime;
@@ -21,13 +21,27 @@ public class AutonSelector extends Actor{
 
 	public Constants.Autons autonMode;
 	public AutonMode currentMode;
+	private State currentState;
+	private int count;
+	private boolean commandDone;
 	
 	SubActor currentCommand;
+	
+	private enum State{
+		Start,
+		FlipWrist,
+		ChangeArmHeight,
+		Intake,
+		Path,
+		Done
+	}
 
 	public AutonSelector (Constants.Autons mode){
 		autonMode = mode;
-		
+		currentState = State.Start;
+		count = 0;
 		acceptableMessages = new Class[]{Done.class};
+		commandDone = false;
 		
 		switch(autonMode){
 		case None:
@@ -72,32 +86,20 @@ public class AutonSelector extends Actor{
 			break;
 		case LeftToSwitch:
 			System.out.println("Auton: LeftToSwitch");
-			currentMode = new SideToSwitch(this, true);
+			currentMode = new SideToSwitch(this, false);
 			break;
 		case RightToSwitch:
 			System.out.println("Auton: RightToSwitch");
-			currentMode = new SideToSwitch(this, false);
+			currentMode = new SideToSwitch(this, true);
+		case MiddleToSwitch:
+			System.out.println("Auton: MiddleToSwitch");
+			currentMode = new MiddleToSwitch(this);
 		}
 	}
 
 	@Override
 	public void iterate() {
-		currentMode.iterate();
-		
-		while (newMessage()) {
-			Message currentMessage = readMessage();
-			if (currentMessage == null){
-				continue;
-			}
-			stopCurrentCommand();
-			if(currentMessage instanceof Done){
-				System.out.println("setting command to done ");
-				currentMode.commandDone(true);
-			}
-		}
-		if (currentCommand != null) {
-			currentCommand.update();
-		}
+		startSequence(currentMode);
 	}
 	
 	private void stopCurrentCommand(){
@@ -121,4 +123,69 @@ public class AutonSelector extends Actor{
 	public void setDone(boolean done){
 		this.done = done;
 	}
+	
+	public void startSequence(AutonMode auton){
+		switch(currentState){
+			case Start:
+				System.out.println("starting case for auton");
+				this.sendMessage(new GripperUpdate(true));
+				this.sendMessage(new ShoulderPIDMessage(1));
+				System.out.println("lifting arm");
+				setState(State.FlipWrist);
+				this.sendMessage(new WristPIDMessage(2));
+				break;
+			case FlipWrist:
+				System.out.println("flipping the wrist");
+				if(commandDone){
+					if(count == 0){
+						setState(State.ChangeArmHeight);
+						this.sendMessage(new ShoulderPIDMessage(0));
+						System.out.println("lowering arm");
+						count ++;
+					}
+					else{
+						setState(State.Path);
+					}
+				}
+				break;
+			case ChangeArmHeight:
+				System.out.println("Changing Arm Height");
+				if(commandDone){
+					setState(State.Intake);
+					this.sendMessage(new GripperUpdate(false));
+				}
+				break;
+			case Intake:
+				System.out.println("Intakaing the cube");
+				setState(State.FlipWrist);
+				this.sendMessage(new WristPIDMessage(1));
+				break;
+			case Path:
+				System.out.println("Auton Path");
+				auton.iterate();
+				while (newMessage()) {
+					Message currentMessage = readMessage();
+					if (currentMessage == null){
+						continue;
+					}
+					stopCurrentCommand();
+					if(currentMessage instanceof Done){
+						System.out.println("setting command to done ");
+						auton.commandDone(true);
+					}
+				}
+				if (currentCommand != null) {
+					currentCommand.update();
+				}
+				break;
+				
+		}
+	}
+	
+	
+	private void setState(State state){
+		currentState = state;
+		commandDone = false;
+	}
+
 }

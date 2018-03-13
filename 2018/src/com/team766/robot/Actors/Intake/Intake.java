@@ -32,7 +32,7 @@ public class Intake extends Actor{
 	public void iterate() {
 		if(newMessage()){
 			if(currentCommand != null){
-				System.out.println("got new arm message, stopping current command");
+				System.out.println("got new intake message, stopping current command");
 				currentCommand.stop();
 			}
 			commandFinished = false;
@@ -49,7 +49,7 @@ public class Intake extends Actor{
 				currentCommand = null;
 				GripperUpdate gripperMessage = (GripperUpdate)currentMessage;
 				setGripper(gripperMessage.getGrab());
-				System.out.println("set: " + gripperMessage.getGrab() + "actual: " + getGripper());
+//				System.out.println("set: " + gripperMessage.getGrab() + "\t\tactual: " + getGripper());
 			}
 			else if(currentMessage instanceof IntakeMotorUpdate){
 				currentCommand = null;

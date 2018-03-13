@@ -8,21 +8,30 @@ public class Constants {
 	 */
 	public static enum Autons {
 		None,
-		Switch,
-		Scale,
+		Switch, //need to add left, right, center
+		RightToScale,
+		LeftToScale,
 		Exchange,
 		CrossLine,
-		DriveStraightTime,
-		ArmPID,
-		DriveSquare,
-		DriveEncoder,
-		DrivePID,
-		WristPID
+		DriveSquare
 	};
 	//game data
 	public static int scale_side; //1 = right and -1 = left
 	public static int switch_side;
 	
+	public static final double field_width_half = 11.01;
+	
+	public static final double delta_center_lines = 0.42; //distance between robot middle and field middle when starting at "middle" position
+	
+	// side to scale
+	public static final double side_scale_same_angle = -6.0; //degrees right
+	public static final double side_scale_same_forward = 4.0; //27.0
+	public static final double side_scale_same_forward_angle = 96.0; //left
+	public static final double side_scale_same_forward_side = 1.0;
+	
+	public static final double side_scale_opposite_forward = 4.0; //17.0
+	public static final double side_scale_opposite_forward_side = 7.0; //14.0
+	public static final double side_scale_opposite_forward_side_forward = 2.0; //7.0
 	
 	/*
 	 * Drive
@@ -33,7 +42,7 @@ public class Constants {
 		CheesyDrive,
 		Arm
 	};
-	public static final Drives driveType = Drives.SingleStick;
+	public static final Drives driveType = Drives.CheesyDrive;
 	public static final double drivePowerLimit = 0.4;
 	
 	public static final double wheel_circumference = ConstantsFileReader.getInstance().get("wheel_diameter") * Math.PI; //note: mule = 4 in ; revA = 6 in diameter

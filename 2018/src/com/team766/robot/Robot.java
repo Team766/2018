@@ -75,7 +75,7 @@ public class Robot implements MyRobot {
 		Scheduler.getInstance().remove(OperatorControl.class);
 		Scheduler.getInstance().remove(AutonSelector.class);
 
-//		sendStopMessage();
+		sendStopMessage();
 
 		log(Level.INFO, "Starting AutonSelector");
 		Constants.Autons selected_auton = httpServer.getSelectedAutonMode(Constants.Autons.class);
@@ -91,9 +91,10 @@ public class Robot implements MyRobot {
 				}
 				if(i == 0){
 					Constants.switch_side = right ? 1 : -1;
-					break;
 				}
-				Constants.scale_side = right ? 1 : -1;
+				else{
+					Constants.scale_side = right ? 1 : -1;
+				}
 			}
 		}
 		

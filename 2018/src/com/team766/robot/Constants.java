@@ -13,7 +13,7 @@ public class Constants {
 		LeftToScale,
 		Exchange,
 		CrossLine,
-		DriveSquare
+		DriveSquare,
 		LeftToSwitch,
 		RightToSwitch,
 		MiddleToSwitch

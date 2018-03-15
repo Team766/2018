@@ -15,8 +15,8 @@ public class Buttons {
 	public static final int climbUp = 6;
 	
 	//arm
-	public static final int manualArmUp = 3;
-	public static final int manualArmDown = 5;
+	public static final int manualShoulderUp = 3;
+	public static final int manualShoulderDown = 5;
 	public static final int manualWristUp = 2;
 	public static final int manualWristDown = 4;
 	

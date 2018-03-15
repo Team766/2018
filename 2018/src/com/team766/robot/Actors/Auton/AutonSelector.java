@@ -129,19 +129,18 @@ public class AutonSelector extends Actor{
 			case Start:
 				System.out.println("starting case for auton");
 				this.sendMessage(new GripperUpdate(true));
-				this.sendMessage(new ShoulderPIDMessage(1));
 				System.out.println("lifting arm");
-				setState(State.FlipWrist);
-				this.sendMessage(new WristPIDMessage(2));
+				setState(State.ChangeArmHeight);
+				this.sendMessage(new ShoulderPIDMessage(2));
 				break;
 			case FlipWrist:
 				System.out.println("flipping the wrist");
 				if(commandDone){
 					if(count == 0){
+						count ++;
 						setState(State.ChangeArmHeight);
 						this.sendMessage(new ShoulderPIDMessage(0));
 						System.out.println("lowering arm");
-						count ++;
 					}
 					else{
 						setState(State.Path);
@@ -151,8 +150,13 @@ public class AutonSelector extends Actor{
 			case ChangeArmHeight:
 				System.out.println("Changing Arm Height");
 				if(commandDone){
-					setState(State.Intake);
-					this.sendMessage(new GripperUpdate(false));
+					if(count == 0){
+						setState(State.FlipWrist);
+						this.sendMessage(new WristPIDMessage(2));
+					} else{
+						setState(State.Intake);
+						this.sendMessage(new GripperUpdate(false));
+					} 
 				}
 				break;
 			case Intake:

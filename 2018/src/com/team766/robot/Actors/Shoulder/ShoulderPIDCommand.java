@@ -22,7 +22,8 @@ public class ShoulderPIDCommand extends CommandBase{
 		Down,
 		Middle,
 		Up,
-		StayVertical
+		StayVertical,
+		Hold
 	}
 	
 	private State[] positions;
@@ -32,12 +33,16 @@ public class ShoulderPIDCommand extends CommandBase{
 		message = (ShoulderPIDMessage) m;
 		done = false;
 		constants_file = ConstantsFileReader.getInstance();
-		
-		positions = new State[]{State.Down, State.Middle, State.Up};
+		positions = new State[]{State.Down, State.Middle, State.Up, State.Hold};
 		encoderPos = new String[]{"armShoulderBottom", "armShoulderMiddle", "armShoulderVertical"};
 		
 		switchState(positions[message.getDesiredPos()]);
-		Shoulder.shoulderUpPID.setSetpoint(constants_file.get(encoderPos[message.getDesiredPos()]));
+		
+		if(message.getDesiredPos() == 3){
+			Shoulder.shoulderUpPID.setSetpoint(Shoulder.getAveShoulderEncoder());
+		} else{
+			Shoulder.shoulderUpPID.setSetpoint(constants_file.get(encoderPos[message.getDesiredPos()]));
+		}
 		startTime = System.currentTimeMillis();
 	}
 
@@ -90,6 +95,19 @@ public class ShoulderPIDCommand extends CommandBase{
 					done = true;
 				}
 				break;
+			case Hold:
+				if(!reachTimeLimit){
+					Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff);
+				} else{
+					Shoulder.setShoulderBalance(Constants.shoulderUpPIDScale * output + ff);
+				}
+				System.out.println("Case Hold");
+				if(Shoulder.shoulderUpPID.isDone()){
+					System.out.println("done going down");
+					done = true;
+				}
+				break;
+				
 		}
 	}
 

@@ -74,7 +74,7 @@ public class Constants {
 	public static final double shoulderTimeLimit = 8000;
 	//Wrist
 	public static final double wristPowerLimit = 0.7;
-	public static final double armWristLimit = 1000; //not tested - delta value
+	
 	
 	/*
 	 * To Switch

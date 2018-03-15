@@ -20,36 +20,40 @@ public class WristPIDCommand extends CommandBase {
 	ConstantsFileReader constants_file;
 	
 	private enum State{
-		back,
-		middle,		
-		intake,
-		stop
+		Back,
+		Middle,		
+		Intake,
+		Stop,
+		Hold
 	}
 	
 	public WristPIDCommand(Message m) {
 		this.message = (WristPIDMessage)m;
 		done = false;
-		currentState = State.stop;
+		currentState = State.Stop;
 		constants_file = ConstantsFileReader.getInstance();
 		
 		if(message.getWristPosition() == 1){
 			//System.out.println("to middle__________");
-			switchState(State.middle);
+			switchState(State.Middle);
 			Wrist.wristPID.setSetpoint(constants_file.get("armWristMiddle"));
 		}
 		else if(message.getWristPosition() == 2){
-			switchState(State.intake);
+			switchState(State.Intake);
+			Wrist.wristPID.setSetpoint(constants_file.get("armWristIntake"));
+		}
+		else if(message.getWristPosition() == 0){
+			switchState(State.Back);
 			Wrist.wristPID.setSetpoint(constants_file.get("armWristBack"));
 		}
 		else{
-			switchState(State.back);
-			Wrist.wristPID.setSetpoint(constants_file.get("armWristDown"));
+			switchState(State.Hold);
+			Wrist.wristPID.setSetpoint(Wrist.getAveWristEncoder());
 		}
 	}
 
 	@Override
-	public void update() {
-				
+	public void update() {	
 				System.out.println("Wrist PID setpoint: " + Wrist.wristPID.getSetpoint());
 				Wrist.wristPID.calculate(Wrist.getRightWristEncoder(), false);
 				Wrist.setWrist(negate * (Wrist.wristPID.getOutput() * constants_file.get("wristBackPIDScale") + constants_file.get("armWrisFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()))));

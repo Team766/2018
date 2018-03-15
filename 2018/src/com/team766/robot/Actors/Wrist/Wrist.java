@@ -1,15 +1,20 @@
 package com.team766.robot.Actors.Wrist;
 
 import com.team766.lib.Messages.Done;
+import com.team766.lib.Messages.ShoulderPIDMessage;
+import com.team766.lib.Messages.ShoulderSimpleMessage;
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.WristPIDMessage;
+import com.team766.lib.Messages.WristSimpleMessage;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
+import com.team766.robot.Actors.Shoulder.ShoulderPIDCommand;
 import com.team766.robot.Actors.Wrist.WristPIDCommand;
 import interfaces.CANSpeedController;
 import interfaces.SubActor;
 import interfaces.CANSpeedController.ControlMode;
 import lib.Actor;
+import lib.ConstantsFileReader;
 import lib.Message;
 import lib.PIDController;
 
@@ -18,7 +23,7 @@ public class Wrist extends Actor {
 	CANSpeedController leftWrist = HardwareProvider.getInstance().getLeftArmWrist();
 	CANSpeedController rightWrist = HardwareProvider.getInstance().getRightArmWrist();
 	
-	PIDController wristPID = new PIDController(Constants.k_wristP, Constants.k_wristI, Constants.k_wristD, Constants.k_wristThresh);
+	PIDController wristPID = new PIDController(ConstantsFileReader.getInstance().get("k_wristP"), ConstantsFileReader.getInstance().get("k_wristI"), ConstantsFileReader.getInstance().get("k_wristD"), ConstantsFileReader.getInstance().get("k_wristThresh"));
 	
 	private boolean commandFinished;
 
@@ -28,7 +33,7 @@ public class Wrist extends Actor {
 	private SubActor currentCommand;
 	
 	public Wrist() {
-		acceptableMessages = new Class[]{Stop.class, WristPIDMessage.class};
+		acceptableMessages = new Class[]{Stop.class, WristPIDMessage.class, WristSimpleMessage.class};
 		setWristEncoders(0);
 	}
 
@@ -53,6 +58,21 @@ public class Wrist extends Actor {
 				System.out.println("stopping wrist");
 				currentCommand = null;
 				setWrist(0.0);
+			}
+			else if(currentMessage instanceof WristSimpleMessage){
+				System.out.println("WristSimpleMessage");
+				double currPos = this.getAveWristEncoder();
+				double wristPower = ConstantsFileReader.getInstance().get("wristManualPower");
+				double ff = ConstantsFileReader.getInstance().get("armWristFeedForward") * Math.cos(this.getWristAngleRad(currPos));
+				WristSimpleMessage wristMessage = (WristSimpleMessage)currentMessage;
+				currentCommand = null;
+				
+				if(wristMessage.getWristDirection() == 0 && currPos < ConstantsFileReader.getInstance().get("armWristBack"))
+					setWrist(wristPower + ff);
+				else if(wristMessage.getWristDirection() == 1 && currPos > 50)
+					setWrist(-wristPower + ff);
+				else
+					currentCommand = new ShoulderPIDCommand(new WristPIDMessage(3)); //hold	
 			}
 			else if(currentMessage instanceof WristPIDMessage){
 				currentCommand = new WristPIDCommand(currentMessage);
@@ -98,7 +118,7 @@ public class Wrist extends Actor {
 	}
 	
 	public double getAveWristEncoder(){
-		return 0.5 * (Math.abs(getLeftWristEncoder()) + Math.abs(getRightWristEncoder()));
+		return 0.5 * (-getLeftWristEncoder() + getRightWristEncoder());
 	}
 	
 	public void setWristEncoders(int position){
@@ -116,7 +136,7 @@ public class Wrist extends Actor {
 	}
 	
 	public double getWristAngleRad(double encoder){
-		return 0.5 * Math.PI * getAveWristEncoder() / Constants.armWristMiddle;
+		return 0.5 * Math.PI * getAveWristEncoder() / ConstantsFileReader.getInstance().get("armWristMiddle");
 	}
 
 	

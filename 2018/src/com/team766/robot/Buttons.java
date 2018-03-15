@@ -27,5 +27,5 @@ public class Buttons {
 	public static final int shoulderMiddle = 180; //A2
 	public static final int shoulderBottom = 45; //A3
 	public static final int shoulderClimb = 0; //A4
-	
+  
 }

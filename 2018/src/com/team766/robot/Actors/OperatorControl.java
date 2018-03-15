@@ -8,20 +8,22 @@ import com.team766.lib.Messages.DriveUpdate;
 import com.team766.lib.Messages.IntakeMotorUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.WristPIDMessage;
+import com.team766.lib.Messages.WristSimpleMessage;
 import com.team766.lib.Messages.GripperUpdate;
 import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.lib.Messages.ShoulderPIDMessage;
+import com.team766.lib.Messages.ShoulderSimpleMessage;
 import com.team766.robot.Buttons;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 import com.team766.robot.Actors.Intake.Intake;
-
 import edu.wpi.first.wpilibj.DriverStation;
-
+import com.team766.robot.Actors.Wrist.WristPIDCommand;
 import com.team766.robot.Actors.Drive.Drive;
 
 import interfaces.JoystickReader;
 import lib.Actor;
+import lib.Message;
 
 public class OperatorControl extends Actor{
 	
@@ -33,7 +35,7 @@ public class OperatorControl extends Actor{
 	
 	private double[] leftJoystick = new double[4];
 	private double[] rightJoystick = new double[4];
-	private boolean[] prevPress = new boolean[14];
+	private boolean[] prevPress = new boolean[17];
 	private boolean shifterStatus = false;
 	
 	private void setAxis(JoystickReader joystick, double[] axis, int axisNumber, double deadband){
@@ -114,7 +116,7 @@ public class OperatorControl extends Actor{
 			sendMessage(new GripperUpdate(true));
 		}
 		
-		//button for climb up (prevPress[3])
+		//button for climb up (prevPress[6])
 		if(!prevPress[6] && jBox.getRawButton(Buttons.climbUp)) {
 			sendMessage(new ClimberUpdate());
 		}
@@ -126,10 +128,15 @@ public class OperatorControl extends Actor{
 		}
 		prevPress[9] = jBox.getRawButton(Buttons.eStop);
 		
-		//button for intake block (prevPress[5])
+		//button for intake block (prevPress[12])
 		if(!prevPress[12] && jBox.getRawButton(Buttons.intakeBlock)){
-			System.out.println("button 5(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
+			System.out.println("button 12(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
 			sendMessage(new IntakeMotorUpdate(Constants.intakeMotorSpeed));
+			prevPress[5] = true;
+		} 
+		else if(prevPress[5] && !jBox.getRawButton(Buttons.blockIn)){
+			sendMessage(new IntakeMotorUpdate(0.0));
+			prevPress[5] = false;
 		}
 		prevPress[12] = jBox.getRawButton(Buttons.intakeBlock);
 		
@@ -185,6 +192,48 @@ public class OperatorControl extends Actor{
 			sendMessage(new WristPIDMessage(0));
 		}
 		prevPress[8] = jBox.getRawButton(Buttons.wristBack);
+		
+		//button for moving wrist up manually
+		if(!prevPress[2] && jBox.getRawButton(Buttons.wristUp)){
+			System.out.println("Wrist up");
+			sendMessage(new WristSimpleMessage(0));
+			prevPress[2] = true;
+		}
+		else if(prevPress[2] && !jBox.getRawButton(Buttons.wristUp)){
+			sendMessage(new WristPIDMessage(3));
+			prevPress[2] = false;
+		}
+		
+		//wrist down manually
+		if(!prevPress[4] && jBox.getRawButton(Buttons.wristDown)){
+			sendMessage(new WristSimpleMessage(1));
+			prevPress[4] = true;
+		}
+		else if(prevPress[4] && !jBox.getRawButton(Buttons.wristDown)){
+			sendMessage(new WristPIDMessage(3));
+			prevPress[4] = false;
+		}
+		
+		//shoulder up manually
+		if(!prevPress[3] && jBox.getRawButton(Buttons.shoulderUp)){
+			System.out.println("up button for shoulder is pressed");
+			sendMessage(new ShoulderSimpleMessage(0));
+			prevPress[3] = true;
+		}
+		else if(prevPress[3] && !jBox.getRawButton(Buttons.shoulderUp)){
+			sendMessage(new ShoulderPIDMessage(3));
+			prevPress[3] false;
+		}
+		
+		//shoulder down manually
+		if(!prevPress[5] && jBox.getRawButton(Buttons.shoulderDown)){
+			sendMessage(new ShoulderSimpleMessage(1));
+			prevPress[5 = true;
+		}
+		else if(prevPress[5] && !jBox.getRawButton(Buttons.shoulderDown)){
+			sendMessage(new ShoulderPIDMessage(3));
+			prevPress[5] false;
+		}
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import com.team766.lib.Messages.ArmSimpleMessage;
 import com.team766.lib.Messages.ArmStageMessage;
 import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.ShoulderPIDMessage;
+import com.team766.lib.Messages.ShoulderSimpleMessage;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 
@@ -31,7 +32,7 @@ public class Shoulder extends Actor {
 	private SubActor currentCommand;
 	
 	public void init(){
-		acceptableMessages = new Class[]{ArmSimpleMessage.class, ArmStageMessage.class, Stop.class, ShoulderPIDMessage.class};
+		acceptableMessages = new Class[]{ArmStageMessage.class, Stop.class, ShoulderSimpleMessage.class, ShoulderPIDMessage.class};
 		setShoulderEncoders(0);
 	}
 	
@@ -57,17 +58,23 @@ public class Shoulder extends Actor {
 				currentCommand = null;
 				setShoulder(0.0);
 			}
-			else if(currentMessage instanceof ArmSimpleMessage){
-				System.out.println("got arm simple message");
+			else if(currentMessage instanceof ShoulderSimpleMessage){
+				System.out.println("shoulder simple message");
+				double currPos = this.getAveShoulderEncoder();
+				double shoulderPower = ConstantsFileReader.getInstance().get("shoulderManualPower");
+				double ff = ConstantsFileReader.getInstance().get("shoulderUpFeedForward") * Math.cos(this.getShoulderAngleRad(currPos));
+				ShoulderSimpleMessage armMessage = (ShoulderSimpleMessage)currentMessage;
 				currentCommand = null;
-				ArmSimpleMessage armMessage = (ArmSimpleMessage)currentMessage;
-				if(getAveShoulderEncoder() < ConstantsFileReader.getInstance().get("armShoulderVertical")){
-					//no need to negate shoulder on mule see note
-					setShoulder(armMessage.getShoulderSpeed());
-				}else{
-					leftShoulder.stopMotor();
-					rightShoulder.stopMotor();				
+				if(armMessage.getShoulderDirection() == 0 && currPos < ConstantsFileReader.getInstance().get("armShoulderVerticle")){
+					System.out.println("********************shoulder moving up*********************");
+					setShoulder(shoulderPower + ff);
 				}
+				else if(armMessage.getShoulderDirection() == 1 && currPos > 0){
+					System.out.println("--------------------shoulder movig down----------------------");
+					setShoulder(-shoulderPower + ff);
+				}	
+				else
+					currentCommand = new ShoulderPIDCommand(new ShoulderPIDMessage(3)); //hold	
 			}
 			else if(currentMessage instanceof ArmStageMessage){
 				currentCommand = new ArmStageCommand(currentMessage);

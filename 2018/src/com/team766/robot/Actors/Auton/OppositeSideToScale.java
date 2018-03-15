@@ -21,7 +21,7 @@ public class OppositeSideToScale implements AutonMode{
 	}
 	
 	public OppositeSideToScale(AutonSelector parent, boolean startingRight){
-		System.out.println("-------------------running opposite to scale------------------");
+		System.out.println("-------------------running opposite to scale-------------------");
 		right = startingRight ? 1 : -1;
 		this.parent = parent;
 		count = 0;
@@ -39,15 +39,20 @@ public class OppositeSideToScale implements AutonMode{
 				break;
 			case Drive:
 				if(commandDone){
-					int turnDirection = (((count % 2) == 0) ? 1 : -1) * right;
-					parent.sendMessage(new DrivePIDMessage(0.0, turnDirection * 90.0));
-					switchState(State.Turn);
+					if(count < 2){
+						int turnDirection = (((count % 2) == 0) ? 1 : -1) * right;
+						parent.sendMessage(new DrivePIDMessage(0.0, turnDirection * 90.0));
+						switchState(State.Turn);
+					} else{
+						switchState(State.DropCube);
+					}
 				}
 				break;
 			case Turn:
 				if(commandDone){
 					count ++;
 					if(count < 3){
+						System.out.println("count: " + count);
 						parent.sendMessage(new DrivePIDMessage(driveDist[count - 1], 0.0));
 						switchState(State.Drive);
 						if(count == 1){
@@ -55,12 +60,11 @@ public class OppositeSideToScale implements AutonMode{
 							//parent.sendMessage(new ShoulderPIDMessage(2));
 							//parent.sendMessage(new WristPIDMessage(2));
 						}
-					} else{
-						switchState(State.DropCube);
 					}
 				}
 				break;
 			case DropCube:
+				System.out.println("inside drop cube case \t commandDone: " + commandDone);
 				if(commandDone){
 					System.out.println("sent message to drop cube");
 					parent.sendMessage(new GripperUpdate(true));

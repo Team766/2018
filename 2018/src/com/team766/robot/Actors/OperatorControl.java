@@ -42,7 +42,6 @@ public class OperatorControl extends Actor{
 
 	@Override
 	public void iterate() {		
-		
 		/*
 		 * 0 axis L/R
 		 * 1 axis F/B

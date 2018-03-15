@@ -52,6 +52,8 @@ public class Shoulder extends Actor {
 			
 			else if(currentMessage instanceof Stop){
 				System.out.println("stopping shoulder");
+				//when pull from zhannings branch
+				//currentCommand = new ShoulderPIDMessage(4);? //stay at current encoder value
 				currentCommand = null;
 				setShoulder(0.0);
 			}

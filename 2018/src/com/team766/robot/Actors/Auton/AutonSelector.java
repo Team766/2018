@@ -50,23 +50,37 @@ public class AutonSelector extends Actor{
 		case Switch:
 			System.out.println("Auton: Switch");
 			break;
-		case Scale:
-			System.out.println("Auton: Scale");
-			currentMode = new Scale(this);
+		case LeftToScale:
+			System.out.println("Auton: left side to scale");
+			if(Constants.scale_side == 1){ //right
+				currentMode = new OppositeSideToScale(this, false);
+			}else{
+				currentMode = new SameSideToScale(this, false);
+			}
+			break;
+		case RightToScale:
+			System.out.println("Auton: right side to scale");
+			if(Constants.scale_side == 1){ //right
+				currentMode = new SameSideToScale(this, true);
+			}else{
+				currentMode = new OppositeSideToScale(this, true);
+			}
 			break;
 		case CrossLine:
 			System.out.println("Auton: CrossLine");
+			currentMode = new CrossLine(this);
 			break;
 		case Exchange:
 			System.out.println("Auton: Exchange");
 			break;
-		case DriveStraightTime:
-			System.out.println("Auton: DriveStraightTime");
-			currentMode = new DriveStraightTime(this);
-			break;
 		case DriveSquare:
 			System.out.println("Auton: DriveSquare");
 			currentMode = new DriveSquare(this);
+			break;
+		/*
+		case DriveStraightTime:
+			System.out.println("Auton: DriveStraightTime");
+			currentMode = new DriveStraightTime(this);
 			break;
 		case DriveEncoder:
 			System.out.println("Auton: DriveEncoder");
@@ -84,6 +98,7 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton: WristPID");
 			currentMode = new WristPID(this);
 			break;
+		*/
 		case LeftToSwitch:
 			System.out.println("Auton: LeftToSwitch");
 			currentMode = new SideToSwitch(this, false);
@@ -91,9 +106,11 @@ public class AutonSelector extends Actor{
 		case RightToSwitch:
 			System.out.println("Auton: RightToSwitch");
 			currentMode = new SideToSwitch(this, true);
+      break;
 		case MiddleToSwitch:
 			System.out.println("Auton: MiddleToSwitch");
 			currentMode = new MiddleToSwitch(this);
+      break;
 		}
 	}
 

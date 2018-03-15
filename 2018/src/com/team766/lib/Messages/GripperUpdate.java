@@ -5,7 +5,7 @@ import lib.Message;
 public class GripperUpdate implements Message{
 
 	private boolean open;
-	
+
 	//true = open, false = close
 	public GripperUpdate(boolean open) {
 		System.out.println("inside gripper message!");

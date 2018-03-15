@@ -5,7 +5,7 @@ import com.team766.lib.Messages.ShoulderPIDMessage;
 
 import interfaces.AutonMode;
 
-public class Scale implements AutonMode{
+public class ArmUpDown implements AutonMode{
 	private boolean commandDone, lock;
 	private AutonSelector parent;
 	private State currentState;
@@ -18,7 +18,7 @@ public class Scale implements AutonMode{
 		Done
 	}
 	
-	public Scale(AutonSelector parent){
+	public ArmUpDown(AutonSelector parent){
 		this.parent = parent;
 		commandDone = false;
 		currentState = State.Start;

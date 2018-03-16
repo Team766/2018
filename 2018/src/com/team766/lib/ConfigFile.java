@@ -1,6 +1,8 @@
 package com.team766.lib;
 
 import interfaces.ConfigFileReader;
+import interfaces.RobotProvider;
+import interfaces.SolenoidController;
 
 public class ConfigFile {
 	
@@ -27,8 +29,12 @@ public class ConfigFile {
 
 	
 	//gripper
-	public static int getGripper(){
-		return ConfigFileReader.getInstance().getPort("gripper");
+	public static int getGripperA(){
+		return ConfigFileReader.getInstance().getPort("gripperA");
+	}
+	
+	public static int getGripperB(){
+		return ConfigFileReader.getInstance().getPort("gripperB");
 	}
 	
 	public static int getGripperMotorA(){

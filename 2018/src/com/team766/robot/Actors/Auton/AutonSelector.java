@@ -23,7 +23,7 @@ public class AutonSelector extends Actor{
 	public AutonMode currentMode;
 	private State currentState;
 	private int count;
-	private boolean commandDone;
+	private boolean armCommandDone;
 	
 	SubActor currentCommand;
 	
@@ -32,8 +32,7 @@ public class AutonSelector extends Actor{
 		FlipWrist,
 		ChangeArmHeight,
 		Intake,
-		Path,
-		Done
+		Path
 	}
 
 	public AutonSelector (Constants.Autons mode){
@@ -41,7 +40,7 @@ public class AutonSelector extends Actor{
 		currentState = State.Start;
 		count = 0;
 		acceptableMessages = new Class[]{Done.class};
-		commandDone = false;
+		armCommandDone = false;
 		
 		switch(autonMode){
 		case None:
@@ -116,7 +115,31 @@ public class AutonSelector extends Actor{
 
 	@Override
 	public void iterate() {
+		
 		startSequence(currentMode);
+		
+		while (newMessage()) {
+			Message currentMessage = readMessage();
+			if (currentMessage == null){
+				continue;
+			}
+			stopCurrentCommand();
+			if(currentMessage instanceof Done){
+				Done doneMessage = (Done) currentMessage;
+				if(doneMessage.getSender() == "Drive"){
+					System.out.println("setting drive command to done");
+					currentMode.commandDone(true);
+				} else{
+					System.out.println("arm command is done");
+					armCommandDone = true;
+				}
+				
+			}
+		}
+		if (currentCommand != null) {
+			System.out.println("Auton Selector has a current command....it shouldn't");
+			currentCommand.update();
+		}
 	}
 	
 	private void stopCurrentCommand(){
@@ -145,18 +168,30 @@ public class AutonSelector extends Actor{
 		switch(currentState){
 			case Start:
 				System.out.println("starting case for auton");
-				this.sendMessage(new GripperUpdate(true));
-				System.out.println("lifting arm");
+				sendMessage(new GripperUpdate(true));
+				System.out.println("sent message to lift shoulder and wrist");
 				setState(State.ChangeArmHeight);
-				this.sendMessage(new ShoulderPIDMessage(2));
+				sendMessage(new ShoulderPIDMessage(2));
+				break;
+			case ChangeArmHeight:
+				System.out.println("Changing Arm Height");
+				if(armCommandDone){
+					if(count == 0){
+						setState(State.FlipWrist);
+						sendMessage(new WristPIDMessage(2));
+					} else{
+						setState(State.Intake);
+						sendMessage(new GripperUpdate(false));
+					} 
+				}
 				break;
 			case FlipWrist:
 				System.out.println("flipping the wrist");
-				if(commandDone){
+				if(armCommandDone){
 					if(count == 0){
 						count ++;
 						setState(State.ChangeArmHeight);
-						this.sendMessage(new ShoulderPIDMessage(0));
+						sendMessage(new ShoulderPIDMessage(0));
 						System.out.println("lowering arm");
 					}
 					else{
@@ -164,49 +199,21 @@ public class AutonSelector extends Actor{
 					}
 				}
 				break;
-			case ChangeArmHeight:
-				System.out.println("Changing Arm Height");
-				if(commandDone){
-					if(count == 0){
-						setState(State.FlipWrist);
-						this.sendMessage(new WristPIDMessage(2));
-					} else{
-						setState(State.Intake);
-						this.sendMessage(new GripperUpdate(false));
-					} 
-				}
-				break;
 			case Intake:
 				System.out.println("Intakaing the cube");
 				setState(State.FlipWrist);
-				this.sendMessage(new WristPIDMessage(1));
+				sendMessage(new WristPIDMessage(1));
 				break;
 			case Path:
 				System.out.println("Auton Path");
 				auton.iterate();
-				while (newMessage()) {
-					Message currentMessage = readMessage();
-					if (currentMessage == null){
-						continue;
-					}
-					stopCurrentCommand();
-					if(currentMessage instanceof Done){
-						System.out.println("setting command to done ");
-						auton.commandDone(true);
-					}
-				}
-				if (currentCommand != null) {
-					currentCommand.update();
-				}
 				break;
-				
 		}
 	}
 	
-	
 	private void setState(State state){
 		currentState = state;
-		commandDone = false;
+		armCommandDone = false;
 	}
 
 }

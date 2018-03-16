@@ -52,6 +52,9 @@ public class Robot implements MyRobot {
 		Scheduler.getInstance().add(CommandBase.Shoulder);
 		Scheduler.getInstance().add(CommandBase.Climber);
 		Scheduler.getInstance().add(CommandBase.Wrist);
+		if(Constants.enableCamera){
+			Scheduler.getInstance().add(CommandBase.Camera);
+		}
 		
 		System.out.println("It works!!!");
 		log(Level.INFO, "Robot Starting");

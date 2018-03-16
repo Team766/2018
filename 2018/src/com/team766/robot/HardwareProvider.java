@@ -2,6 +2,7 @@ package com.team766.robot;
 
 import com.team766.lib.ConfigFile;
 
+import interfaces.CameraInterface;
 import interfaces.CANSpeedController;
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
@@ -48,8 +49,14 @@ public class HardwareProvider {
 
 	
 	//Gripper
-	public SolenoidController getGripper(){
-		return RobotProvider.instance.getSolenoid(ConfigFile.getGripper());
+//	public SolenoidController getGripper(){
+//		return RobotProvider.instance.getSolenoid(ConfigFile.getGripper());
+//	}
+	public SolenoidController getGripperA(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperA());
+	}
+	public SolenoidController getGripperB(){
+		return RobotProvider.instance.getSolenoid(ConfigFile.getGripperB());
 	}
 	public SpeedController getGripperMotorA(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorA());
@@ -96,5 +103,10 @@ public class HardwareProvider {
 	}
 	public SolenoidController getLeftShifter(){
 		return RobotProvider.instance.getSolenoid(ConfigFile.getLeftShifter());
+	}
+	
+	//Camera
+	public CameraInterface getCamera(){
+		return RobotProvider.instance.getCamServer();
 	}
 }

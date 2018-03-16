@@ -33,7 +33,7 @@ public class Shoulder extends Actor {
 	
 	public void init(){
 		acceptableMessages = new Class[]{ArmStageMessage.class, Stop.class, ShoulderSimpleMessage.class, ShoulderPIDMessage.class};
-		setShoulderEncoders(0);
+		setShoulderEncoders(Constants.shoulderStartValue);
 	}
 	
 	public String toString() {
@@ -92,7 +92,7 @@ public class Shoulder extends Actor {
 			currentCommand.update();
 			
 			if(currentCommand.isDone()){
-				sendMessage(new Done());
+				sendMessage(new Done("Shoulder"));
 			}	
 		}
 	}

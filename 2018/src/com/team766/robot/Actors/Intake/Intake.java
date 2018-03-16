@@ -10,11 +10,14 @@ import interfaces.SolenoidController;
 import interfaces.SpeedController;
 import interfaces.SubActor;
 import lib.Actor;
+import lib.DoubleSolenoid;
+import lib.DoubleSolenoid.State;
 import lib.Message;
 
 public class Intake extends Actor{
 	
-	SolenoidController gripper = HardwareProvider.getInstance().getGripper();
+	//SolenoidController gripper = HardwareProvider.getInstance().getGripper();
+	DoubleSolenoid gripper = new DoubleSolenoid(HardwareProvider.getInstance().getGripperA(), HardwareProvider.getInstance().getGripperB());
 	
 	SpeedController leftIntake = HardwareProvider.getInstance().getGripperMotorA();
 	SpeedController rightIntake = HardwareProvider.getInstance().getGripperMotorB();
@@ -70,7 +73,11 @@ public class Intake extends Actor{
 	}
 	
 	public void setGripper(boolean grab){
-		gripper.set(grab);
+		if(grab){
+			gripper.set(State.Forward);
+		} else{
+			gripper.set(State.Backward);
+		}
 	}
 	
 	public void setLeftMotor(double speed){

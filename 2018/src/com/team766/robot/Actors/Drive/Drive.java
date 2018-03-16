@@ -91,7 +91,7 @@ public class Drive extends Actor{
 			//System.out.println("DMDBG: Calling update");
 			currentCommand.update();
 			if(currentCommand.isDone()){ 
-				sendMessage(new Done());
+				sendMessage(new Done("Drive"));
 				currentCommand = null;
 			}
 		}

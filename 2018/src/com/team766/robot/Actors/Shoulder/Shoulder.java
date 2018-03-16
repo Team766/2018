@@ -12,6 +12,7 @@ import com.team766.robot.HardwareProvider;
 
 import interfaces.CANSpeedController;
 import interfaces.CANSpeedController.ControlMode;
+import interfaces.DigitalInputReader;
 import interfaces.SubActor;
 import lib.Actor;
 import lib.ConstantsFileReader;
@@ -21,6 +22,7 @@ import lib.PIDController;
 public class Shoulder extends Actor {
 	CANSpeedController leftShoulder = HardwareProvider.getInstance().getLeftArmShoulder();
 	CANSpeedController rightShoulder = HardwareProvider.getInstance().getRightArmShoulder();
+	DigitalInputReader limitSwitch = HardwareProvider.getInstance().getLimitSwitch();
 	
 	PIDController shoulderUpPID = new PIDController(ConstantsFileReader.getInstance().get("k_shoulderUpP"), ConstantsFileReader.getInstance().get("k_shoulderUpI"), ConstantsFileReader.getInstance().get("k_shoulderUpD"), ConstantsFileReader.getInstance().get("k_shoulderUpThresh"));
 		
@@ -94,6 +96,9 @@ public class Shoulder extends Actor {
 			if(currentCommand.isDone()){
 				sendMessage(new Done("Shoulder"));
 			}	
+		}
+		if (getLimitSwitch()){
+			setShoulderEncoders(0);
 		}
 	}
 	
@@ -169,6 +174,10 @@ public class Shoulder extends Actor {
 	
 	public double getShoulderAngleRad(double encoder){
 		return 0.5 * Math.PI * getAveShoulderEncoder() / ConstantsFileReader.getInstance().get("armShoulderVertical");
+	}
+	
+	public boolean getLimitSwitch(){
+		return limitSwitch.get();
 	}
 	
 }

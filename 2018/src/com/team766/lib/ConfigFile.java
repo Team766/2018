@@ -81,4 +81,8 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPort("climber");
 	}
 
+	public static int getLimitSwitch() {
+		return ConfigFileReader.getInstance().getPort("limitswitch");
+	}
+
 }

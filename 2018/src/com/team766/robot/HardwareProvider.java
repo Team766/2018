@@ -4,6 +4,7 @@ import com.team766.lib.ConfigFile;
 
 import interfaces.CameraInterface;
 import interfaces.CANSpeedController;
+import interfaces.DigitalInputReader;
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
 import interfaces.JoystickReader;
@@ -90,13 +91,17 @@ public class HardwareProvider {
 	public CANSpeedController getRightArmWrist(){
 		return RobotProvider.instance.getCANMotor(ConfigFile.getArmWrist()[1]);
 	}
+		
+	public DigitalInputReader getLimitSwitch(){
+		return RobotProvider.instance.getDigitalInput(ConfigFile.getLimitSwitch());
+		}
 	
 	//Climber
 	public SpeedController getClimber() {
 		return RobotProvider.instance.getMotor(ConfigFile.getClimber());
 	}
 	
-	
+
 	//Shifter
 	public SolenoidController getRightShifter(){
 		return RobotProvider.instance.getSolenoid(ConfigFile.getRightShifter());

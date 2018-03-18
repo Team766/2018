@@ -6,6 +6,7 @@ import com.team766.lib.Messages.DriveEncoderMessage;
 import com.team766.lib.Messages.DrivePIDMessage;
 import com.team766.lib.Messages.DriveTimeMessage;
 import com.team766.lib.Messages.DriveUpdate;
+import com.team766.lib.Messages.EStop;
 import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.lib.Messages.Stop;
 import com.team766.robot.Constants;
@@ -44,7 +45,7 @@ public class Drive extends Actor{
 	private double gyroOffset;
 
 	public void init() {
-		acceptableMessages = new Class[]{Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class, DrivePIDMessage.class};
+		acceptableMessages = new Class[]{EStop.class, Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class, DrivePIDMessage.class};
 	
 		gyroOffset = Constants.startAngle;
 	}
@@ -58,8 +59,8 @@ public class Drive extends Actor{
 			
 			//System.out.println("DBG: got new message stopping current message!");
 			
-			if (currentMessage instanceof Stop) {
-				stopCurrentCommand("got Stop message");
+			if (currentMessage instanceof Stop || currentMessage instanceof EStop) {
+				stopCurrentCommand("got stop message");
 				setDrive(0.0);
 			}
 			else if (currentMessage instanceof DriveTimeMessage){
@@ -83,9 +84,9 @@ public class Drive extends Actor{
 			else if (currentMessage instanceof DrivePIDMessage){
 				swapCurrentCommand(new DrivePIDCommand(currentMessage), "got new drive PID message");
 			}
+		}
 			System.out.println("leftDrive power: " + leftDriveA.get());
 			System.out.println("rightDrive power: " + rightDriveA.get());
-		}
 		
 		if (currentCommand != null) {
 			//System.out.println("DMDBG: Calling update");
@@ -110,7 +111,6 @@ public class Drive extends Actor{
 	}
 	
 	public void setLeft(double power){
-		//System.out.println("left: " + power);
 		leftDriveA.set(clamp(power));
 		leftDriveB.set(clamp(power));
 	}

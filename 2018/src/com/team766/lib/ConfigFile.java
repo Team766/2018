@@ -76,13 +76,13 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPorts("armWrist");
 	}
 	
-	//climber
-	public static int getClimber() {
-		return ConfigFileReader.getInstance().getPort("climber");
-	}
+//	//climber
+//	public static int getClimber() {
+//		return ConfigFileReader.getInstance().getPort("climber");
+//	}
 
 	public static int getLimitSwitch() {
-		return ConfigFileReader.getInstance().getPort("limitswitch");
+		return ConfigFileReader.getInstance().getPort("limitSwitch");
 	}
 
 }

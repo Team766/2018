@@ -50,5 +50,9 @@ public class ArmPID implements AutonMode{
 	public void commandDone(boolean done) {
 		commandDone = done;
 	}
+	
+	public String getTarget(){
+		return "Arm";
+	}
 
 }

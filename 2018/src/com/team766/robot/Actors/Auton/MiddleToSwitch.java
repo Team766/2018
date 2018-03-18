@@ -2,7 +2,7 @@ package com.team766.robot.Actors.Auton;
 
 
 import com.team766.lib.Messages.DrivePIDMessage;
-import com.team766.lib.Messages.GripperUpdate;
+import com.team766.lib.Messages.GripperUpdateMessage;
 import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.robot.Constants;
 
@@ -63,15 +63,16 @@ public class MiddleToSwitch implements AutonMode {
 				} else{
 					setState(State.DriveRaiseArm);
 					parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0));
-					parent.sendMessage(new ShoulderPIDMessage(1));
+					//parent.sendMessage(new ShoulderPIDMessage(1)); //don't need if keep on kickstand
 				}	
 			}
 			break;
 		case DriveRaiseArm:
 			System.out.println("raising arms to the middle");
-			if(commandDone)
-				switchState(State.DropCube, new GripperUpdate(true));
+			if(commandDone){
+				switchState(State.DropCube, new GripperUpdateMessage(true));
 				setState(State.Done);
+			}
 			break;
 		case DropCube:
 			System.out.println("dropping the cube");
@@ -98,6 +99,10 @@ public class MiddleToSwitch implements AutonMode {
 	private void setState(State state){
 		currentState = state;
 		commandDone(false);
+	}
+	
+	public String getTarget(){
+		return "Switch";
 	}
 
 }

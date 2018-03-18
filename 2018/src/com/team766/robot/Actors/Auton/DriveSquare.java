@@ -79,5 +79,9 @@ public class DriveSquare implements AutonMode{
 		parent.sendMessage(message);
 		commandDone = false;
 	}
+	
+	public String getTarget(){
+		return "Drive";
+	}
 
 }

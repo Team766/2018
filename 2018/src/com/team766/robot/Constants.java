@@ -4,7 +4,7 @@ import lib.ConstantsFileReader;
 
 public class Constants {
 	
-	public static final boolean enableCamera = true;
+	public static final boolean enableCamera = false;
 	
 	/*
 	 * Auton
@@ -14,7 +14,6 @@ public class Constants {
 		Switch,
 		RightToScale,
 		LeftToScale,
-		Exchange,
 		CrossLine,
 		DriveSquare,
 		LeftToSwitch,
@@ -49,11 +48,11 @@ public class Constants {
 		CheesyDrive,
 		Arm
 	};
-	public static final Drives driveType = Drives.CheesyDrive;
-	public static final double drivePowerLimit = 0.4;
+	public static final Drives driveType = Drives.TankDrive;
+	public static final double drivePowerLimit = 1.0;
 	
 	public static final double wheel_circumference = ConstantsFileReader.getInstance().get("wheel_diameter") * Math.PI; //note: mule = 4 in ; revA = 6 in diameter
-	
+				
 	//gyro
 	public static final double startAngle = 0.0;
 	
@@ -84,9 +83,8 @@ public class Constants {
 	 * Arm
 	 */
 	//Shoulder
-	public static final double shoulderUpPIDScale = 1.0 / (ConstantsFileReader.getInstance().get("armShoulderVertical") * ConstantsFileReader.getInstance().get("k_shoulderUpP"));
+	public static final double shoulderUpPIDScale = 1.0; 
 	public static final double shoulderTimeLimit = 8000;
-	public static final int shoulderStartValue = 0; //up on kickstand - needs testing
 	
 	//Wrist
 	public static final double wristPowerLimit = 0.7;

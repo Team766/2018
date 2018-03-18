@@ -61,5 +61,9 @@ public class WristPID implements AutonMode {
 	public void commandDone(boolean done) {
 		commandDone = done;
 	}
+	
+	public String getTarget(){
+		return "Wrist";
+	}
 
 }

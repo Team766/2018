@@ -1,8 +1,9 @@
 package com.team766.robot.Actors.Wrist;
 
 import com.team766.lib.Messages.Done;
+import com.team766.lib.Messages.EStop;
 import com.team766.lib.Messages.ShoulderPIDMessage;
-import com.team766.lib.Messages.ShoulderSimpleMessage;
+import com.team766.lib.Messages.ShoulderManualMessage;
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.WristPIDMessage;
 import com.team766.lib.Messages.WristSimpleMessage;
@@ -33,7 +34,7 @@ public class Wrist extends Actor {
 	private SubActor currentCommand;
 	
 	public Wrist() {
-		acceptableMessages = new Class[]{Stop.class, WristPIDMessage.class, WristSimpleMessage.class};
+		acceptableMessages = new Class[]{EStop.class, Stop.class, WristPIDMessage.class, WristSimpleMessage.class};
 		setWristEncoders(0);
 	}
 
@@ -44,7 +45,7 @@ public class Wrist extends Actor {
 
 	@Override
 	public void iterate() {
-		if(newMessage()){
+		while(newMessage()){
 			if(currentCommand != null)
 				currentCommand.stop();
 			
@@ -53,11 +54,13 @@ public class Wrist extends Actor {
 			currentMessage = readMessage();
 			if(currentMessage == null)
 				return;
-			
 			else if(currentMessage instanceof Stop){
-				System.out.println("stopping wrist");
 				currentCommand = null;
 				setWrist(0.0);
+			}
+			else if(currentMessage instanceof EStop){
+				System.out.println("holding wrist movement");
+				currentCommand = new WristPIDCommand(new WristPIDMessage(3));
 			}
 			else if(currentMessage instanceof WristSimpleMessage){
 				System.out.println("WristSimpleMessage");
@@ -72,7 +75,7 @@ public class Wrist extends Actor {
 				else if(wristMessage.getWristDirection() == 1 && currPos > 50)
 					setWrist(-wristPower + ff);
 				else
-					currentCommand = new ShoulderPIDCommand(new WristPIDMessage(3)); //hold	
+					currentCommand = new WristPIDCommand(new WristPIDMessage(3)); //hold	
 			}
 			else if(currentMessage instanceof WristPIDMessage){
 				currentCommand = new WristPIDCommand(currentMessage);
@@ -91,17 +94,17 @@ public class Wrist extends Actor {
 			
 		}
 
-		//System.out.println("Arm wrist encoder value: " + getAveWristEncoder());
-		//System.out.println("left wrist: " + getLeftWristEncoder());
-		//System.out.println("right wrist: " + getRightWristEncoder());		
+
+		//System.out.println("left wrist encoder: " + getLeftWristEncoder());
+		
 	}
 	
 	public void setLeftWrist(double power){
-		leftWrist.set(ControlMode.PercentOutput, clamp(power, Constants.wristPowerLimit));
+		leftWrist.set(ControlMode.PercentOutput, clamp(power, ConstantsFileReader.getInstance().get("wristPowerLimit")));
 	}
 	
 	public void setRightWrist(double power){
-		rightWrist.set(ControlMode.PercentOutput, clamp(-power, Constants.wristPowerLimit));
+		rightWrist.set(ControlMode.PercentOutput, clamp(-power, ConstantsFileReader.getInstance().get("wristPowerLimit")));
 	}
 	
 	public void setWrist(double power){
@@ -113,12 +116,12 @@ public class Wrist extends Actor {
 		return leftWrist.getSensorPosition();
 	}
 	
-	public double getRightWristEncoder(){
-		return rightWrist.getSensorPosition();
-	}
+//	public double getRightWristEncoder(){
+//		return rightWrist.getSensorPosition();
+//	}
 	
 	public double getAveWristEncoder(){
-		return 0.5 * (-getLeftWristEncoder() + getRightWristEncoder());
+		return getLeftWristEncoder();
 	}
 	
 	public void setWristEncoders(int position){
@@ -138,7 +141,5 @@ public class Wrist extends Actor {
 	public double getWristAngleRad(double encoder){
 		return 0.5 * Math.PI * getAveWristEncoder() / ConstantsFileReader.getInstance().get("armWristMiddle");
 	}
-
-	
 }
 

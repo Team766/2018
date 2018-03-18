@@ -54,21 +54,20 @@ public class WristPIDCommand extends CommandBase {
 
 	@Override
 	public void update() {	
-				System.out.println("Wrist PID setpoint: " + Wrist.wristPID.getSetpoint());
-				Wrist.wristPID.calculate(Wrist.getRightWristEncoder(), false);
-				Wrist.setWrist(negate * (Wrist.wristPID.getOutput() * constants_file.get("wristBackPIDScale") + constants_file.get("armWrisFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()))));
-				System.out.println("__________________WristPower: " + Wrist.wristPID.getOutput() * constants_file.get("wristBackPIDScale") + constants_file.get("armWrisFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder())));
-				
-				if(Wrist.wristPID.isDone()){
-					done = true;
-					System.out.println("done moving");
-				}
+		System.out.println("Wrist PID setpoint: " + Wrist.wristPID.getSetpoint());
+		Wrist.wristPID.calculate(Wrist.getLeftWristEncoder(), false);
+		Wrist.setWrist(negate * (Wrist.wristPID.getOutput() * constants_file.get("wristBackPIDScale") + constants_file.get("armWristFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()))));
+		System.out.println("__________________WristPower: " + Wrist.wristPID.getOutput() * constants_file.get("wristBackPIDScale") + constants_file.get("armWristFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder())));
+		
+		if(Wrist.wristPID.isDone()){
+			done = true;
+			System.out.println("done moving");
+		}
 	}
 
 	@Override
 	public void stop() {
 		Wrist.setWrist(0);
-
 	}
 
 	@Override

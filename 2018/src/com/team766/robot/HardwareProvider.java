@@ -95,11 +95,11 @@ public class HardwareProvider {
 	public DigitalInputReader getLimitSwitch(){
 		return RobotProvider.instance.getDigitalInput(ConfigFile.getLimitSwitch());
 		}
-	
-	//Climber
-	public SpeedController getClimber() {
-		return RobotProvider.instance.getMotor(ConfigFile.getClimber());
-	}
+//	
+//	//Climber
+//	public SpeedController getClimber() {
+//		return RobotProvider.instance.getMotor(ConfigFile.getClimber());
+//	}
 	
 
 	//Shifter

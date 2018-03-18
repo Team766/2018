@@ -109,7 +109,7 @@ public class Shoulder extends Actor {
 			setShoulderEncoders(0);
 		}
 		
-		//System.out.println("shoulder encoder: " + getAveShoulderEncoder() + "\t\tshoulder angle: " + getShoulderAngle());
+		System.out.println("shoulder encoder: " + getAveShoulderEncoder() + "\t\tshoulder angle: " + getShoulderAngle());
 	}
 	
 	//mule: one shoulder motor is cross wired so they spin the same way, no need to negate one side, theoreticlly negate right?

@@ -6,7 +6,7 @@ import lib.Message;
 
 import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.lib.Messages.Done;
-import com.team766.lib.Messages.GripperUpdate;
+import com.team766.lib.Messages.GripperUpdateMessage;
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.WristPIDMessage;
 import com.team766.robot.Constants;
@@ -23,7 +23,7 @@ public class AutonSelector extends Actor{
 	public AutonMode currentMode;
 	private State currentState;
 	private int count;
-	private boolean armCommandDone;
+	private boolean armCommandDone, startSeq;
 	
 	SubActor currentCommand;
 	
@@ -32,7 +32,9 @@ public class AutonSelector extends Actor{
 		FlipWrist,
 		ChangeArmHeight,
 		Intake,
-		Path
+		Path,
+		EndDrive,
+		End
 	}
 
 	public AutonSelector (Constants.Autons mode){
@@ -41,10 +43,12 @@ public class AutonSelector extends Actor{
 		count = 0;
 		acceptableMessages = new Class[]{Done.class};
 		armCommandDone = false;
+		startSeq = true;
 		
 		switch(autonMode){
 		case None:
 			System.out.println("Auton: None");
+			startSeq = false;
 			break;
 		case Switch:
 			System.out.println("Auton: Switch");
@@ -68,9 +72,7 @@ public class AutonSelector extends Actor{
 		case CrossLine:
 			System.out.println("Auton: CrossLine");
 			currentMode = new CrossLine(this);
-			break;
-		case Exchange:
-			System.out.println("Auton: Exchange");
+			startSeq = false;
 			break;
 		case DriveSquare:
 			System.out.println("Auton: DriveSquare");
@@ -101,22 +103,29 @@ public class AutonSelector extends Actor{
 		case LeftToSwitch:
 			System.out.println("Auton: LeftToSwitch");
 			currentMode = new SideToSwitch(this, false);
+			startSeq = false;
 			break;
 		case RightToSwitch:
 			System.out.println("Auton: RightToSwitch");
 			currentMode = new SideToSwitch(this, true);
-      break;
+			startSeq = false;
+			break;
 		case MiddleToSwitch:
 			System.out.println("Auton: MiddleToSwitch");
 			currentMode = new MiddleToSwitch(this);
-      break;
+			startSeq = false;
+			break;
 		}
 	}
 
 	@Override
 	public void iterate() {
-		
-		startSequence(currentMode);
+		if(startSeq){
+			startSequence(currentMode);
+		} else{
+			sendMessage(new GripperUpdateMessage(false));
+			currentMode.iterate();
+		}
 		
 		while (newMessage()) {
 			Message currentMessage = readMessage();
@@ -140,6 +149,7 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton Selector has a current command....it shouldn't");
 			currentCommand.update();
 		}
+		
 	}
 	
 	private void stopCurrentCommand(){
@@ -167,23 +177,10 @@ public class AutonSelector extends Actor{
 	public void startSequence(AutonMode auton){
 		switch(currentState){
 			case Start:
-				System.out.println("starting case for auton");
-				sendMessage(new GripperUpdate(true));
-				System.out.println("sent message to lift shoulder and wrist");
+				System.out.println("starting case for auton, sent message to open gripper and raise intake");
+				sendMessage(new GripperUpdateMessage(true)); //open?
+				sendMessage(new WristPIDMessage(0));
 				setState(State.ChangeArmHeight);
-				sendMessage(new ShoulderPIDMessage(2));
-				break;
-			case ChangeArmHeight:
-				System.out.println("Changing Arm Height");
-				if(armCommandDone){
-					if(count == 0){
-						setState(State.FlipWrist);
-						sendMessage(new WristPIDMessage(2));
-					} else{
-						setState(State.Intake);
-						sendMessage(new GripperUpdate(false));
-					} 
-				}
 				break;
 			case FlipWrist:
 				System.out.println("flipping the wrist");
@@ -199,6 +196,18 @@ public class AutonSelector extends Actor{
 					}
 				}
 				break;
+			case ChangeArmHeight:
+				System.out.println("Changing Arm Height");
+				if(armCommandDone){
+					if(count == 0){
+						setState(State.FlipWrist);
+						sendMessage(new WristPIDMessage(2));
+					} else{
+						setState(State.Intake);
+						sendMessage(new GripperUpdateMessage(false));
+					} 
+				}
+				break;
 			case Intake:
 				System.out.println("Intakaing the cube");
 				setState(State.FlipWrist);
@@ -208,7 +217,15 @@ public class AutonSelector extends Actor{
 				System.out.println("Auton Path");
 				auton.iterate();
 				break;
-		}
+				/*
+			case EndDrive:
+				break;
+			case End:
+				System.out.println("ending auton position");
+				if(commandDone)
+					sendMessage(new ShoulderPIDMessage(0));
+				break;
+				*/		}
 	}
 	
 	private void setState(State state){

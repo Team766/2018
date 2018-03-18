@@ -45,7 +45,7 @@ public class OperatorControl extends Actor{
 	@Override
 	public void iterate() {	
 		
-		System.out.println("POV: " + jBox.getPOV());
+		//System.out.println("POV: " + jBox.getPOV());
 		
 		
 		/*
@@ -130,6 +130,7 @@ public class OperatorControl extends Actor{
 		} else{
 			sendMessage(new GripperUpdateMessage(true));
 		}
+		System.out.print("gripper: " + jBox.getRawButton(Buttons.gripper) + "------");
 		
 		//button for climb up (prevPress[6])
 		if(!prevPress[6] && jBox.getRawButton(Buttons.climbUp)) {
@@ -216,7 +217,7 @@ public class OperatorControl extends Actor{
 		} else if (prevPress[2] && !jBox.getRawButton(Buttons.manualWristUp)){
 			System.out.println("hold wrist manual up");
 			int setPoint = 3;
-			sendMessage(new WristSimpleMessage(setPoint));
+			sendMessage(new WristPIDMessage(setPoint));
 		}
 		prevPress[2] = jBox.getRawButton(Buttons.manualWristUp);
 				
@@ -228,7 +229,7 @@ public class OperatorControl extends Actor{
 		} else if(prevPress[4] && !jBox.getRawButton(Buttons.manualWristDown)){
 			System.out.println("wrist manual down");
 			int setPoint = 3;
-			sendMessage(new WristSimpleMessage(setPoint));
+			sendMessage(new WristPIDMessage(setPoint));
 		}
 		prevPress[4] = jBox.getRawButton(Buttons.manualWristDown);
 		

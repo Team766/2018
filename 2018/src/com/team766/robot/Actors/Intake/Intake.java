@@ -31,6 +31,7 @@ public class Intake extends Actor{
 	
 	public void init(){
 		acceptableMessages = new Class[]{GripperUpdateMessage.class, IntakeMotorUpdate.class, EStop.class, Stop.class};
+		//setGripper(false);
 	}
 	
 	public void iterate() {
@@ -53,13 +54,13 @@ public class Intake extends Actor{
 				currentCommand = null;
 				GripperUpdateMessage gripperMessage = (GripperUpdateMessage)currentMessage;
 				setGripper(gripperMessage.getOpen());
-				System.out.println("set: " + gripperMessage.getOpen() + "actual: " + getGripper());
+				//System.out.println("---____________________set: " + gripperMessage.getOpen() + "\t\tactual: " + getGripper());
 			}
 			else if(currentMessage instanceof IntakeMotorUpdate){
 				currentCommand = null;
 				IntakeMotorUpdate intakeMessage = (IntakeMotorUpdate)currentMessage;
 				setMotors(intakeMessage.getSpeed());
-				System.out.println("gripper motor speed: " + intakeMessage.getSpeed());
+				//System.out.println("gripper motor speed: " + intakeMessage.getSpeed());
 			}
 			
 		}
@@ -73,8 +74,8 @@ public class Intake extends Actor{
 		return gripper.get();
 	}
 	
-	public void setGripper(boolean grab){
-		if(grab){
+	private void setGripper(boolean grab){
+		if(!grab){
 			gripper.set(State.Forward);
 		} else{
 			gripper.set(State.Backward);

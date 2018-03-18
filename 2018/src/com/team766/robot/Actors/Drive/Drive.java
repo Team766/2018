@@ -85,8 +85,8 @@ public class Drive extends Actor{
 				swapCurrentCommand(new DrivePIDCommand(currentMessage), "got new drive PID message");
 			}
 		}
-			System.out.println("leftDrive power: " + leftDriveA.get());
-			System.out.println("rightDrive power: " + rightDriveA.get());
+//			System.out.println("leftDrive power: " + leftDriveA.get());
+//			System.out.println("rightDrive power: " + rightDriveA.get());
 		
 		if (currentCommand != null) {
 			//System.out.println("DMDBG: Calling update");
@@ -118,6 +118,14 @@ public class Drive extends Actor{
 	public void setDrive(double power){
 		setLeft(power);
 		setRight(power);
+	}
+	
+	public void setAutonLeft(double power){
+		setLeft(autonClamp(power));
+	}
+	
+	public void setAutonRight(double power){
+		setRight(autonClamp(power));
 	}
 	
 	public double leftDistance(){
@@ -192,6 +200,14 @@ public class Drive extends Actor{
 	
 	private double clamp(double power){
 		double clampedLimit = Math.max(Math.min(Constants.drivePowerLimit, 1), -1);
+		
+		power = Math.min(power, clampedLimit);
+		power = Math.max(power, -clampedLimit);
+		return power;
+	}
+	
+	private double autonClamp(double power){
+		double clampedLimit = Math.max(Math.min(ConstantsFileReader.getInstance().get("autonDriveLimit"), 1), -1);
 		
 		power = Math.min(power, clampedLimit);
 		power = Math.max(power, -clampedLimit);

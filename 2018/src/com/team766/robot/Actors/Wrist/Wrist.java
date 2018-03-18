@@ -35,7 +35,7 @@ public class Wrist extends Actor {
 	
 	public Wrist() {
 		acceptableMessages = new Class[]{EStop.class, Stop.class, WristPIDMessage.class, WristSimpleMessage.class};
-		setWristEncoders(0);
+		setWristEncoders((int)ConstantsFileReader.getInstance().get("wristStartValue"));
 	}
 
 	@Override
@@ -94,8 +94,7 @@ public class Wrist extends Actor {
 			
 		}
 
-
-		//System.out.println("left wrist encoder: " + getLeftWristEncoder());
+		System.out.println("left wrist encoder: " + getLeftWristEncoder() + " wrist angle: " + getWristAngleRad(getLeftWristEncoder()));
 		
 	}
 	

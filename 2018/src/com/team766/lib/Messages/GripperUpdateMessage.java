@@ -8,7 +8,7 @@ public class GripperUpdateMessage implements Message{
 
 	//true = open, false = close
 	public GripperUpdateMessage(boolean open) {
-		System.out.println("inside gripper message!");
+		//System.out.println("inside gripper message!");
 		this.open = open;
 	}
 	

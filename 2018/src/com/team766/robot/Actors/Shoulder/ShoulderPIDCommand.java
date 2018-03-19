@@ -48,6 +48,7 @@ public class ShoulderPIDCommand extends CommandBase{
 
 	@Override
 	public void update() {
+		System.out.println("shoulder setpoint: " + Shoulder.shoulderUpPID.getSetpoint());
 		double currPos = Shoulder.getAveShoulderEncoder();
 		Shoulder.shoulderUpPID.calculate(currPos, false);
 		double power = Constants.shoulderUpPIDScale * Shoulder.shoulderUpPID.getOutput() + constants_file.get("shoulderUpFeedForward") * Math.cos(Shoulder.getShoulderAngleRad(currPos));

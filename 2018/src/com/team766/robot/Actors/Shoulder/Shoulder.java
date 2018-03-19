@@ -2,7 +2,6 @@ package com.team766.robot.Actors.Shoulder;
 
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.WristPIDMessage;
-import com.team766.lib.Messages.ArmStageMessage;
 import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.EStop;
 import com.team766.lib.Messages.ShoulderPIDMessage;
@@ -28,16 +27,17 @@ public class Shoulder extends Actor {
 	
 	PIDController shoulderUpPID = new PIDController(ConstantsFileReader.getInstance().get("k_shoulderUpP"), ConstantsFileReader.getInstance().get("k_shoulderUpI"), ConstantsFileReader.getInstance().get("k_shoulderUpD"), ConstantsFileReader.getInstance().get("k_shoulderUpThresh"));
 		
-	private boolean commandFinished;
+	private boolean commandFinished, lock;
 
-	private double shoulderSetPoint;
+	private double shoulderSetPoint, limitSwitchStartTime;
 	
 	Message currentMessage;
 	private SubActor currentCommand;
 	
 	public void init(){
-		acceptableMessages = new Class[]{ArmStageMessage.class, EStop.class, Stop.class, ShoulderManualMessage.class, ShoulderPIDMessage.class, ShoulderSimpleMessage.class};
+		acceptableMessages = new Class[]{EStop.class, Stop.class, ShoulderManualMessage.class, ShoulderPIDMessage.class, ShoulderSimpleMessage.class};
 		setShoulderEncoders((int)ConstantsFileReader.getInstance().get("shoulderStartValue"));
+		lock = false;
 	}
 	
 	public String toString() {
@@ -86,9 +86,6 @@ public class Shoulder extends Actor {
 				else
 					currentCommand = new ShoulderPIDCommand(new ShoulderPIDMessage(3)); //hold	
 			}
-			else if(currentMessage instanceof ArmStageMessage){
-				currentCommand = new ArmStageCommand(currentMessage);
-			}
 			else if(currentMessage instanceof ShoulderPIDMessage){
 				currentCommand = new ShoulderPIDCommand(currentMessage);
 				System.out.println("receiving message");
@@ -103,13 +100,25 @@ public class Shoulder extends Actor {
 			
 			if(currentCommand.isDone()){
 				sendMessage(new Done("Shoulder"));
-			}	
-		}
-		if (!getLimitSwitch()){
-			setShoulderEncoders(0);
+			}
 		}
 		
-		System.out.println("shoulder encoder: " + getAveShoulderEncoder() + "\t\tshoulder angle: " + getShoulderAngle());
+		if (!getLimitSwitch()){
+			System.out.println("difference = " + (System.currentTimeMillis() - limitSwitchStartTime) + "\t\tLimit switch start time = " + (int)limitSwitchStartTime + "\t\tcurrtime = " + (int)System.currentTimeMillis());
+			if(!lock){
+				limitSwitchStartTime = System.currentTimeMillis();
+				lock = true;
+			}
+			if(System.currentTimeMillis() - limitSwitchStartTime > ConstantsFileReader.getInstance().get("limitSwitchPressedTime")){
+				setShoulderEncoders(0);
+				lock = false;
+			}
+		} else{
+			lock = false;
+		}
+		
+		System.out.println("shoulder encoder: " + getAveShoulderEncoder());
+		
 	}
 	
 	//mule: one shoulder motor is cross wired so they spin the same way, no need to negate one side, theoreticlly negate right?
@@ -179,10 +188,7 @@ public class Shoulder extends Actor {
 	public void setShoulderEncoders(int position){
 		leftShoulder.setPosition(position);
 		//rightShoulder.setPosition(position);
-	}
-	
-	public void setEncoders(int position){
-		setShoulderEncoders(position);
+		new Throwable().printStackTrace();
 	}
 	
 	public double clamp(double value, double limit){

@@ -52,4 +52,8 @@ public class DriveEncoder implements AutonMode{
 	public void commandDone(boolean done){
 		commandDone = done;
 	}
+	
+	public String getTarget(){
+		return "Drive";
+	}
 }

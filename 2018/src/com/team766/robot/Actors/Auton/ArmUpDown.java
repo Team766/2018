@@ -70,5 +70,9 @@ public class ArmUpDown implements AutonMode{
 		currentState = state;
 		commandDone(false);
 	}
+	
+	public String getTarget(){
+		return "Arm";
+	}
 
 }

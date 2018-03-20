@@ -23,9 +23,9 @@ public class Buttons {
 	public static final int wristIntake = 10;
 	public static final int wristMiddle = 11;
 	public static final int wristBack = 8;
-	public static final int shoulderVertical = 225; //A1
+	public static final int shoulderVertical = 270; //A1
 	public static final int shoulderMiddle = 180; //A2
-	public static final int shoulderBottom = 45; //A3
+	public static final int shoulderBottom = 90; //A3
 	public static final int shoulderClimb = 0; //A4
   
 }

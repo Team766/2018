@@ -44,5 +44,9 @@ public class CrossLine implements AutonMode{
 		currentState = s;
 		commandDone = false;
 	}
+	
+	public String getTarget(){
+		return "Cross Line";
+	}
 
 }

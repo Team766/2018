@@ -1,6 +1,7 @@
 package com.team766.robot.Actors.Climber;
 
 import com.team766.lib.Messages.ClimberUpdate;
+import com.team766.lib.Messages.EStop;
 import com.team766.robot.HardwareProvider;
 import com.team766.robot.Constants;
 import interfaces.SpeedController;
@@ -19,12 +20,12 @@ public class Climber extends Actor {
 	SubActor currentCommand;
 
 	public void init() {
-		acceptableMessages = new Class[]{ClimberUpdate.class, Stop.class};
+		acceptableMessages = new Class[]{ClimberUpdate.class, EStop.class, Stop.class};
 	}
 	
 	@Override
 	public void iterate() {
-		if(newMessage()) {
+		while(newMessage()) {
 //			if (currentCommand == null){
 //				currentCommand.stop();
 //			}
@@ -33,7 +34,7 @@ public class Climber extends Actor {
 			
 //			currentMessage = readMessage();
 			
-//			if(currentMessage instanceof Stop){
+//			if(currentMessage instanceof Stop || currentMessage instanceof EStop){
 //				setClimberMotor(0.0);
 //			}
 //			else if(currentMessage instanceof ClimberUpdate) {

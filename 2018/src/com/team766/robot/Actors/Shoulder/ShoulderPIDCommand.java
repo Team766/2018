@@ -48,27 +48,28 @@ public class ShoulderPIDCommand extends CommandBase{
 
 	@Override
 	public void update() {
+		System.out.println("shoulder setpoint: " + Shoulder.shoulderUpPID.getSetpoint());
 		double currPos = Shoulder.getAveShoulderEncoder();
 		Shoulder.shoulderUpPID.calculate(currPos, false);
-		double output = Shoulder.shoulderUpPID.getOutput();
-		double ff = constants_file.get("shoulderUpFeedForward") * Math.cos(Shoulder.getShoulderAngleRad(currPos));
+		double power = Constants.shoulderUpPIDScale * Shoulder.shoulderUpPID.getOutput() + constants_file.get("shoulderUpFeedForward") * Math.cos(Shoulder.getShoulderAngleRad(currPos));
 		System.out.println("pid setpoint: " + Shoulder.shoulderUpPID.getSetpoint());
-		System.out.println("Shoulder power: " + Constants.shoulderUpPIDScale * output + ff);
-		reachTimeLimit = (System.currentTimeMillis() - startTime) >= Constants.shoulderTimeLimit;
+		//System.out.println("Shoulder power: " + Constants.shoulderUpPIDScale * output + ff);
+		reachTimeLimit = (System.currentTimeMillis() - startTime) >= constants_file.get("shoulderTimeLimit");
 		switch (currentState){
 			case Up:
+				System.out.println("shoulder going up to vertical");
 				if(!reachTimeLimit){
-					Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff); //radians
+					Shoulder.setShoulder(power); //radians
 				} else{
-					Shoulder.setShoulderBalance(Constants.shoulderUpPIDScale * output + ff);
+					Shoulder.setShoulderBalance(power);
 				}
 				if(currPos > constants_file.get("armShoulderVertical") - constants_file.get("k_shoulderUpThresh")){
 					switchState(State.StayVertical);
 				}
 				break;
 			case StayVertical:
-				Shoulder.setShoulderBalance(Constants.shoulderUpPIDScale * output + ff);
-				System.out.println("stay vertical");
+				Shoulder.setShoulderBalance(power);
+				System.out.println("shoulder staying vertical");
 				if(currPos < constants_file.get("armShoulderVertical") - constants_file.get("shoulderSwitchClamp")){
 					switchState(State.Up);
 				}
@@ -78,17 +79,17 @@ public class ShoulderPIDCommand extends CommandBase{
 				break;
 			case Middle:
 				if(!reachTimeLimit){
-					Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff);
+					Shoulder.setShoulder(power);
 				} else{
-					Shoulder.setShoulderBalance(Constants.shoulderUpPIDScale * output + ff);
+					Shoulder.setShoulderBalance(power);
 				}
-				System.out.println(" Case Middle");
+				System.out.println("shoulder going to middle");
 				if(Shoulder.shoulderUpPID.isDone()){
 					done = true;
 				}
 				break;
 			case Down:
-				Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff);
+				Shoulder.setShoulder(power);
 				System.out.println("Case Down");
 				if(Shoulder.shoulderUpPID.isDone()){
 					System.out.println("done going down");
@@ -96,18 +97,17 @@ public class ShoulderPIDCommand extends CommandBase{
 				}
 				break;
 			case Hold:
+				System.out.println("shoulder holding position");
 				if(!reachTimeLimit){
-					Shoulder.setShoulder(Constants.shoulderUpPIDScale * output + ff);
+					Shoulder.setShoulder(power);
 				} else{
-					Shoulder.setShoulderBalance(Constants.shoulderUpPIDScale * output + ff);
+					Shoulder.setShoulderBalance(power);
 				}
-				System.out.println("Case Hold");
+				
 				if(Shoulder.shoulderUpPID.isDone()){
-					System.out.println("done going down");
 					done = true;
 				}
 				break;
-				
 		}
 	}
 

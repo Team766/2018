@@ -1,7 +1,7 @@
 package com.team766.robot.Actors.Auton;
 
 import com.team766.lib.Messages.DrivePIDMessage;
-import com.team766.lib.Messages.GripperUpdate;
+import com.team766.lib.Messages.GripperUpdateMessage;
 import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.robot.Constants;
 
@@ -55,7 +55,7 @@ public class SameSideToScale implements AutonMode{
 				System.out.println("completeting last drive forward");
 				if(commandDone){
 					System.out.println("========================sent message to drop cube=====================");
-					parent.sendMessage(new GripperUpdate(true));
+					parent.sendMessage(new GripperUpdateMessage(true));
 					switchState(State.Done);
 				}
 				break;
@@ -73,6 +73,10 @@ public class SameSideToScale implements AutonMode{
 	private void switchState(State s){
 		currentState = s;
 		commandDone = false;
+	}
+	
+	public String getTarget(){
+		return "Scale";
 	}
 
 }

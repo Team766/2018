@@ -78,6 +78,21 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton: DriveSquare");
 			currentMode = new DriveSquare(this);
 			break;
+		case LeftToSwitch:
+			System.out.println("Auton: LeftToSwitch");
+			currentMode = new SideToSwitch(this, false);
+			startSeq = false;
+			break;
+		case RightToSwitch:
+			System.out.println("Auton: RightToSwitch");
+			currentMode = new SideToSwitch(this, true);
+			startSeq = false;
+			break;
+		case MiddleToSwitch:
+			System.out.println("Auton: MiddleToSwitch");
+			currentMode = new MiddleToSwitch(this);
+			startSeq = false;
+			break;
 		/*
 		case DriveStraightTime:
 			System.out.println("Auton: DriveStraightTime");
@@ -100,32 +115,18 @@ public class AutonSelector extends Actor{
 			currentMode = new WristPID(this);
 			break;
 		*/
-		case LeftToSwitch:
-			System.out.println("Auton: LeftToSwitch");
-			currentMode = new SideToSwitch(this, false);
-			startSeq = false;
-			break;
-		case RightToSwitch:
-			System.out.println("Auton: RightToSwitch");
-			currentMode = new SideToSwitch(this, true);
-			startSeq = false;
-			break;
-		case MiddleToSwitch:
-			System.out.println("Auton: MiddleToSwitch");
-			currentMode = new MiddleToSwitch(this);
-			startSeq = false;
-			break;
 		}
+	}
+	
+	@Override
+	public void init(){
+		sendMessage(new WristPIDMessage(2)); //intake position
+		sendMessage(new GripperUpdateMessage(false)); //close
 	}
 
 	@Override
 	public void iterate() {
-		if(startSeq){
-			startSequence(currentMode);
-		} else{
-			sendMessage(new GripperUpdateMessage(false));
-			currentMode.iterate();
-		}
+		currentMode.iterate();
 		
 		while (newMessage()) {
 			Message currentMessage = readMessage();
@@ -225,7 +226,8 @@ public class AutonSelector extends Actor{
 				if(commandDone)
 					sendMessage(new ShoulderPIDMessage(0));
 				break;
-				*/		}
+				*/		
+		}
 	}
 	
 	private void setState(State state){

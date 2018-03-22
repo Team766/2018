@@ -67,7 +67,7 @@ public class SideToSwitch implements AutonMode{
 					} else{
 						setState(State.DriveRaiseArm);
 						parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0));
-						//parent.sendMessage(new ShoulderPIDMessage(1)); //don't need if keep on kickstand
+						parent.sendMessage(new ShoulderPIDMessage(1)); 
 					}	
 				}
 				break;

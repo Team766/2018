@@ -97,8 +97,8 @@ public class Drive extends Actor{
 			}
 		}
 		
-		//System.out.println("DBG: right encoder = " + rightEncoder.getRaw() + "\t\t left = " + leftEncoder.getRaw());
-		//System.out.println("Gyro: " + gyro.getAngle());
+		System.out.println("DBG: right encoder = " + rightEncoder.getRaw() + "\t\t left = " + leftEncoder.getRaw());
+		System.out.println("Gyro: " + gyro.getAngle());
 	}
 
 	public String toString() {
@@ -128,6 +128,7 @@ public class Drive extends Actor{
 		setRight(autonClamp(power));
 	}
 	
+	//divides by 12 to convert inches to feet
 	public double leftDistance(){
 		return ConstantsFileReader.getInstance().get("leftEncoderDirection") * (leftEncoder.getRaw() / ConstantsFileReader.getInstance().get("counts_per_revolution") * ConstantsFileReader.getInstance().get("wheel_diameter") / 12.0 * Math.PI);
 	}
@@ -137,7 +138,7 @@ public class Drive extends Actor{
 	}
 	
 	public double averageDistance(){
-		return (leftDistance() + rightDistance())/2.0;
+		return (leftDistance() + rightDistance()) / 2.0;
 	}
 	
 	protected void resetEncoders(){

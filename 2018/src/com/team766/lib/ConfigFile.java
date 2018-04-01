@@ -67,6 +67,7 @@ public class ConfigFile {
 		return ConfigFileReader.getInstance().getPort("leftShifter");
 	}
 	
+	
 	//Arm
 	public static int[] getArmShoulder(){
 		return ConfigFileReader.getInstance().getPorts("armShoulder");
@@ -84,5 +85,5 @@ public class ConfigFile {
 	public static int getLimitSwitch() {
 		return ConfigFileReader.getInstance().getPort("limitSwitch");
 	}
-
+	
 }

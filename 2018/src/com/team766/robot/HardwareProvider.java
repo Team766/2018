@@ -65,6 +65,7 @@ public class HardwareProvider {
 	public SpeedController getGripperMotorB(){
 		return RobotProvider.instance.getMotor(ConfigFile.getGripperMotorB());
 	}
+	
 
 	//Joysticks
 	public JoystickReader getLeftJoy() {
@@ -114,4 +115,5 @@ public class HardwareProvider {
 	public CameraInterface getCamera(){
 		return RobotProvider.instance.getCamServer();
 	}
+	
 }

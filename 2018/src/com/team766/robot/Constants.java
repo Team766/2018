@@ -5,6 +5,8 @@ import lib.ConstantsFileReader;
 public class Constants {
 	
 	public static final boolean enableCamera = false;
+	public static final boolean mule = true;
+	public static final boolean startSeq = false;
 	
 	/*
 	 * Auton
@@ -31,8 +33,8 @@ public class Constants {
 	
 	// side to scale
 	public static final double side_scale_same_angle = -6.0; //degrees right
-	public static final double side_scale_same_forward = 27.0; //27.0
-	public static final double side_scale_same_forward_angle = 96.0; //left
+	public static final double side_scale_same_forward = 20.0; //24.0 if including the length of robot
+	public static final double side_scale_same_forward_angle = 90.0; //left 96.0
 	public static final double side_scale_same_forward_side = 1.0;
 	
 	public static final double side_scale_opposite_forward = 17.0; //17.0
@@ -48,7 +50,7 @@ public class Constants {
 		CheesyDrive,
 		Arm
 	};
-	public static final Drives driveType = Drives.TankDrive;
+	public static final Drives driveType = Drives.SingleStick; //(ConstantsFileReader.getInstance().get("driveType") == 0) ? Drives.TankDrive : Drives.CheesyDrive;
 	public static final double drivePowerLimit = 1.0;
 	
 	public static final double wheel_circumference = ConstantsFileReader.getInstance().get("wheel_diameter") * Math.PI; //note: mule = 4 in ; revA = 6 in diameter
@@ -58,7 +60,7 @@ public class Constants {
 	
 	//encoder drive
 	public static final double driveEncoderThreshold = 0.3;
-	public static final double driveAngleThreshold = 5.0; 
+	public static final double driveAngleThreshold = 5.0;
 	
 	/*
 	 * Joysticks
@@ -102,7 +104,7 @@ public class Constants {
 	public static final double side_switch_forward_side = 5; //(actual value: 15 feet) horizontal distance for going to the switch at opposite direction
 	public static final double side_switch_forward_side_forward = 4.45; //distance to the switch for dropping cube after turning
 	public static final double switchFirstTurnAngle = -90.0;
-	public static final double switchSecondTurnAngle = 90.0;
+	public static final double switchSecondTurnAngle = 90.0; //90.0
 	
 	//starting from middle
 	public static final double middle_switch_forward = 3.0;

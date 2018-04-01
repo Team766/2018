@@ -15,16 +15,18 @@ public abstract class CommandBase implements SubActor{
 	public static Drive Drive;
 	public static Intake Intake;
 	public static Shoulder Shoulder;
-	//public static Climber Climber;
+	public static Climber Climber;
 	public static Wrist Wrist;
 	public static Camera Camera;
 	
 	public static void init(){
 		Drive = new Drive();
 		Intake = new Intake();
-		Shoulder = new Shoulder();
-		//Climber = new Climber();
-		Wrist = new Wrist();
+		if(Constants.mule){
+			Shoulder = new Shoulder();
+			Climber = new Climber();
+			Wrist = new Wrist();
+		}
 		if(Constants.enableCamera){
 			Camera = new Camera();
 		}

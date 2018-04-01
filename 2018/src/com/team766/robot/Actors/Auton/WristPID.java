@@ -58,12 +58,16 @@ public class WristPID implements AutonMode {
 	}
 
 	@Override
-	public void commandDone(boolean done) {
+	public void driveCommandDone(boolean done) {
 		commandDone = done;
 	}
 	
 	public String getTarget(){
 		return "Wrist";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
 	}
 
 }

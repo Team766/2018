@@ -10,14 +10,19 @@ import interfaces.AutonMode;
 
 public class OppositeSideToScale implements AutonMode{
 	
-	private boolean commandDone;
+	private boolean driveCommandDone, shoulderCommandDone;
 	private AutonSelector parent;
 	private State currentState;
 	private int count, right;
 	private double driveDist[];
 	
 	private enum State {
-		Start, Drive, Turn, DropCube, Done
+		Start, 
+		Drive, 
+		Turn,
+		LiftArm,
+		DropCube, 
+		Done
 	}
 	
 	public OppositeSideToScale(AutonSelector parent, boolean startingRight){
@@ -25,7 +30,8 @@ public class OppositeSideToScale implements AutonMode{
 		right = startingRight ? 1 : -1;
 		this.parent = parent;
 		count = 0;
-		commandDone = false;
+		driveCommandDone = false;
+		shoulderCommandDone = false;
 		currentState = State.Start;
 		driveDist = new double[] {Constants.side_scale_opposite_forward_side, Constants.side_scale_opposite_forward_side_forward};
 	}
@@ -34,38 +40,40 @@ public class OppositeSideToScale implements AutonMode{
 	public void iterate() {
 		switch(currentState){
 			case Start:
-				parent.sendMessage(new DrivePIDMessage(Constants.side_scale_opposite_forward, 0.0));
+				parent.sendMessage(new DrivePIDMessage(Constants.side_scale_opposite_forward, 0.0, true));
 				switchState(State.Drive);
 				break;
 			case Drive:
-				if(commandDone){
+				if(driveCommandDone){
 					if(count < 2){
 						int turnDirection = (((count % 2) == 0) ? 1 : -1) * right;
-						parent.sendMessage(new DrivePIDMessage(0.0, turnDirection * 90.0));
+						parent.sendMessage(new DrivePIDMessage(0.0, turnDirection * 90.0, false));
 						switchState(State.Turn);
 					} else{
-						switchState(State.DropCube);
+						switchState(State.LiftArm);
 					}
 				}
 				break;
 			case Turn:
-				if(commandDone){
+				if(driveCommandDone){
 					count ++;
 					if(count < 3){
 						System.out.println("count: " + count);
-						parent.sendMessage(new DrivePIDMessage(driveDist[count - 1], 0.0));
+						double direction = (count == 1) ? right * 90.0 : 0.0;
+						parent.sendMessage(new DrivePIDMessage(driveDist[count - 1], direction, false));
 						switchState(State.Drive);
-						if(count == 1){
-							System.out.println("-------------Raising shoulder and wrist--------------");
-							//parent.sendMessage(new ShoulderPIDMessage(2));
-							//parent.sendMessage(new WristPIDMessage(2));
-						}
 					}
 				}
 				break;
+			case LiftArm:
+				if(driveCommandDone){
+					parent.sendMessage(new DrivePIDMessage(Constants.side_scale_same_forward_side, 0.0, false));
+					switchState(State.DropCube);
+				}
+				break;
 			case DropCube:
-				System.out.println("inside drop cube case \t commandDone: " + commandDone);
-				if(commandDone){
+				System.out.println("inside drop cube case \t driveCommandDone: " + driveCommandDone);
+				if(driveCommandDone){
 					System.out.println("sent message to drop cube");
 					parent.sendMessage(new GripperUpdateMessage(true));
 					switchState(State.Done);
@@ -78,17 +86,23 @@ public class OppositeSideToScale implements AutonMode{
 	}
 
 	@Override
-	public void commandDone(boolean done) {
-		commandDone = done;
+	public void driveCommandDone(boolean done) {
+		driveCommandDone = done;
 	}
 	
 	private void switchState(State s){ 
 		currentState = s;
-		commandDone = false;
+		driveCommandDone = false;
+		shoulderCommandDone = false;
 	}
 	
 	public String getTarget(){
 		return "Scale";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		shoulderCommandDone = done;
 	}
 
 }

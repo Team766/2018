@@ -9,6 +9,10 @@ import com.team766.robot.Actors.Drive.DriveTime;
 import interfaces.AutonMode;
 import lib.Message;
 
+/**
+ * need to rewrite since switched to absolute heading
+ *
+ */
 public class DriveSquare implements AutonMode{
 	
 	private enum State{
@@ -36,19 +40,19 @@ public class DriveSquare implements AutonMode{
 		switch (currentState){
 			case Start:
 				//switchState(State.DriveStraight, new DriveTimeMessage(2.0, 0.5, false));
-				switchState(State.DriveStraight, new DrivePIDMessage(3.0, 0.0));
+				switchState(State.DriveStraight, new DrivePIDMessage(3.0, 0.0, true));
 				break;
 			case DriveStraight:
 				if(commandDone){
 					//switchState(State.Turn, new DriveTimeMessage(1.0, 0.2, true));
-					switchState(State.Turn, new DrivePIDMessage(0.0, 90));
+					switchState(State.Turn, new DrivePIDMessage(0.0, 90.0, true));
 				}
 				break;
 			case Turn:
 				if(commandDone){
 					if(count < 3){
 						//switchState(State.DriveStraight, new DriveTimeMessage(2.0, 0.5, false));
-						switchState(State.DriveStraight, new DrivePIDMessage(3.0, 0.0));
+						switchState(State.DriveStraight, new DrivePIDMessage(3.0, 90.0, true));
 						count += 1;
 					} else{
 						setState(State.Done);
@@ -70,7 +74,7 @@ public class DriveSquare implements AutonMode{
 	}
 	
 	@Override
-	public void commandDone(boolean done){
+	public void driveCommandDone(boolean done){
 		commandDone = done;
 	}
 	
@@ -82,6 +86,10 @@ public class DriveSquare implements AutonMode{
 	
 	public String getTarget(){
 		return "Drive";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
 	}
 
 }

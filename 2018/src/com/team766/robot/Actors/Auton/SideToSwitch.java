@@ -11,7 +11,7 @@ import interfaces.AutonMode;
 import lib.Message;
 
 public class SideToSwitch implements AutonMode{
-	private boolean commandDone;
+	private boolean driveCommandDone, shoulderCommandDone;
 	private AutonSelector parent;
 	private State currentState;
 	private double[] straightDist;
@@ -31,11 +31,13 @@ public class SideToSwitch implements AutonMode{
 	public SideToSwitch(AutonSelector parent, boolean isStartingRight){
 		this.parent = parent;
 		negateAngle = isStartingRight? -1 : 1;
-		commandDone = false;
+		driveCommandDone = false;
+		shoulderCommandDone = false;
 		currentState = State.Start;
 		count = 0;
-		isOppositeSide = Constants.switch_side != negateAngle ;
-		if(Constants.switch_side == 1){
+		
+		isOppositeSide = (Constants.switch_side == negateAngle) ;
+		if(isOppositeSide){
 			straightDist = new double[]{Constants.side_switch_forward, Constants.side_switch_forward_side, Constants.side_switch_forward_side_forward};
 			turnAngle = new double[]{negateAngle * Constants.switchFirstTurnAngle, negateAngle * Constants.switchSecondTurnAngle, 0.0};
 		} else{
@@ -50,30 +52,30 @@ public class SideToSwitch implements AutonMode{
 		switch(currentState){
 			case Start:
 				double dist = isOppositeSide? straightDist[count] : Constants.side_switch_straight;
-				switchState(State.DriveStraight, new DrivePIDMessage(dist, 0));
+				switchState(State.DriveStraight, new DrivePIDMessage(dist, 0, true));
 				break;
 			case DriveStraight:
 				System.out.println("driving for " + straightDist[count] + " feet");
-				if(commandDone){
-					switchState(State.Turn, new DrivePIDMessage(0.0, turnAngle[count]));
+				if(driveCommandDone){
+					switchState(State.Turn, new DrivePIDMessage(0.0, turnAngle[count], false));
 				} 
 				break;
 			case Turn:
 				System.out.println("turning for " + turnAngle[count] + " degrees");
-				if(commandDone){
+				if(driveCommandDone){
 					if((count < 2 && isOppositeSide) || (count < 1 && !isOppositeSide)){
 						count += 1;
-						switchState(State.DriveStraight, new DrivePIDMessage(straightDist[count], 0.0));
+						switchState(State.DriveStraight, new DrivePIDMessage(straightDist[count], turnAngle[count - 1], false));
 					} else{
 						setState(State.DriveRaiseArm);
-						parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0));
+						parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0, false));
 						parent.sendMessage(new ShoulderPIDMessage(1)); 
 					}	
 				}
 				break;
 			case DriveRaiseArm:
 				System.out.println("driving");
-				if(commandDone)
+				if(driveCommandDone)
 					switchState(State.DropCube, new GripperUpdateMessage(true));
 					setState(State.Done);
 				break;
@@ -89,24 +91,30 @@ public class SideToSwitch implements AutonMode{
 	}
 
 	@Override
-	public void commandDone(boolean done) {
-		commandDone = done;
-		
+	public void driveCommandDone(boolean done) {
+		driveCommandDone = done;
 	}
 	
 	private void switchState(State state, Message message){
 		currentState = state;
 		parent.sendMessage(message);
-		commandDone(false);
+		driveCommandDone(false);
+		shoulderCommandDone(false);
 	}
 	
 	private void setState(State state){
 		currentState = state;
-		commandDone(false);
+		driveCommandDone(false);
+		shoulderCommandDone(false);
 	}
 	
 	public String getTarget(){
 		return "Switch";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		shoulderCommandDone = done;
 	}
 
 }

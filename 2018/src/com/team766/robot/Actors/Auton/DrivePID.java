@@ -25,7 +25,7 @@ public class DrivePID implements AutonMode{
 		switch(currState){
 			case Start:
 				setState(State.Drive);
-				parent.sendMessage(new DrivePIDMessage(0.0, 90.0));
+				parent.sendMessage(new DrivePIDMessage(0.0, 90.0, true));
 				break;
 			case Drive:
 				if(commandDone){
@@ -47,12 +47,16 @@ public class DrivePID implements AutonMode{
 	}
 	
 	@Override
-	public void commandDone(boolean done){
+	public void driveCommandDone(boolean done){
 		commandDone = done;
 	}
 	
 	public String getTarget(){
 		return "Drive";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
 	}
 
 }

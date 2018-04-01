@@ -6,7 +6,7 @@ import interfaces.AutonMode;
 
 public class CrossLine implements AutonMode{
 	
-	private boolean commandDone;
+	private boolean driveCommandDone, shoulderCommandDone;
 	private AutonSelector parent;
 	private State currentState;
 	
@@ -16,7 +16,8 @@ public class CrossLine implements AutonMode{
 	
 	public CrossLine(AutonSelector parent){
 		this.parent = parent;
-		commandDone = false;
+		driveCommandDone = false;
+		shoulderCommandDone = false;
 		currentState = State.Start;
 	}
 
@@ -24,10 +25,10 @@ public class CrossLine implements AutonMode{
 		switch(currentState){
 			case Start:
 				switchState(State.Drive);
-				parent.sendMessage(new DrivePIDMessage(15.0, 0.0));
+				parent.sendMessage(new DrivePIDMessage(7.0, 0.0, true));
 				break;
 			case Drive:
-				if(commandDone){
+				if(driveCommandDone){
 					switchState(State.Done);
 				}
 				break;
@@ -36,17 +37,24 @@ public class CrossLine implements AutonMode{
 		}
 	}
 
-	public void commandDone(boolean done) {
-		commandDone = done;
+	@Override
+	public void driveCommandDone(boolean done) {
+		driveCommandDone = done;
 	}
 	
 	private void switchState(State s){
 		currentState = s;
-		commandDone = false;
+		driveCommandDone = false;
+		shoulderCommandDone = false;
 	}
 	
 	public String getTarget(){
 		return "Cross Line";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		shoulderCommandDone = false;
 	}
 
 }

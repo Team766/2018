@@ -18,7 +18,9 @@ public class DrivePIDCommand extends CommandBase{
 		done = false;
 		
 		Drive.resetEncoders();
-		Drive.setGyroAngle(0.0);
+		if(message.resetGyro()){
+			Drive.setGyroAngle(0.0);
+		}
 		
 		Drive.distancePID.setSetpoint(message.getDistance());
 		Drive.anglePID.setSetpoint(message.getAngle());
@@ -26,6 +28,7 @@ public class DrivePIDCommand extends CommandBase{
 
 	@Override
 	public void update() {
+		System.out.println("distance: " + Drive.averageDistance());
 		Drive.distancePID.calculate(Drive.averageDistance(), false);
 		Drive.anglePID.calculate(Drive.getGyroAngle(),false);
 

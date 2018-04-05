@@ -22,11 +22,10 @@ public abstract class CommandBase implements SubActor{
 	public static void init(){
 		Drive = new Drive();
 		Intake = new Intake();
-		if(Constants.mule){
-			Shoulder = new Shoulder();
-			Climber = new Climber();
-			Wrist = new Wrist();
-		}
+		Shoulder = new Shoulder();
+		Climber = new Climber();
+		Wrist = new Wrist();
+		
 		if(Constants.enableCamera){
 			Camera = new Camera();
 		}

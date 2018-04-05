@@ -23,8 +23,9 @@ public class CrossLine implements AutonMode{
 	public void iterate() {
 		switch(currentState){
 			case Start:
+				System.out.println("inside cross line auton start");
 				switchState(State.Drive);
-				parent.sendMessage(new DrivePIDMessage(15.0, 0.0));
+				parent.sendMessage(new DrivePIDMessage(15.0, 0.0)); //15.0
 				break;
 			case Drive:
 				if(commandDone){

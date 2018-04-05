@@ -8,6 +8,7 @@ import com.team766.lib.Messages.EStop;
 import com.team766.lib.Messages.IntakeMotorUpdate;
 import com.team766.lib.Messages.WristPIDMessage;
 import com.team766.lib.Messages.WristSimpleMessage;
+import com.team766.lib.Messages.WristTestMessage;
 import com.team766.lib.Messages.GripperUpdateMessage;
 import com.team766.lib.Messages.ShifterUpdate;
 import com.team766.lib.Messages.ShoulderPIDMessage;
@@ -96,7 +97,7 @@ public class OperatorControl extends Actor{
 			double rightShoulder = rightJoystickFB;
 			
 			if(previousLeftPower != leftShoulder || previousRightPower != rightShoulder){
-				sendMessage(new ShoulderSimpleMessage(leftShoulder, rightShoulder));
+				sendMessage(new WristTestMessage(leftShoulder, rightShoulder));
 				previousLeftPower = leftShoulder;
 				previousRightPower = rightShoulder;
 			}

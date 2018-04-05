@@ -50,9 +50,6 @@ public class AutonSelector extends Actor{
 			System.out.println("Auton: None");
 			startSeq = false;
 			break;
-		case Switch:
-			System.out.println("Auton: Switch");
-			break;
 		case LeftToScale:
 			System.out.println("Auton: left side to scale");
 			if(Constants.scale_side == 1){ //right
@@ -120,12 +117,15 @@ public class AutonSelector extends Actor{
 	
 	@Override
 	public void init(){
-		sendMessage(new WristPIDMessage(2)); //intake position
-		sendMessage(new GripperUpdateMessage(false)); //close
+		//sendMessage(new WristPIDMessage(2)); //intake position
+		//sendMessage(new GripperUpdateMessage(false)); //close
 	}
 
 	@Override
 	public void iterate() {
+		
+		System.out.println("iterating in auton selector mode = " + currentMode.getTarget());
+		
 		currentMode.iterate();
 		
 		while (newMessage()) {

@@ -3,10 +3,12 @@ package com.team766.robot.Actors.Wrist;
 import com.team766.lib.Messages.Done;
 import com.team766.lib.Messages.EStop;
 import com.team766.lib.Messages.ShoulderPIDMessage;
+import com.team766.lib.Messages.ShoulderSimpleMessage;
 import com.team766.lib.Messages.ShoulderManualMessage;
 import com.team766.lib.Messages.Stop;
 import com.team766.lib.Messages.WristPIDMessage;
 import com.team766.lib.Messages.WristSimpleMessage;
+import com.team766.lib.Messages.WristTestMessage;
 import com.team766.robot.Constants;
 import com.team766.robot.HardwareProvider;
 import com.team766.robot.Actors.Shoulder.ShoulderPIDCommand;
@@ -34,7 +36,7 @@ public class Wrist extends Actor {
 	private SubActor currentCommand;
 	
 	public Wrist() {
-		acceptableMessages = new Class[]{EStop.class, Stop.class, WristPIDMessage.class, WristSimpleMessage.class};
+		acceptableMessages = new Class[]{EStop.class, Stop.class, WristPIDMessage.class, WristSimpleMessage.class, WristTestMessage.class};
 		setWristEncoders((int)ConstantsFileReader.getInstance().get("wristStartValue"));
 	}
 
@@ -77,6 +79,11 @@ public class Wrist extends Actor {
 				else
 					currentCommand = new WristPIDCommand(new WristPIDMessage(3)); //hold	
 			}
+			else if(currentMessage instanceof WristTestMessage){
+				WristTestMessage mess = (WristTestMessage) currentMessage;
+				setLeftWrist(mess.getLeft());
+				setRightWrist(mess.getRight());
+			}
 			else if(currentMessage instanceof WristPIDMessage){
 				currentCommand = new WristPIDCommand(currentMessage);
 			}
@@ -94,7 +101,7 @@ public class Wrist extends Actor {
 			
 		}
 
-		//System.out.println("left wrist encoder: " + getLeftWristEncoder() + " wrist angle: " + getWristAngleRad(getLeftWristEncoder()));
+		System.out.println("----------------------------wrist encoder: " + getAveWristEncoder() + "\t\twrist angle: " + getWristAngleRad(getLeftWristEncoder()));
 		
 	}
 	
@@ -115,12 +122,12 @@ public class Wrist extends Actor {
 		return leftWrist.getSensorPosition();
 	}
 	
-//	public double getRightWristEncoder(){
-//		return rightWrist.getSensorPosition();
-//	}
+	public double getRightWristEncoder(){
+		return ConstantsFileReader.getInstance().get("negateWristEncoder") * rightWrist.getSensorPosition(); //negate = -1 on practice , 1 on comp
+	}
 	
 	public double getAveWristEncoder(){
-		return getLeftWristEncoder();
+		return getRightWristEncoder(); // comp bot getLeftWristEncoder(), practice right
 	}
 	
 	public void setWristEncoders(int position){

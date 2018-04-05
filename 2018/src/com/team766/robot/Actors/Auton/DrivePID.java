@@ -22,6 +22,7 @@ public class DrivePID implements AutonMode{
 
 	@Override
 	public void iterate() {
+		System.out.println(currState);
 		switch(currState){
 			case Start:
 				setState(State.Drive);

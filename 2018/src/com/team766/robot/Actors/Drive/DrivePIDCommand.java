@@ -26,13 +26,16 @@ public class DrivePIDCommand extends CommandBase{
 
 	@Override
 	public void update() {
-		Drive.distancePID.calculate(Drive.averageDistance(), false);
-		Drive.anglePID.calculate(Drive.getGyroAngle(),false);
-
+		Drive.distancePID.calculate(Drive.averageDistance(), true);
+		Drive.anglePID.calculate(Drive.getGyroAngle(), false); //added debug need to test monday
+		
 		Drive.setAutonLeft(Drive.distancePID.getOutput() - Drive.anglePID.getOutput()); 
 		Drive.setAutonRight(Drive.distancePID.getOutput() + Drive.anglePID.getOutput());
 		
+		System.out.println("drive left: " + (Drive.distancePID.getOutput() - Drive.anglePID.getOutput() + "\t\t\t\t\t\t\tright: " + (Drive.distancePID.getOutput() + Drive.anglePID.getOutput())));
+		
 		if(Drive.distancePID.isDone() && Drive.anglePID.isDone()){
+			stop();
 			done = true;
 		}
 	}

@@ -57,7 +57,7 @@ public class Drive extends Actor{
 				continue;
 			}
 			
-			//System.out.println("DBG: got new message stopping current message!");
+			System.out.println("DBG: got new message stopping current message!");
 			
 			if (currentMessage instanceof Stop || currentMessage instanceof EStop) {
 				stopCurrentCommand("got stop message");

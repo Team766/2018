@@ -13,7 +13,6 @@ public class Constants {
 	 */
 	public static enum Autons {
 		None,
-		Switch,
 		RightToScale,
 		LeftToScale,
 		CrossLine,
@@ -50,7 +49,7 @@ public class Constants {
 		CheesyDrive,
 		Arm
 	};
-	public static final Drives driveType = Drives.SingleStick; //(ConstantsFileReader.getInstance().get("driveType") == 0) ? Drives.TankDrive : Drives.CheesyDrive;
+	public static final Drives driveType = Drives.CheesyDrive; //(ConstantsFileReader.getInstance().get("driveType") == 0) ? Drives.TankDrive : Drives.CheesyDrive;
 	public static final double drivePowerLimit = 1.0;
 	
 	public static final double wheel_circumference = ConstantsFileReader.getInstance().get("wheel_diameter") * Math.PI; //note: mule = 4 in ; revA = 6 in diameter

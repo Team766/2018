@@ -47,7 +47,7 @@ public class WristPIDCommand extends CommandBase {
 			Wrist.wristPID.setSetpoint(constants_file.get("armWristBack"));
 		}
 		else{
-			switchState(State.Hold);
+			switchState(State.Hold);  
 			Wrist.wristPID.setSetpoint(Wrist.getAveWristEncoder());
 		}
 	}
@@ -55,9 +55,10 @@ public class WristPIDCommand extends CommandBase {
 	@Override
 	public void update() {	
 		System.out.println("Wrist PID setpoint: " + Wrist.wristPID.getSetpoint());
-		Wrist.wristPID.calculate(Wrist.getLeftWristEncoder(), false);
-		Wrist.setWrist(negate * (Wrist.wristPID.getOutput() + constants_file.get("armWristFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()))));
-		System.out.println("__________________WristPower: " + Wrist.wristPID.getOutput() + constants_file.get("armWristFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder())));
+		Wrist.wristPID.calculate(Wrist.getAveWristEncoder(), false);
+		double power = Wrist.wristPID.getOutput() + constants_file.get("armWristFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()));
+		Wrist.setWrist(negate * power);
+		System.out.println("__________________WristPower: " + power);
 		
 		if(Wrist.wristPID.isDone()){
 			done = true;

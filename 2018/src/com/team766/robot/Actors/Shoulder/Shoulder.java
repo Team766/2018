@@ -117,13 +117,15 @@ public class Shoulder extends Actor {
 			lock = false;
 		}
 		
+		System.out.println("shoulder limit switch: ------------------------------ " + getLimitSwitch());
+		
 		System.out.println("shoulder encoder: " + getAveShoulderEncoder());
 		
 	}
 	
 	//mule: one shoulder motor is cross wired so they spin the same way, no need to negate one side, theoreticlly negate right?
 	public void setLeftShoulder(double power){
-		leftShoulder.set(ControlMode.PercentOutput, clamp(power, ConstantsFileReader.getInstance().get("shoulderUpPowerLimit")));
+		leftShoulder.set(ControlMode.PercentOutput, ConstantsFileReader.getInstance().get("negateShoulder") * clamp(power, ConstantsFileReader.getInstance().get("shoulderUpPowerLimit")));
 	}
 	
 	//PercentOutput is the mode for setting speed
@@ -154,14 +156,14 @@ public class Shoulder extends Actor {
 	public double getLeftShoulderEncoder(){
 		return leftShoulder.getSensorPosition();
 	}
-	/*
+	
 	public double getRightShoulderEncoder(){
 		return rightShoulder.getSensorPosition();
 	}
-	*/
+	
 	
 	public double getAveShoulderEncoder(){
-		return -1 * getLeftShoulderEncoder();
+		return getRightShoulderEncoder(); //-1 * getLeftShoulderEncoder() = comp bot, current = practice bot
 	}
 	
 	public double getShoulderAngle(){
@@ -186,8 +188,8 @@ public class Shoulder extends Actor {
 	}
 	
 	public void setShoulderEncoders(int position){
-		leftShoulder.setPosition(position);
-		//rightShoulder.setPosition(position);
+		//leftShoulder.setPosition(position);
+		rightShoulder.setPosition(position);
 		new Throwable().printStackTrace();
 	}
 	

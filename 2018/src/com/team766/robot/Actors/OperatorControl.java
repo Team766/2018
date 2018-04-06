@@ -38,6 +38,7 @@ public class OperatorControl extends Actor{
 	private double[] rightJoystick = new double[4];
 	private boolean[] prevPress = new boolean[17];
 	private boolean shifterStatus = false;
+	private boolean state = false;
 	
 	private void setAxis(JoystickReader joystick, double[] axis, int axisNumber, double deadband){
 		axis[axisNumber] = (Math.abs(joystick.getRawAxis(axisNumber)) > deadband)? joystick.getRawAxis(axisNumber) : 0.0;
@@ -125,6 +126,7 @@ public class OperatorControl extends Actor{
 			}
 		}
 		
+		/*
 		//button for close gripper(prevPress[7])
 		if(jBox.getRawButton(Buttons.gripper)){
 			sendMessage(new GripperUpdateMessage(false));
@@ -132,6 +134,7 @@ public class OperatorControl extends Actor{
 			sendMessage(new GripperUpdateMessage(true));
 		}
 		System.out.print("gripper: " + jBox.getRawButton(Buttons.gripper) + "------");
+		*/
 		
 		//button for climb up (prevPress[6])
 		if(!prevPress[6] && jBox.getRawButton(Buttons.climbUp)) {
@@ -146,12 +149,17 @@ public class OperatorControl extends Actor{
 		prevPress[9] = jBox.getRawButton(Buttons.eStop);
 		
 		//button for intake motor (prevPress[12])
-		if(!prevPress[12]){
+		if(!prevPress[12] && jBox.getRawButton(Buttons.gripperButton)){
+			state = !state;
+			sendMessage(new GripperUpdateMessage(state));
+			
+			/*
 			//System.out.println("button 12(intaking): " + jBox.getRawButton(Buttons.intakeBlock));
 			double power = jBox.getRawButton(Buttons.intakeBlock) ? Constants.intakeMotorSpeed : 0.0;
 			sendMessage(new IntakeMotorUpdate(power));
+			*/
 		}
-		prevPress[12] = jBox.getRawButton(Buttons.intakeBlock);
+		prevPress[12] = jBox.getRawButton(Buttons.gripperButton);
 		
 		if(!prevPress[13]){
 			//System.out.println("button 13(outtaking): " + jBox.getRawButton(Buttons.outtakeBlock));

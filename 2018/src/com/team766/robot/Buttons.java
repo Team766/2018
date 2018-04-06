@@ -8,6 +8,7 @@ public class Buttons {
 	
 	//intake
 	public static final int gripper = 7;
+	public static final int gripperButton = 12;
 	public static final int intakeBlock = 12;
 	public static final int outtakeBlock = 13;
 

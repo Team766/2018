@@ -118,16 +118,16 @@ public class Wrist extends Actor {
 		setRightWrist(power);
 	}
 	
-	public double getLeftWristEncoder(){
+	private double getLeftWristEncoder(){
 		return leftWrist.getSensorPosition();
 	}
 	
-	public double getRightWristEncoder(){
+	private double getRightWristEncoder(){
 		return ConstantsFileReader.getInstance().get("negateWristEncoder") * rightWrist.getSensorPosition(); //negate = -1 on practice , 1 on comp
 	}
 	
 	public double getAveWristEncoder(){
-		return getRightWristEncoder(); // comp bot getLeftWristEncoder(), practice right
+		return getLeftWristEncoder(); // comp bot getLeftWristEncoder(), practice right = getRightWristEncoder()
 	}
 	
 	public void setWristEncoders(int position){

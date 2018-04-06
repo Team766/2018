@@ -75,6 +75,7 @@ public class Shoulder extends Actor {
 				double ff = ConstantsFileReader.getInstance().get("shoulderUpFeedForward") * Math.cos(this.getShoulderAngleRad(currPos));
 				ShoulderManualMessage armMessage = (ShoulderManualMessage)currentMessage;
 				currentCommand = null;
+				
 				if(armMessage.getShoulderDirection() == 0 && currPos < ConstantsFileReader.getInstance().get("armShoulderVerticle")){
 					System.out.println("********************shoulder moving up*********************");
 					setShoulder(shoulderPower + ff);
@@ -153,17 +154,16 @@ public class Shoulder extends Actor {
 		System.out.println("shoulder timeout power: " + clamped_power);
 	}
 	
-	public double getLeftShoulderEncoder(){
+	private double getLeftShoulderEncoder(){
 		return leftShoulder.getSensorPosition();
 	}
 	
-	public double getRightShoulderEncoder(){
+	private double getRightShoulderEncoder(){
 		return rightShoulder.getSensorPosition();
 	}
 	
-	
 	public double getAveShoulderEncoder(){
-		return getRightShoulderEncoder(); //-1 * getLeftShoulderEncoder() = comp bot, current = practice bot
+		return -1 * getLeftShoulderEncoder(); //-1 * getLeftShoulderEncoder() = comp bot, current = practice bot = getRightShoulderEncoder()
 	}
 	
 	public double getShoulderAngle(){
@@ -188,7 +188,7 @@ public class Shoulder extends Actor {
 	}
 	
 	public void setShoulderEncoders(int position){
-		//leftShoulder.setPosition(position);
+		leftShoulder.setPosition(position);
 		rightShoulder.setPosition(position);
 		new Throwable().printStackTrace();
 	}

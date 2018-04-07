@@ -101,7 +101,7 @@ public class Wrist extends Actor {
 			
 		}
 
-		System.out.println("----------------------------wrist encoder: " + getAveWristEncoder() + "\t\twrist angle: " + getWristAngleRad(getLeftWristEncoder()));
+		System.out.println("----------------------------wrist encoder: " + getAveWristEncoder() + "\t\twrist angle: " + getWristAngleRad(getAveWristEncoder()));
 		
 	}
 	

@@ -70,7 +70,7 @@ public class DriveSquare implements AutonMode{
 	}
 	
 	@Override
-	public void commandDone(boolean done){
+	public void driveCommandDone(boolean done){
 		commandDone = done;
 	}
 	
@@ -82,6 +82,11 @@ public class DriveSquare implements AutonMode{
 	
 	public String getTarget(){
 		return "Drive";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		
 	}
 
 }

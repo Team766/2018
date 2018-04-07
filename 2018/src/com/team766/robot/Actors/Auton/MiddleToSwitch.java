@@ -3,6 +3,7 @@ package com.team766.robot.Actors.Auton;
 
 import com.team766.lib.Messages.DrivePIDMessage;
 import com.team766.lib.Messages.GripperUpdateMessage;
+import com.team766.lib.Messages.IntakeMotorUpdate;
 import com.team766.lib.Messages.ShoulderPIDMessage;
 import com.team766.robot.Constants;
 
@@ -14,7 +15,7 @@ public class MiddleToSwitch implements AutonMode {
 	private boolean commandDone;
 	private AutonSelector parent;
 	private State currentState;
-	private double negateAngle;
+	private double negateAngle, dropTime, dropTimeLimit;
 	private double[]straightDist;
 	private double[]turnAngle;
 	private int count;
@@ -23,7 +24,7 @@ public class MiddleToSwitch implements AutonMode {
 		Start,
 		DriveStraight,
 		Turn,
-		DriveRaiseArm,
+		FinalForward,
 		DropCube,
 		Done
 	}
@@ -31,7 +32,9 @@ public class MiddleToSwitch implements AutonMode {
 	public MiddleToSwitch(AutonSelector parent) {
 		this.parent = parent;
 		commandDone = false;
+		dropTime = 0.0;
 		currentState = State.Start;
+		dropTimeLimit = 4000.0;
 		negateAngle = Constants.switch_side;
 		if(negateAngle == 1){ //Constants.switch_side == 1){
 			straightDist = new double[]{Constants.middle_switch_forward, Constants.middle_switch_forward_rightSide, Constants.middle_switch_forward_side_forward};
@@ -61,17 +64,18 @@ public class MiddleToSwitch implements AutonMode {
 					count += 1;
 					switchState(State.DriveStraight, new DrivePIDMessage(straightDist[count], 0.0));
 				} else{
-					setState(State.DriveRaiseArm);
+					setState(State.FinalForward);
 					parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0));
-					parent.sendMessage(new ShoulderPIDMessage(1));
+					dropTime = System.currentTimeMillis();
 				}	
 			}
 			break;
-		case DriveRaiseArm:
-			System.out.println("raising arms to the middle");
-			if(commandDone){
+		case FinalForward:
+			System.out.println("final drive forward");
+			System.out.println("dropTime: " + (System.currentTimeMillis() - dropTime));
+			if(commandDone || (System.currentTimeMillis() - dropTime > dropTimeLimit)){
 				switchState(State.DropCube, new GripperUpdateMessage(true));
-				setState(State.Done);
+				parent.sendMessage(new IntakeMotorUpdate(-1.0)); //outtake
 			}
 			break;
 		case DropCube:
@@ -80,29 +84,36 @@ public class MiddleToSwitch implements AutonMode {
 			break;
 		case Done:
 			parent.setDone(true);
+			parent.sendMessage(new IntakeMotorUpdate(0.0)); //stop
 			break;
 			
 		}
 	}
 
 	@Override
-	public void commandDone(boolean done) {
+	public void driveCommandDone(boolean done) {
 		commandDone = done;
 	}
 	
 	private void switchState(State state, Message message){
 		currentState = state;
 		parent.sendMessage(message);
-		commandDone(false);
+		driveCommandDone(false);
 	}
 	
 	private void setState(State state){
 		currentState = state;
-		commandDone(false);
+		driveCommandDone(false);
 	}
 	
 	public String getTarget(){
 		return "Switch";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		
+		
 	}
 
 }

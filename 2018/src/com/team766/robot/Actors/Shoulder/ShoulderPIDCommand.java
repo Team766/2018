@@ -11,7 +11,7 @@ public class ShoulderPIDCommand extends CommandBase{
 	/*
 	 * This command moves the shoulder to one of three setpoints
 	 */
-	private boolean done;
+	private boolean done, lock;
 	private State currentState;
 	private ShoulderPIDMessage message;
 	ConstantsFileReader constants_file;
@@ -20,10 +20,13 @@ public class ShoulderPIDCommand extends CommandBase{
 	
 	private enum State{
 		Down,
+		DownHalf,
 		Middle,
 		Up,
 		StayVertical,
-		Hold
+		Hold,
+		ManualUp,
+		ManualDown
 	}
 	
 	private State[] positions;
@@ -32,14 +35,19 @@ public class ShoulderPIDCommand extends CommandBase{
 	public ShoulderPIDCommand(Message m){
 		message = (ShoulderPIDMessage) m;
 		done = false;
+		lock = false;
 		constants_file = ConstantsFileReader.getInstance();
-		positions = new State[]{State.Down, State.Middle, State.Up, State.Hold};
-		encoderPos = new String[]{"armShoulderBottom", "armShoulderMiddle", "armShoulderVertical"};
+		positions = new State[]{State.DownHalf, State.Middle, State.Up, State.Hold, State.ManualUp, State.ManualDown};
+		encoderPos = new String[]{"armShoulderBottomHalf", "armShoulderMiddle", "armShoulderVertical"};
 		
 		switchState(positions[message.getDesiredPos()]);
 		
 		if(message.getDesiredPos() == 3){
 			Shoulder.shoulderUpPID.setSetpoint(Shoulder.getAveShoulderEncoder());
+		} else if(message.getDesiredPos() == 4){
+			Shoulder.shoulderUpPID.setSetpoint(Shoulder.shoulderUpPID.getSetpoint() + 1000);
+		} else if(message.getDesiredPos() == 5){
+			Shoulder.shoulderUpPID.setSetpoint(Shoulder.shoulderUpPID.getSetpoint() - 1000);
 		} else{
 			Shoulder.shoulderUpPID.setSetpoint(constants_file.get(encoderPos[message.getDesiredPos()]));
 		}
@@ -88,7 +96,17 @@ public class ShoulderPIDCommand extends CommandBase{
 					done = true;
 				}
 				break;
+			case DownHalf:
+				Shoulder.setShoulder(power);
+				if(Shoulder.shoulderUpPID.isDone()){
+					switchState(State.Down);
+				}
+				break;
 			case Down:
+				if(!lock){
+					Shoulder.shoulderUpPID.setSetpoint(constants_file.get("armShoulderBottom"));
+					lock = true;
+				}
 				Shoulder.setShoulder(power);
 				System.out.println("Case Down");
 				if(Shoulder.shoulderUpPID.isDone()){
@@ -106,6 +124,16 @@ public class ShoulderPIDCommand extends CommandBase{
 				
 				if(Shoulder.shoulderUpPID.isDone()){
 					done = true;
+				}
+				break;
+			case ManualUp:
+				if(Shoulder.getAveShoulderEncoder() < ConstantsFileReader.getInstance().get("armShoulderVertical")){
+					Shoulder.setShoulder(power);
+				}
+				break;
+			case ManualDown:
+				if(Shoulder.getAveShoulderEncoder() > ConstantsFileReader.getInstance().get("armShoulderBottom")){
+					Shoulder.setShoulder(power);
 				}
 				break;
 		}

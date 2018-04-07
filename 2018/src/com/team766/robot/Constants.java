@@ -72,7 +72,7 @@ public class Constants {
 	 * Intake
 	 */
 	public static final double intakeMotorSpeed = 0.4;
-	public static final double intakePowerLimit = 0.7;
+	public static final double intakePowerLimit = 1.0;
 	
 	/*
 	 * Climber
@@ -100,15 +100,15 @@ public class Constants {
 	public static final double side_switch_straight = 7.45; //distance to the switch if same side 
 	public static final double side_switch_straight_side = 3.4; //distance from side to the switch if same side
 	public static final double side_switch_forward = 3.0; //distance to the point preparing to turn
-	public static final double side_switch_forward_side = 5; //(actual value: 15 feet) horizontal distance for going to the switch at opposite direction
+	public static final double side_switch_forward_side = 15.0; //(actual value: 15 feet) horizontal distance for going to the switch at opposite direction
 	public static final double side_switch_forward_side_forward = 4.45; //distance to the switch for dropping cube after turning
 	public static final double switchFirstTurnAngle = -90.0;
 	public static final double switchSecondTurnAngle = 90.0; //90.0
 	
 	//starting from middle
 	public static final double middle_switch_forward = 3.0;
-	public static final double middle_switch_forward_leftSide = 5.82;
-	public static final double middle_switch_forward_rightSide = 6.50; //actual value: 6.66 feet
+	public static final double middle_switch_forward_leftSide = 4.82;
+	public static final double middle_switch_forward_rightSide = 5.50; //actual value: 6.66 feet
 	public static final double middle_switch_forward_side_forward = 4.45; //4.45 calc value
 	
 	

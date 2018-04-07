@@ -48,6 +48,9 @@ public class Drive extends Actor{
 		acceptableMessages = new Class[]{EStop.class, Stop.class, DriveTimeMessage.class, DriveUpdate.class, DriveDoubleSideUpdate.class, DriveEncoderMessage.class, ShifterUpdate.class, DrivePIDMessage.class};
 	
 		gyroOffset = Constants.startAngle;
+		
+		setLeftShifter(false);
+		setRightShifter(false);
 	}
 	
 	public void iterate() {
@@ -87,6 +90,7 @@ public class Drive extends Actor{
 		}
 //			System.out.println("leftDrive power: " + leftDriveA.get());
 //			System.out.println("rightDrive power: " + rightDriveA.get());
+//			System.out.println("shifter set to: " + leftShifter.get());
 		
 		if (currentCommand != null) {
 			//System.out.println("DMDBG: Calling update");
@@ -154,6 +158,7 @@ public class Drive extends Actor{
 		return ConstantsFileReader.getInstance().get("negateRightShifter") == 1 ? !rightShifter.get() : rightShifter.get();
 	}
 
+	//false is high gear
 	public void setLeftShifter(boolean setHighGear){
 		leftShifter.set(ConstantsFileReader.getInstance().get("negateLeftShifter") == 1 ? !setHighGear : setHighGear);
 	}

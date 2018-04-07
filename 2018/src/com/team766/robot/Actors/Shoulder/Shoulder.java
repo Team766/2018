@@ -83,9 +83,12 @@ public class Shoulder extends Actor {
 				else if(armMessage.getShoulderDirection() == 1 && currPos > 0){
 					System.out.println("--------------------shoulder moving down----------------------");
 					setShoulder(-shoulderPower + ff);
-				}	
-				else
-					currentCommand = new ShoulderPIDCommand(new ShoulderPIDMessage(3)); //hold	
+				}
+				else{
+					System.out.println("else case in shoulder manual message");
+					setShoulder(0.0);
+				}
+				
 			}
 			else if(currentMessage instanceof ShoulderPIDMessage){
 				currentCommand = new ShoulderPIDCommand(currentMessage);

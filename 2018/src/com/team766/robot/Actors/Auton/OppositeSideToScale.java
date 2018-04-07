@@ -10,7 +10,7 @@ import interfaces.AutonMode;
 
 public class OppositeSideToScale implements AutonMode{
 	
-	private boolean commandDone;
+	private boolean driveCommandDone;
 	private AutonSelector parent;
 	private State currentState;
 	private int count, right;
@@ -25,7 +25,7 @@ public class OppositeSideToScale implements AutonMode{
 		right = startingRight ? 1 : -1;
 		this.parent = parent;
 		count = 0;
-		commandDone = false;
+		driveCommandDone = false;
 		currentState = State.Start;
 		driveDist = new double[] {Constants.side_scale_opposite_forward_side, Constants.side_scale_opposite_forward_side_forward};
 	}
@@ -38,7 +38,7 @@ public class OppositeSideToScale implements AutonMode{
 				switchState(State.Drive);
 				break;
 			case Drive:
-				if(commandDone){
+				if(driveCommandDone){
 					if(count < 2){
 						int turnDirection = (((count % 2) == 0) ? 1 : -1) * right;
 						parent.sendMessage(new DrivePIDMessage(0.0, turnDirection * 90.0));
@@ -49,7 +49,7 @@ public class OppositeSideToScale implements AutonMode{
 				}
 				break;
 			case Turn:
-				if(commandDone){
+				if(driveCommandDone){
 					count ++;
 					if(count < 3){
 						System.out.println("count: " + count);
@@ -64,8 +64,8 @@ public class OppositeSideToScale implements AutonMode{
 				}
 				break;
 			case DropCube:
-				System.out.println("inside drop cube case \t commandDone: " + commandDone);
-				if(commandDone){
+				System.out.println("inside drop cube case \t driveCommandDone: " + driveCommandDone);
+				if(driveCommandDone){
 					System.out.println("sent message to drop cube");
 					parent.sendMessage(new GripperUpdateMessage(true));
 					switchState(State.Done);
@@ -78,17 +78,23 @@ public class OppositeSideToScale implements AutonMode{
 	}
 
 	@Override
-	public void commandDone(boolean done) {
-		commandDone = done;
+	public void driveCommandDone(boolean done) {
+		driveCommandDone = done;
 	}
 	
 	private void switchState(State s){ 
 		currentState = s;
-		commandDone = false;
+		driveCommandDone = false;
 	}
 	
 	public String getTarget(){
 		return "Scale";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -41,7 +41,7 @@ public class DriveStraightTime implements AutonMode{
 	}
 
 	@Override
-	public void commandDone(boolean done) {
+	public void driveCommandDone(boolean done) {
 		commandDone = done;
 	}
 
@@ -61,5 +61,10 @@ public class DriveStraightTime implements AutonMode{
 	
 	public String getTarget(){
 		return "Drive";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		
 	}
 }

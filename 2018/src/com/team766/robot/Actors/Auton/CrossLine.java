@@ -37,7 +37,7 @@ public class CrossLine implements AutonMode{
 		}
 	}
 
-	public void commandDone(boolean done) {
+	public void driveCommandDone(boolean done) {
 		commandDone = done;
 	}
 	
@@ -48,6 +48,11 @@ public class CrossLine implements AutonMode{
 	
 	public String getTarget(){
 		return "Cross Line";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		
 	}
 
 }

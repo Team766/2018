@@ -117,8 +117,9 @@ public class AutonSelector extends Actor{
 	
 	@Override
 	public void init(){
-		//sendMessage(new WristPIDMessage(2)); //intake position
-		//sendMessage(new GripperUpdateMessage(false)); //close
+		sendMessage(new WristPIDMessage(2)); //intake position
+		sendMessage(new GripperUpdateMessage(false)); //close
+		sendMessage(new ShoulderPIDMessage(1)); //switch height
 	}
 
 	@Override
@@ -138,7 +139,7 @@ public class AutonSelector extends Actor{
 				Done doneMessage = (Done) currentMessage;
 				if(doneMessage.getSender() == "Drive"){
 					System.out.println("setting drive command to done");
-					currentMode.commandDone(true);
+					currentMode.driveCommandDone(true);
 				} else{
 					System.out.println("arm command is done");
 					armCommandDone = true;

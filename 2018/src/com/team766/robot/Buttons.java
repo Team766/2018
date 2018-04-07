@@ -9,11 +9,11 @@ public class Buttons {
 	//intake
 	public static final int gripper = 7;
 	public static final int gripperButton = 12;
-	public static final int intakeBlock = 12;
-	public static final int outtakeBlock = 13;
+	public static final int intakeBlock = 6;
+	public static final int outtakeBlock = 0;//A4
 
 	//climber
-	public static final int climbUp = 6;
+	public static final int climbUp = 13;
 	
 	//arm
 	public static final int manualShoulderUp = 3;
@@ -27,6 +27,6 @@ public class Buttons {
 	public static final int shoulderVertical = 270; //A1
 	public static final int shoulderMiddle = 180; //A2
 	public static final int shoulderBottom = 90; //A3
-	public static final int shoulderClimb = 0; //A4
+	public static final int shoulderClimb = 1; //random value
   
 }

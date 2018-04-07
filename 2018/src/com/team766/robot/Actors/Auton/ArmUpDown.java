@@ -62,17 +62,22 @@ public class ArmUpDown implements AutonMode{
 	}
 
 	@Override
-	public void commandDone(boolean done) {
+	public void driveCommandDone(boolean done) {
 		commandDone = done;
 	}
 	
 	private void switchState(State state){
 		currentState = state;
-		commandDone(false);
+		driveCommandDone(false);
 	}
 	
 	public String getTarget(){
 		return "Arm";
+	}
+
+	@Override
+	public void shoulderCommandDone(boolean done) {
+		
 	}
 
 }

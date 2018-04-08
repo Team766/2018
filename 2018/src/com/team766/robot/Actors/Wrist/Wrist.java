@@ -61,11 +61,11 @@ public class Wrist extends Actor {
 				setWrist(0.0);
 			}
 			else if(currentMessage instanceof EStop){
-				System.out.println("holding wrist movement");
+//				System.out.println("holding wrist movement");
 				currentCommand = new WristPIDCommand(new WristPIDMessage(3));
 			}
 			else if(currentMessage instanceof WristSimpleMessage){
-				System.out.println("WristSimpleMessage");
+//				System.out.println("WristSimpleMessage");
 				double currPos = this.getAveWristEncoder();
 				double wristPower = ConstantsFileReader.getInstance().get("wristManualPower");
 				double ff = ConstantsFileReader.getInstance().get("armWristFeedForward") * Math.cos(this.getWristAngleRad(currPos));
@@ -101,7 +101,7 @@ public class Wrist extends Actor {
 			
 		}
 
-		System.out.println("----------------------------wrist encoder: " + getAveWristEncoder() + "\t\twrist angle: " + getWristAngleRad(getAveWristEncoder()));
+//		System.out.println("----------------------------wrist encoder: " + getAveWristEncoder() + "\t\twrist angle: " + getWristAngleRad(getAveWristEncoder()));
 		
 	}
 	

@@ -65,11 +65,11 @@ public class Shoulder extends Actor {
 				setShoulder(0.0);
 			}
 			else if(currentMessage instanceof EStop){
-				System.out.println("eStop: holding shoulder");
+//				System.out.println("eStop: holding shoulder");
 				currentCommand = new ShoulderPIDCommand(new ShoulderPIDMessage(3)); //stay at current encoder value
 			}
 			else if(currentMessage instanceof ShoulderManualMessage){
-				System.out.println("shoulder manual message");
+//				System.out.println("shoulder manual message");
 				double currPos = this.getAveShoulderEncoder();
 				double shoulderPower = ConstantsFileReader.getInstance().get("shoulderManualPower");
 				double ff = ConstantsFileReader.getInstance().get("shoulderUpFeedForward") * Math.cos(this.getShoulderAngleRad(currPos));
@@ -77,22 +77,22 @@ public class Shoulder extends Actor {
 				currentCommand = null;
 				
 				if(armMessage.getShoulderDirection() == 0 && currPos < ConstantsFileReader.getInstance().get("armShoulderVerticle")){
-					System.out.println("********************shoulder moving up*********************");
+//					System.out.println("********************shoulder moving up*********************");
 					setShoulder(shoulderPower + ff);
 				}
 				else if(armMessage.getShoulderDirection() == 1 && currPos > 0){
-					System.out.println("--------------------shoulder moving down----------------------");
+//					System.out.println("--------------------shoulder moving down----------------------");
 					setShoulder(-shoulderPower + ff);
 				}
 				else{
-					System.out.println("else case in shoulder manual message");
+//					System.out.println("else case in shoulder manual message");
 					setShoulder(0.0);
 				}
 				
 			}
 			else if(currentMessage instanceof ShoulderPIDMessage){
 				currentCommand = new ShoulderPIDCommand(currentMessage);
-				System.out.println("receiving message");
+//				System.out.println("receiving message");
 			}
 			else if(currentMessage instanceof Done){
 				currentCommand.stop();
@@ -108,7 +108,7 @@ public class Shoulder extends Actor {
 		}
 		
 		if (!getLimitSwitch()){
-			System.out.println("difference = " + (System.currentTimeMillis() - limitSwitchStartTime) + "\t\tLimit switch start time = " + (int)limitSwitchStartTime + "\t\tcurrtime = " + (int)System.currentTimeMillis());
+//			System.out.println("difference = " + (System.currentTimeMillis() - limitSwitchStartTime) + "\t\tLimit switch start time = " + (int)limitSwitchStartTime + "\t\tcurrtime = " + (int)System.currentTimeMillis());
 			if(!lock){
 				limitSwitchStartTime = System.currentTimeMillis();
 				lock = true;
@@ -121,9 +121,9 @@ public class Shoulder extends Actor {
 			lock = false;
 		}
 		
-		System.out.println("shoulder limit switch: ------------------------------ " + getLimitSwitch());
+//		System.out.println("shoulder limit switch: ------------------------------ " + getLimitSwitch());
 		
-		System.out.println("shoulder encoder: " + getAveShoulderEncoder());
+//		System.out.println("shoulder encoder: " + getAveShoulderEncoder());
 		
 	}
 	
@@ -140,21 +140,21 @@ public class Shoulder extends Actor {
 	public void setShoulder(double power){ //for going up and regular
 		setLeftShoulder(power);
 		setRightShoulder(power);
-		System.out.println("shoulder up power: " + clamp(power, ConstantsFileReader.getInstance().get("shoulderUpPowerLimit")));
+//		System.out.println("shoulder up power: " + clamp(power, ConstantsFileReader.getInstance().get("shoulderUpPowerLimit")));
 	}
 	
 	public void setShoulderDown(double power){
 		double clampedPower = clamp(power, ConstantsFileReader.getInstance().get("shoulderDownPowerLimit"));
 		setLeftShoulder(clampedPower);
 		setRightShoulder(clampedPower);
-		System.out.println("shoulder down power: " + clampedPower);
+//		System.out.println("shoulder down power: " + clampedPower);
 	}
 	
 	public void setShoulderBalance(double power){
 		double clamped_power = clamp(power, ConstantsFileReader.getInstance().get("shoulderBalancePowerLimit"));
 		setLeftShoulder(clamped_power);
 		setRightShoulder(clamped_power);
-		System.out.println("shoulder timeout power: " + clamped_power);
+//		System.out.println("shoulder timeout power: " + clamped_power);
 	}
 	
 	private double getLeftShoulderEncoder(){

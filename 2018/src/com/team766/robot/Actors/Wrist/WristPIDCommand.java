@@ -54,15 +54,15 @@ public class WristPIDCommand extends CommandBase {
 
 	@Override
 	public void update() {	
-		System.out.println("Wrist PID setpoint: " + Wrist.wristPID.getSetpoint());
+//		System.out.println("Wrist PID setpoint: " + Wrist.wristPID.getSetpoint());
 		Wrist.wristPID.calculate(Wrist.getAveWristEncoder(), false);
 		double power = Wrist.wristPID.getOutput() + constants_file.get("armWristFeedForward") * Math.cos(Wrist.getWristAngleRad(Wrist.getAveWristEncoder()));
 		Wrist.setWrist(negate * power);
-		System.out.println("__________________WristPower: " + power);
+//		System.out.println("__________________WristPower: " + power);
 		
 		if(Wrist.wristPID.isDone()){
 			done = true;
-			System.out.println("done moving");
+//			System.out.println("done moving");
 		}
 	}
 

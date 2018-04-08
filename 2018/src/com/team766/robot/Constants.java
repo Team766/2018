@@ -97,7 +97,7 @@ public class Constants {
 	public static final double switch_final_forward = 1.5;
 	
 	//starting from sides
-	public static final double side_switch_straight = 7.45; //distance to the switch if same side 
+	public static final double side_switch_straight = 10.45; //distance to the switch if same side 
 	public static final double side_switch_straight_side = 3.4; //distance from side to the switch if same side
 	public static final double side_switch_forward = 3.0; //distance to the point preparing to turn
 	public static final double side_switch_forward_side = 15.0; //(actual value: 15 feet) horizontal distance for going to the switch at opposite direction
@@ -108,7 +108,7 @@ public class Constants {
 	//starting from middle
 	public static final double middle_switch_forward = 3.0;
 	public static final double middle_switch_forward_leftSide = 4.82;
-	public static final double middle_switch_forward_rightSide = 5.50; //actual value: 6.66 feet
+	public static final double middle_switch_forward_rightSide = 4.50; //actual value: 6.66 feet
 	public static final double middle_switch_forward_side_forward = 4.45; //4.45 calc value
 	
 	

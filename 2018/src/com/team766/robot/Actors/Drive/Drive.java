@@ -60,7 +60,7 @@ public class Drive extends Actor{
 				continue;
 			}
 			
-			System.out.println("DBG: got new message stopping current message!");
+//			System.out.println("DBG: got new message stopping current message!");
 			
 			if (currentMessage instanceof Stop || currentMessage instanceof EStop) {
 				stopCurrentCommand("got stop message");
@@ -101,8 +101,8 @@ public class Drive extends Actor{
 			}
 		}
 		
-		System.out.println("DBG: right encoder = " + rightEncoder.getRaw() + "\t\t left = " + leftEncoder.getRaw());
-		System.out.println("Gyro: " + gyro.getAngle());
+//		System.out.println("DBG: right encoder = " + rightEncoder.getRaw() + "\t\t left = " + leftEncoder.getRaw());
+//		System.out.println("Gyro: " + gyro.getAngle());
 	}
 
 	public String toString() {
@@ -173,7 +173,7 @@ public class Drive extends Actor{
 	}
 	
 	private void swapCurrentCommand(SubActor newCommand, String reason){
-		System.out.println("DMDBG: swapping currentCommand because: " + reason);
+//		System.out.println("DMDBG: swapping currentCommand because: " + reason);
 		if(currentCommand != null){
 			currentCommand.stop();
 		}
@@ -224,9 +224,9 @@ public class Drive extends Actor{
 		double leftPower = surge_v - yaw_v;
 		double rightPower = surge_v + yaw_v;
 		
-		System.out.println("yaw = " + yaw_v);
+//		System.out.println("yaw = " + yaw_v);
 		
-		System.out.println("DBG: left = " + leftPower + " \t\tright = " + rightPower);
+//		System.out.println("DBG: left = " + leftPower + " \t\tright = " + rightPower);
 		
 		setLeft(leftPower);
 		setRight(rightPower);

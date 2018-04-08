@@ -84,17 +84,17 @@ public class Intake extends Actor{
 	
 	private void setLeftMotor(double speed){
 		leftIntake.set(speed);
-		System.out.println("setting left intake wheels to: " + speed);
+//		System.out.println("setting left intake wheels to: " + speed);
 	}
 	
 	private void setRightMotor(double speed){
 		rightIntake.set(-speed);
-		System.out.println("setting right intake wheels to: " + speed);
+//		System.out.println("setting right intake wheels to: " + speed);
 	}
 	
 	public void setMotors(double speed){
-		setLeftMotor(speed);
-		setRightMotor(speed);
+		setLeftMotor(speed * 0.75);
+		setRightMotor(speed * 0.75);
 	}
 	
 	public double clamp(double value, double limit){

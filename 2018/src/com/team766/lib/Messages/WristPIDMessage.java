@@ -9,7 +9,7 @@ public class WristPIDMessage implements Message {
 	//0 = back, 1 = middle, 2 = intake, 3 = hold
 	public WristPIDMessage(int position) {
 		this.position = position;
-		System.out.println("Inside wrist message.");
+//		System.out.println("Inside wrist message.");
 	}
 	
 	public int getWristPosition(){

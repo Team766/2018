@@ -32,7 +32,7 @@ public class DrivePIDCommand extends CommandBase{
 		Drive.setAutonLeft(Drive.distancePID.getOutput() - Drive.anglePID.getOutput()); 
 		Drive.setAutonRight(Drive.distancePID.getOutput() + Drive.anglePID.getOutput());
 		
-		System.out.println("drive left: " + (Drive.distancePID.getOutput() - Drive.anglePID.getOutput() + "\t\t\t\t\t\t\tright: " + (Drive.distancePID.getOutput() + Drive.anglePID.getOutput())));
+//		System.out.println("drive left: " + (Drive.distancePID.getOutput() - Drive.anglePID.getOutput() + "\t\t\t\t\t\t\tright: " + (Drive.distancePID.getOutput() + Drive.anglePID.getOutput())));
 		
 		if(Drive.distancePID.isDone() && Drive.anglePID.isDone()){
 			stop();

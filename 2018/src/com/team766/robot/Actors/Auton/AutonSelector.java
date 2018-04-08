@@ -176,7 +176,7 @@ public class AutonSelector extends Actor{
 		this.done = done;
 	}
 	
-	public void startSequence(AutonMode auton){
+	private void startSequence(AutonMode auton){
 		switch(currentState){
 			case Start:
 				System.out.println("starting case for auton, sent message to open gripper and raise intake");

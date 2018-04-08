@@ -17,6 +17,7 @@ public class SideToSwitch implements AutonMode{
 	private double[] straightDist;
 	private double[] turnAngle;
 	private int count;
+	private long startTime, dropTimeLimit;
 	private boolean isOppositeSide;
 	private int negateAngle;
 	
@@ -32,8 +33,11 @@ public class SideToSwitch implements AutonMode{
 		this.parent = parent;
 		negateAngle = isStartingRight? -1 : 1;
 		driveCommandDone = false;
-		currentState = State.Start;
-		count = 0;
+		currentState = State.Start; //Start
+		count = 0; //0
+		startTime = (long)0.0;
+		//startTime = System.currentTimeMillis(); //kkkkkkkkkkkkkkkkkkkkkk
+		dropTimeLimit = (long) 2000.0;
 		isOppositeSide = Constants.switch_side == negateAngle ;
 		if(Constants.switch_side == 1){
 			straightDist = new double[]{Constants.side_switch_forward, Constants.side_switch_forward_side, Constants.side_switch_forward_side_forward};
@@ -68,14 +72,16 @@ public class SideToSwitch implements AutonMode{
 						setState(State.DriveRaiseArm);
 						parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0));
 						parent.sendMessage(new ShoulderPIDMessage(1)); 
+						startTime = System.currentTimeMillis();
 					}	
 				}
 				break;
 			case DriveRaiseArm:
-				System.out.println("driving");
-				if(driveCommandDone)
+				System.out.println("---------------------final forward-----------------------" + (System.currentTimeMillis() - startTime));
+				if(driveCommandDone || (System.currentTimeMillis() - startTime > dropTimeLimit)){
 					switchState(State.DropCube, new GripperUpdateMessage(true));
 					setState(State.Done);
+				}
 				break;
 			case DropCube:
 				System.out.println("dropping the cube");

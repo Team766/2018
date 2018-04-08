@@ -8,7 +8,7 @@ public class ShifterUpdate implements Message {
 	
 	public ShifterUpdate(boolean isHighGear){
 		this.isHighGear = isHighGear;
-		System.out.println("Shifter gets the message.");
+//		System.out.println("Shifter gets the message.");
 	}
 	
 	public boolean getHighGear(){

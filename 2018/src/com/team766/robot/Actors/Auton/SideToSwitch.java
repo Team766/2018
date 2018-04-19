@@ -35,9 +35,8 @@ public class SideToSwitch implements AutonMode{
 		driveCommandDone = false;
 		currentState = State.Start; //Start
 		count = 0; //0
-		startTime = (long)0.0;
-		//startTime = System.currentTimeMillis(); //kkkkkkkkkkkkkkkkkkkkkk
-		dropTimeLimit = (long) 2000.0;
+		startTime = System.currentTimeMillis(); 
+		dropTimeLimit = (long) 12000.0;
 		isOppositeSide = Constants.switch_side == negateAngle ;
 		if(Constants.switch_side == 1){
 			straightDist = new double[]{Constants.side_switch_forward, Constants.side_switch_forward_side, Constants.side_switch_forward_side_forward};
@@ -72,13 +71,12 @@ public class SideToSwitch implements AutonMode{
 						setState(State.DriveRaiseArm);
 						parent.sendMessage(new DrivePIDMessage(Constants.switch_final_forward, 0.0));
 						parent.sendMessage(new ShoulderPIDMessage(1)); 
-						startTime = System.currentTimeMillis();
 					}	
 				}
 				break;
 			case DriveRaiseArm:
 				System.out.println("---------------------final forward-----------------------" + (System.currentTimeMillis() - startTime));
-				if(driveCommandDone || (System.currentTimeMillis() - startTime > dropTimeLimit)){
+				if(driveCommandDone || (Math.abs(System.currentTimeMillis() - startTime) > dropTimeLimit)){
 					switchState(State.DropCube, new GripperUpdateMessage(true));
 					setState(State.Done);
 				}

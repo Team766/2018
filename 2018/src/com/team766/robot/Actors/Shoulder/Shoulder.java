@@ -193,7 +193,7 @@ public class Shoulder extends Actor {
 	public void setShoulderEncoders(int position){
 		leftShoulder.setPosition(position);
 		rightShoulder.setPosition(position);
-		new Throwable().printStackTrace();
+//		new Throwable().printStackTrace();
 	}
 	
 	public double clamp(double value, double limit){

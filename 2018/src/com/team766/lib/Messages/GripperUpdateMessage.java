@@ -10,7 +10,7 @@ public class GripperUpdateMessage implements Message{
 	public GripperUpdateMessage(boolean open) {
 //		System.out.println("inside gripper message!");
 		this.open = open;
-		System.out.println("gripper open: " + open);
+//		System.out.println("gripper open: " + open);
 //		for(StackTraceElement ste: Thread.currentThread().getStackTrace()){
 //			System.out.println(ste);
 //		}

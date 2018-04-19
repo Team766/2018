@@ -94,7 +94,7 @@ public class Constants {
 	/*
 	 * To Switch
 	 */
-	public static final double switch_final_forward = 1.5;
+	public static final double switch_final_forward = 1.2;//1.2
 	
 	//starting from sides
 	public static final double side_switch_straight = 10.45; //distance to the switch if same side 

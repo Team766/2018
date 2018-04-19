@@ -15,7 +15,8 @@ public class MiddleToSwitch implements AutonMode {
 	private boolean commandDone;
 	private AutonSelector parent;
 	private State currentState;
-	private double negateAngle, dropTime, dropTimeLimit;
+	private double negateAngle;
+	private long dropTime, dropTimeLimit;
 	private double[]straightDist;
 	private double[]turnAngle;
 	private int count;
@@ -32,9 +33,9 @@ public class MiddleToSwitch implements AutonMode {
 	public MiddleToSwitch(AutonSelector parent) {
 		this.parent = parent;
 		commandDone = false;
-		dropTime = 0.0;
+		dropTime = System.currentTimeMillis();
 		currentState = State.Start;
-		dropTimeLimit = 12000.0;
+		dropTimeLimit = (long) 12000.0; //12000.0
 		negateAngle = Constants.switch_side;
 		if(negateAngle == 1){ //Constants.switch_side == 1){
 			straightDist = new double[]{Constants.middle_switch_forward, Constants.middle_switch_forward_rightSide, Constants.middle_switch_forward_side_forward};
@@ -49,7 +50,6 @@ public class MiddleToSwitch implements AutonMode {
 	public void iterate() {
 		switch(currentState){
 		case Start:
-			dropTime = System.currentTimeMillis();
 			switchState(State.DriveStraight, new DrivePIDMessage(straightDist[count], 0));
 			break;
 		case DriveStraight:
@@ -74,7 +74,7 @@ public class MiddleToSwitch implements AutonMode {
 		case FinalForward:
 			System.out.println("final drive forward");
 			System.out.println("dropTime: " + (System.currentTimeMillis() - dropTime));
-			if(commandDone || ((System.currentTimeMillis() - dropTime) > dropTimeLimit)){
+			if(commandDone || ((Math.abs(System.currentTimeMillis() - dropTime)) > dropTimeLimit)){
 				switchState(State.DropCube, new GripperUpdateMessage(true));
 				parent.sendMessage(new IntakeMotorUpdate(-1.0)); //outtake
 			}
